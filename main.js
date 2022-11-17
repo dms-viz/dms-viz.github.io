@@ -1,4 +1,5 @@
 import "./style.css";
+import * as d3 from "d3";
 import polyclonal from "./data/polyclonal.json" assert { type: "json" };
 
 // INITIALIZE THE DATA //
@@ -103,4 +104,153 @@ epitopeSelection.addEventListener("change", (event) => {
 // Add event listener to update summary metric
 metricSelection.addEventListener("change", (event) => {
   metric = event.target.value;
+});
+
+// INITIALIZE THE PLOT //
+
+function makePlot() {
+  // Get the data
+  const data = polyclonal[model].mut_escape_df;
+  const escapeDataSummary = summarizeEscapeData(data).filter(
+    (e) => e.epitope === epitope
+  );
+
+  // Relative scaling of plot elements
+  const marginScale = {
+    top: 0.025,
+    left: 0.04,
+    bottom: 0.1,
+    right: 0.06,
+    innerTop: 0.05,
+    innerRight: 0.08,
+    focusContextRatio: 0.15,
+    focusHeatmapRatio: 0.03,
+  };
+
+  // Plot dimensions
+  const dimensions = {
+    width: document.getElementById("chart").offsetWidth,
+    height: 400,
+  };
+
+  // Margins around the whole plot
+  dimensions.margin = {
+    top: dimensions.height * marginScale.top,
+    left: dimensions.width * marginScale.left,
+    bottom: dimensions.height * marginScale.bottom,
+    right: dimensions.width * marginScale.right,
+  };
+  // Inner margins between plots
+  dimensions.marginInner = {
+    top: dimensions.height * marginScale.innerTop,
+    right: dimensions.height * marginScale.innerRight,
+  };
+  // Bounded plot sizes
+  dimensions.boundedContext = {
+    height:
+      (dimensions.height -
+        dimensions.margin.top -
+        dimensions.margin.bottom -
+        dimensions.marginInner.top) *
+      marginScale.focusContextRatio,
+    width:
+      (dimensions.width -
+        dimensions.margin.right -
+        dimensions.margin.left -
+        dimensions.marginInner.right) *
+      (1 - marginScale.focusHeatmapRatio),
+  };
+  dimensions.boundedFocus = {
+    height:
+      (dimensions.height -
+        dimensions.margin.top -
+        dimensions.margin.bottom -
+        dimensions.marginInner.top) *
+      (1 - marginScale.focusContextRatio),
+    width:
+      (dimensions.width -
+        dimensions.margin.right -
+        dimensions.margin.left -
+        dimensions.marginInner.right) *
+      (1 - marginScale.focusHeatmapRatio),
+  };
+  dimensions.boundedHeatmap = {
+    height:
+      dimensions.height - dimensions.margin.top - dimensions.margin.bottom,
+    width:
+      (dimensions.width -
+        dimensions.margin.right -
+        dimensions.margin.left -
+        dimensions.marginInner.right) *
+      marginScale.focusHeatmapRatio,
+  };
+
+  // Chart wrapper svg
+  const svg = d3
+    .select("#chart")
+    .append("svg")
+    .attr("width", dimensions.width)
+    .attr("height", dimensions.height)
+    .attr("class", "wrapper");
+
+  // Create the bounds
+  const bounds = svg
+    .append("g")
+    .style(
+      "transform",
+      `translate(${dimensions.margin.left}px, ${dimensions.margin.top}px)`
+    );
+
+  // Outer bounds of the wrapper element
+  svg
+    .append("rect")
+    .attr("width", dimensions.width)
+    .attr("height", dimensions.height)
+    .attr("fill", "none")
+    .attr("stroke-width", 4)
+    .attr("stroke", "black")
+    .attr("stroke-dasharray", 4);
+
+  // Context plot location
+  bounds
+    .append("rect")
+    .attr("width", dimensions.boundedContext.width)
+    .attr("height", dimensions.boundedContext.height)
+    .attr("fill", "#4287f5")
+    .attr("fill-opacity", 0.2)
+    .attr("stroke", "#4287f5")
+    .attr("stroke-width", 2)
+    .attr("stroke-opacity", 1);
+
+  // Focus plot location
+  bounds
+    .append("rect")
+    .attr("width", dimensions.boundedFocus.width)
+    .attr("height", dimensions.boundedFocus.height)
+    .attr("y", dimensions.boundedContext.height + dimensions.marginInner.top)
+    .attr("fill", "#48f542")
+    .attr("fill-opacity", 0.2)
+    .attr("stroke", "#48f542")
+    .attr("stroke-width", 2)
+    .attr("stroke-opacity", 1);
+
+  // Heatmap plot location
+  bounds
+    .append("rect")
+    .attr("width", dimensions.boundedHeatmap.width)
+    .attr("height", dimensions.boundedHeatmap.height)
+    .attr("x", dimensions.boundedContext.width + dimensions.marginInner.right)
+    .attr("fill", "#c71417")
+    .attr("fill-opacity", 0.2)
+    .attr("stroke", "#c71417")
+    .attr("stroke-width", 2)
+    .attr("stroke-opacity", 1);
+}
+
+makePlot();
+
+// resize the plot when the window is resized
+window.addEventListener("resize", () => {
+  d3.select("#chart").selectAll("svg").remove();
+  makePlot();
 });

@@ -1,6 +1,7 @@
 body {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   max-width: 1080px; 
+  min-width: 750px;
 	margin: 0 auto !important; 
 	float: none !important; 
 }
@@ -14,4 +15,12 @@ h1 code {
 #chart-config {
   display: flex;
   gap: 1em;
+}
+
+#chart {
+  margin-top: 20px;
+}
+
+#chart .wrapper {
+  margin-top: 10px;
 }
