@@ -1,6 +1,12 @@
-p {
+body {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
+  max-width: 1080px; 
+	margin: 0 auto !important; 
+	float: none !important; 
+}
+
+h1 code {
+  font-family: monospace;
+  font-size: 40px;
+  line-height: 40px;
 }
