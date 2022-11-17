@@ -7,39 +7,35 @@
   </head>
   <body>
     <div id="root">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <h1><code>dms-viz</code></h1>
-            <p>
-              <details open>
-  
-                <summary>
-                  <h3 style="display: inline">
-                    Instructions
-                  </h3>
-                </summary>
-                
-                <p>
-                  <em>Both the visualization and the code are contained in this notebook.</em> 
-                </p>
-              
-                <p>
-                  <strong>To use this visualizationt tool</strong>, with the menu below, select an antibody, epitope, and how escape at each site should be summarized. Drag your mouse in the context plot just below the menu to zoom into a region of the focus plot. To see how individual mutations at a site contribute to escape, click on a point. To visualize sites on a protein, drag to select a group of points To clear your selections, double click on the plot.
-                </p> 
-                
-              </details>
-              
-              <hr>
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div id="chart"></div>
-          </div>
+      <div class="header">
+        <h1><code>dms-viz</code></h1>
+        <details>
+          <summary><h3 style="display: inline">Instructions</h3></summary>
+          <p>
+            <strong>To use this visualization tool</strong>, with the menu
+            below, select an antibody, epitope, and how escape at each site
+            should be summarized. Drag your mouse in the context plot just below
+            the menu to zoom into a region of the focus plot. To see how
+            individual mutations at a site contribute to escape, click on a
+            point. To visualize sites on a protein, drag to select a group of
+            points To clear your selections, double click on the plot.
+          </p>
+        </details>
+        <hr />
+      </div>
+      <div id="chart">
+        <div id="chart-config">
+          <label for="Model">Select Model:</label>
+          <select name="Model" id="model"></select>
+          <label for="Epitope">Select Epitope:</label>
+          <select name="Epitope" id="epitope"></select>
+          <label for="Metric">Select Summary Metric:</label>
+          <select name="Metric" id="metric"></select>
+          <label for="Floor">Floor:</label>
+          <input type="checkbox" name="Floor" id="floor" />
         </div>
       </div>
+      <div id="viewport"></div>
     </div>
     <script type="module" src="/main.js"></script>
   </body>

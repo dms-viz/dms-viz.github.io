@@ -10,3 +10,8 @@ h1 code {
   font-size: 40px;
   line-height: 40px;
 }
+
+#chart-config {
+  display: flex;
+  gap: 1em;
+}
