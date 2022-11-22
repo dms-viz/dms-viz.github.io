@@ -24,3 +24,26 @@ h1 code {
 #chart .wrapper {
   margin-top: 10px;
 }
+
+.tooltip {
+  padding: 8px 12px;
+  color: black;
+  border-radius: 6px;
+  border: 2px solid rgba(255,255,255,0.5);
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.2);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  font-family: "Helvetica", sans-serif;
+  background: rgba(20,10,30,0.6);
+  transition: 0.2s opacity ease-out, 0.1s border-color ease-out;
+  backdrop-filter: blur(4px);
+  background: rgba(250,240,255,0.2);
+  backdrop-filter: blur(7px);
+}
+
+.axis {
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
