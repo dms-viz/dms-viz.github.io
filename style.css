@@ -25,6 +25,12 @@ h1 code {
   margin-top: 10px;
 }
 
+#viewport {
+  max-width: 1080px; 
+  min-width: 750px;
+  height: 500px;
+}
+
 .tooltip {
   padding: 8px 12px;
   color: black;
