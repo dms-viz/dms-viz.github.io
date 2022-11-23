@@ -1,7 +1,7 @@
-import "./style.css";
+import "../style.css";
 import * as d3 from "d3";
 import * as NGL from "ngl";
-import polyclonal from "./data/polyclonal.json";
+import polyclonal from "../data/polyclonal.json";
 
 // INITIALIZE THE DATA //
 
