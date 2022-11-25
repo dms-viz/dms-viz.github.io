@@ -402,18 +402,36 @@ export class Chart {
       });
 
     // ------ HEATMAP PLOT ------ //
+
     vis.heatmapPlot
-      .append("g")
-      .attr("class", "mutant")
-      .selectAll("rect")
-      .data(vis.mutEscapeHeatmap, (d) => d.mutant)
-      .join("rect")
-      .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
-      .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
-      .attr("width", vis.xScaleHeatmap.bandwidth())
-      .attr("height", vis.yScaleHeatmap.bandwidth())
-      .style("fill", (d) => vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d)))
-      .style("stroke", "black")
+      .selectAll(".mutant-rect")
+      .data(vis.mutEscapeHeatmap, (d) => d.mutation)
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "mutant-rect")
+            .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
+            .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
+            .attr("width", vis.xScaleHeatmap.bandwidth())
+            .attr("height", vis.yScaleHeatmap.bandwidth())
+            .style("fill", (d) =>
+              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+            )
+            .style("stroke", "black"),
+        (update) =>
+          update.call((update) =>
+            update
+              .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
+              .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
+              .attr("width", vis.xScaleHeatmap.bandwidth())
+              .attr("height", vis.yScaleHeatmap.bandwidth())
+              .style("fill", (d) =>
+                vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+              )
+          ),
+        (exit) => exit.remove()
+      )
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
@@ -429,24 +447,25 @@ export class Chart {
       .on("mouseout", () => {
         vis.tooltip.style("opacity", 0);
       });
-    vis.heatmapPlot
-      .selectAll("text")
-      .data(vis.mutEscapeHeatmap, (d) => d.mutant)
-      .join("text")
-      .attr("class", "wildtype")
-      .attr(
-        "transform",
-        `translate(${vis.xScaleHeatmap.bandwidth() / 2}, ${
-          vis.yScaleHeatmap.bandwidth() / 2
-        })`
-      )
-      .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
-      .attr("y", (d) => vis.yScaleHeatmap(d.wildtype))
-      .attr("fill", "black")
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("font-family", "Arial")
-      .text("x");
+
+    // vis.heatmapPlot
+    //   .selectAll("text")
+    //   .data(vis.mutEscapeHeatmap, (d) => d.mutant)
+    //   .join("text")
+    //   .attr("class", "wildtype")
+    //   .attr(
+    //     "transform",
+    //     `translate(${vis.xScaleHeatmap.bandwidth() / 2}, ${
+    //       vis.yScaleHeatmap.bandwidth() / 2
+    //     })`
+    //   )
+    //   .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
+    //   .attr("y", (d) => vis.yScaleHeatmap(d.wildtype))
+    //   .attr("fill", "black")
+    //   .attr("text-anchor", "middle")
+    //   .attr("dominant-baseline", "middle")
+    //   .attr("font-family", "Arial")
+    //   .text("x");
 
     // Draw the peripherals (axes, labels, etc.):
 
