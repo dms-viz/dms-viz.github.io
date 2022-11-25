@@ -300,6 +300,7 @@ export class Chart {
    */
   renderVis() {
     let vis = this;
+    let transition = vis.svg.transition().duration(500);
 
     // Draw the data:
 
@@ -310,28 +311,19 @@ export class Chart {
       .x((d) => vis.xScaleContext(vis.xAccessorContext(d)))
       .y0(vis.yScaleContext(0))
       .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
-    // vis.contextAreaG = vis.contextPlot
-    //   .append("g")
-    //   .attr("class", "context-area")
-    //   .selectAll("path")
-    //   .data([vis.mutEscapeSummary])
-    //   .enter()
-    //   .append("path")
-    //   .attr("d", vis.contextArea)
-    //   .attr("fill", vis.positiveColor);
 
     // Create a update selection: bind to the new data
-    const u = vis.contextPlot
-      .selectAll(".lineTest")
+    const contextUpdate = vis.contextPlot
+      .selectAll(".context-area")
       .data([vis.mutEscapeSummary], function (d) {
         return d.site;
       });
 
     // Updata the line
-    u.join("path")
-      .attr("class", "lineTest")
-      .transition()
-      .duration(500)
+    contextUpdate
+      .join("path")
+      .attr("class", "context-area")
+      .transition(transition)
       .attr("d", vis.contextArea)
       .attr("fill", this.positiveColor);
 
@@ -341,34 +333,28 @@ export class Chart {
       .curve(d3.curveLinear)
       .x((d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
       .y((d) => vis.yScaleFocus(vis.yAccessorFocus(d)));
-    vis.focusLineG = vis.focusPlot
-      .append("g")
+
+    // Create a update selection: bind to the new data
+    const focusUpdate = vis.focusPlot
+      .selectAll(".focus-line")
+      .data([vis.mutEscapeSummary], function (d) {
+        return d.site;
+      });
+
+    // Updata the line
+    focusUpdate
+      .join("path")
       .attr("class", "focus-line")
-      .append("path")
-      .attr("class", "line")
       .attr("clip-path", "url(#focusClipPath)")
       .attr("fill", "none")
-      .attr("stroke", vis.positiveColor)
       .attr("stroke-width", 1.5)
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
-      .attr("d", vis.focusLine(vis.mutEscapeSummary));
+      .transition(transition)
+      .attr("d", vis.focusLine(vis.mutEscapeSummary))
+      .attr("stroke", vis.positiveColor);
 
-    // vis.focusPoints = vis.focusPlot
-    //   .append("g")
-    //   .attr("fill", "white")
-    //   .attr("stroke", vis.positiveColor)
-    //   .attr("stroke-width", 2)
-    //   .selectAll("circle")
-    //   .data(vis.mutEscapeSummary)
-    //   .join("circle")
-    //   .attr("clip-path", "url(#focusClipPath)") // <-- *TEMP* adding a clip path, better to refactor as a group element
-    //   .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
-    //   .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
-    //   .attr("r", 5);
-
-    let transition = vis.svg.transition().duration(500);
     vis.focusPoints = vis.focusPlot
       .selectAll("circle")
       .data(vis.mutEscapeSummary, (d) => d.site)
