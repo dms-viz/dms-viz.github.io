@@ -34,9 +34,7 @@ export class Chart {
     this.initVis();
   }
   /**
-   * Set dimensions and margins of the visualization,
-   * initialize SVG canvas,
-   * and setup static elements like scales and axes.
+   * Setup static elements like scales and axes
    */
   initVis() {
     let vis = this;
@@ -204,7 +202,7 @@ export class Chart {
     vis.updateVis();
   }
   /**
-   * Prepare the data and scales before rendering.
+   * Prepare the data and scales before rendering
    */
   updateVis() {
     let vis = this;
@@ -298,7 +296,7 @@ export class Chart {
     vis.renderVis();
   }
   /**
-   * Bind data to visual elements.
+   * Bind data to visual elements
    */
   renderVis() {
     let vis = this;
@@ -312,12 +310,30 @@ export class Chart {
       .x((d) => vis.xScaleContext(vis.xAccessorContext(d)))
       .y0(vis.yScaleContext(0))
       .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
-    vis.contextAreaG = vis.contextPlot
-      .append("g")
-      .attr("class", "context-area")
-      .append("path")
-      .attr("fill", vis.positiveColor)
-      .attr("d", vis.contextArea(vis.mutEscapeSummary));
+    // vis.contextAreaG = vis.contextPlot
+    //   .append("g")
+    //   .attr("class", "context-area")
+    //   .selectAll("path")
+    //   .data([vis.mutEscapeSummary])
+    //   .enter()
+    //   .append("path")
+    //   .attr("d", vis.contextArea)
+    //   .attr("fill", vis.positiveColor);
+
+    // Create a update selection: bind to the new data
+    const u = vis.contextPlot
+      .selectAll(".lineTest")
+      .data([vis.mutEscapeSummary], function (d) {
+        return d.site;
+      });
+
+    // Updata the line
+    u.join("path")
+      .attr("class", "lineTest")
+      .transition()
+      .duration(500)
+      .attr("d", vis.contextArea)
+      .attr("fill", this.positiveColor);
 
     // ------ FOCUS PLOT ------ // <== Add data join here
     vis.focusLine = d3

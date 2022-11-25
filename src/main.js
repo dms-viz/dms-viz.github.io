@@ -817,3 +817,8 @@ d3.select("#metric").on("change", function () {
   chart.config.metric = d3.select(this).property("value");
   chart.updateVis();
 });
+
+d3.select("#model").on("change", function () {
+  chart.config.model = d3.select(this).property("value");
+  chart.updateVis();
+});
