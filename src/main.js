@@ -774,32 +774,32 @@ updateSelection(epitopeSelection, polyclonal[models[0]].epitopes);
 const metricSelection = document.getElementById("metric");
 updateSelection(metricSelection, ["sum", "mean", "min", "max"]);
 
-// Add event listener to update model
-modelSelection.addEventListener("change", (event) => {
-  model = event.target.value;
-  const epitopes = polyclonal[model].epitopes;
-  updateSelection(epitopeSelection, epitopes);
-  epitopeSelection.dispatchEvent(new Event("change"));
-  // updatePlot();
-});
+// // Add event listener to update model
+// modelSelection.addEventListener("change", (event) => {
+//   model = event.target.value;
+//   const epitopes = polyclonal[model].epitopes;
+//   updateSelection(epitopeSelection, epitopes);
+//   epitopeSelection.dispatchEvent(new Event("change"));
+//   // updatePlot();
+// });
 
-// Add event listener to update epitope
-epitopeSelection.addEventListener("change", (event) => {
-  epitope = event.target.value;
-  // updatePlot();
-});
+// // Add event listener to update epitope
+// epitopeSelection.addEventListener("change", (event) => {
+//   epitope = event.target.value;
+//   // updatePlot();
+// });
 
-// Add event listener to update summary metric
-metricSelection.addEventListener("change", (event) => {
-  metric = event.target.value;
-  // updatePlot();
-});
+// // Add event listener to update summary metric
+// metricSelection.addEventListener("change", (event) => {
+//   metric = event.target.value;
+//   // updatePlot();
+// });
 
-// Add event listener to update floor
-document.getElementById("floor").addEventListener("change", (event) => {
-  floor = event.target.checked;
-  // updatePlot();
-});
+// // Add event listener to update floor
+// document.getElementById("floor").addEventListener("change", (event) => {
+//   floor = event.target.checked;
+//   // updatePlot();
+// });
 
 // INITIALIZE THE PLOT //
 let chart = new Chart(
@@ -812,3 +812,8 @@ let chart = new Chart(
   },
   polyclonal
 );
+
+d3.select("#metric").on("change", function () {
+  chart.config.metric = d3.select(this).property("value");
+  chart.updateVis();
+});

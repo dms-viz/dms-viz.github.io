@@ -338,18 +338,47 @@ export class Chart {
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
       .attr("d", vis.focusLine(vis.mutEscapeSummary));
+
+    // vis.focusPoints = vis.focusPlot
+    //   .append("g")
+    //   .attr("fill", "white")
+    //   .attr("stroke", vis.positiveColor)
+    //   .attr("stroke-width", 2)
+    //   .selectAll("circle")
+    //   .data(vis.mutEscapeSummary)
+    //   .join("circle")
+    //   .attr("clip-path", "url(#focusClipPath)") // <-- *TEMP* adding a clip path, better to refactor as a group element
+    //   .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
+    //   .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
+    //   .attr("r", 5);
+
+    let transition = vis.svg.transition().duration(500);
     vis.focusPoints = vis.focusPlot
-      .append("g")
-      .attr("fill", "white")
-      .attr("stroke", vis.positiveColor)
-      .attr("stroke-width", 2)
       .selectAll("circle")
-      .data(vis.mutEscapeSummary)
-      .join("circle")
-      .attr("clip-path", "url(#focusClipPath)") // <-- *TEMP* adding a clip path, better to refactor as a group element
-      .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
-      .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
-      .attr("r", 5);
+      .data(vis.mutEscapeSummary, (d) => d.site)
+      .join(
+        (enter) =>
+          enter
+            .append("circle")
+            .attr("r", 5)
+            .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
+            .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
+            .attr("clip-path", "url(#focusClipPath)")
+            .attr("fill", "white")
+            .attr("stroke", vis.positiveColor)
+            .attr("stroke-width", 2)
+            .filter((d) => d.site === vis.initSiteSelection)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2),
+        (update) =>
+          update.call((update) =>
+            update
+              .transition(transition)
+              .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
+          ),
+        (exit) => exit.remove()
+      );
+
     vis.focusPoints
       .on("mouseover", (evt, d) => {
         vis.tooltip
@@ -369,17 +398,13 @@ export class Chart {
       .on("mouseout", () => {
         vis.tooltip.style("opacity", 0);
       });
-    vis.focusPoints
-      .filter((d) => d.site === vis.initSiteSelection)
-      .attr("stroke", "black")
-      .attr("stroke-width", 2);
 
     // ------ HEATMAP PLOT ------ //
     vis.heatmapPlot
       .append("g")
       .attr("class", "mutant")
       .selectAll("rect")
-      .data(vis.mutEscapeHeatmap)
+      .data(vis.mutEscapeHeatmap, (d) => d.mutant)
       .join("rect")
       .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
       .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
@@ -404,7 +429,7 @@ export class Chart {
       });
     vis.heatmapPlot
       .selectAll("text")
-      .data(vis.mutEscapeHeatmap)
+      .data(vis.mutEscapeHeatmap, (d) => d.mutant)
       .join("text")
       .attr("class", "wildtype")
       .attr(
