@@ -17,7 +17,7 @@ export class Chart {
       floor: _config.floor,
       parentElement: _config.parentElement,
       width: 1080,
-      height: 400,
+      height: 420,
       scaling: {
         top: 0.025,
         left: 0.04,
@@ -141,14 +141,8 @@ export class Chart {
       .range([0, vis.bounds.context.width])
       .nice();
     vis.yScaleContext = d3.scaleLinear().range([vis.bounds.context.height, 0]);
-    vis.xScaleFocus = d3
-      .scaleLinear()
-      .range([0, vis.bounds.focus.width])
-      .nice();
-    vis.yScaleFocus = d3
-      .scaleLinear()
-      .range([vis.bounds.focus.height, 0])
-      .nice();
+    vis.xScaleFocus = d3.scaleLinear().range([0, vis.bounds.focus.width]);
+    vis.yScaleFocus = d3.scaleLinear().range([vis.bounds.focus.height, 0]);
     vis.xScaleHeatmap = d3
       .scaleBand()
       .range([0, vis.bounds.heatmap.width])
@@ -170,7 +164,7 @@ export class Chart {
       .append("g")
       .attr("class", "axis y-axis");
 
-    vis.xAxisFocus = d3.axisBottom(vis.xScaleFocus);
+    vis.xAxisFocus = d3.axisBottom(vis.xScaleFocus).tickSizeOuter(0);
     vis.xAxisFocusG = vis.focusPlot
       .append("g")
       .attr("class", "axis x-axis")
@@ -265,8 +259,19 @@ export class Chart {
     vis.yScaleContext.domain(
       d3.extent(vis.mutEscapeSummary, vis.yAccessorContext)
     );
-    vis.xScaleFocus.domain(d3.extent(vis.mutEscapeSummary, vis.xAccessorFocus));
-    vis.yScaleFocus.domain(d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus));
+    // Adjust the domain to add some padding to each scale
+    let xExtentFocus = d3.extent(vis.mutEscapeSummary, vis.xAccessorFocus);
+    let xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
+    let yExtentFocus = d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus);
+    let yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
+    vis.xScaleFocus.domain([
+      xExtentFocus[0],
+      xExtentFocus[1] + xRangeFocus * 0.05,
+    ]);
+    vis.yScaleFocus.domain([
+      yExtentFocus[0],
+      yExtentFocus[1] + yRangeFocus * 0.05,
+    ]);
     vis.xScaleHeatmap.domain([
       d3.max(vis.mutEscapeHeatmap, vis.xAccessorHeatmap),
     ]);
