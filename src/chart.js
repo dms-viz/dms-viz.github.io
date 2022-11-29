@@ -327,7 +327,7 @@ export class Chart {
       .attr("d", vis.contextArea)
       .attr("fill", this.positiveColor);
 
-    // ------ FOCUS PLOT ------ // <== Add data join here
+    // ------ FOCUS PLOT ------ //
     vis.focusLine = d3
       .line()
       .curve(d3.curveLinear)
@@ -448,24 +448,28 @@ export class Chart {
         vis.tooltip.style("opacity", 0);
       });
 
-    // vis.heatmapPlot
-    //   .selectAll("text")
-    //   .data(vis.mutEscapeHeatmap, (d) => d.mutant)
-    //   .join("text")
-    //   .attr("class", "wildtype")
-    //   .attr(
-    //     "transform",
-    //     `translate(${vis.xScaleHeatmap.bandwidth() / 2}, ${
-    //       vis.yScaleHeatmap.bandwidth() / 2
-    //     })`
-    //   )
-    //   .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
-    //   .attr("y", (d) => vis.yScaleHeatmap(d.wildtype))
-    //   .attr("fill", "black")
-    //   .attr("text-anchor", "middle")
-    //   .attr("dominant-baseline", "middle")
-    //   .attr("font-family", "Arial")
-    //   .text("x");
+    // Add an 'x' for the wildtype residue
+    vis.wildtype = vis.mutEscapeHeatmap.map((d) => d.wildtype)[0];
+    vis.heatmapPlot
+      .selectAll(".wildtype-text")
+      .data([vis.wildtype], (d) => d)
+      .join(
+        (enter) => enter.append("text").attr("class", "wildtype-text"),
+        (update) => update,
+        (exit) => exit.remove()
+      )
+      .attr(
+        "transform",
+        `translate(${vis.bounds.heatmap.width / 2}, ${
+          vis.yScaleHeatmap.bandwidth() / 2
+        })`
+      )
+      .attr("y", (d) => vis.yScaleHeatmap(d))
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "middle")
+      .attr("font-size", "1.25em")
+      .attr("font-weight", "bold")
+      .text("x");
 
     // Draw the peripherals (axes, labels, etc.):
 
