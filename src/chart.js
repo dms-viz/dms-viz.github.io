@@ -390,10 +390,10 @@ export class Chart {
             .attr("clip-path", "url(#focusClipPath)")
             .attr("fill", "white")
             .attr("stroke", vis.positiveColor)
-            .attr("stroke-width", 2)
-            .filter((d) => d.site === vis.initSiteSelection)
-            .attr("stroke", "black")
             .attr("stroke-width", 2),
+        // .filter((d) => d.site === vis.initSiteSelection)
+        // .attr("stroke", "black")
+        // .attr("stroke-width", 2),
         (update) =>
           update.call((update) =>
             update
