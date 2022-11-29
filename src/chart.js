@@ -125,6 +125,25 @@ export class Chart {
       .style("fill", "none")
       .style("stroke", "black");
 
+    // Define the elements of the HEATMAP LEGEND
+    vis.heatmapLegend = vis.heatmapPlot
+      .append("g")
+      .attr("class", "legend")
+      .attr("transform", `translate(${vis.bounds.heatmap.width + 10})`);
+    vis.legendLinearGradient = vis.heatmapLegend
+      .append("defs")
+      .append("linearGradient")
+      .attr("id", "linear-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "0%")
+      .attr("y2", "0%");
+    vis.legendColorRamp = vis.heatmapLegend
+      .append("rect")
+      .attr("width", `${vis.bounds.heatmap.width / 2}px`)
+      .attr("height", `${vis.bounds.heatmap.height / 2}px`)
+      .style("fill", `url(#linear-gradient)`);
+
     // Define the TOOLTIP
     vis.tooltip = d3
       .select("body")
@@ -139,8 +158,10 @@ export class Chart {
       .range([0, vis.bounds.context.width])
       .nice();
     vis.yScaleContext = d3.scaleLinear().range([vis.bounds.context.height, 0]);
+
     vis.xScaleFocus = d3.scaleLinear().range([0, vis.bounds.focus.width]);
     vis.yScaleFocus = d3.scaleLinear().range([vis.bounds.focus.height, 0]);
+
     vis.xScaleHeatmap = d3
       .scaleBand()
       .range([0, vis.bounds.heatmap.width])
@@ -150,6 +171,8 @@ export class Chart {
       .range([0, vis.bounds.heatmap.height])
       .padding(0.1);
     vis.colorScaleHeatmap = d3.scaleLinear();
+
+    vis.legendScaleHeatmap = vis.colorScaleHeatmap.copy();
 
     // Initialize AXES
     vis.xAxisContext = d3.axisBottom(vis.xScaleContext).tickSizeOuter(0);
@@ -169,6 +192,7 @@ export class Chart {
       .attr("transform", `translate(0, ${vis.bounds.focus.height})`);
     vis.yAxisFocus = d3.axisLeft(vis.yScaleFocus).tickSizeOuter(0);
     vis.yAxisFocusG = vis.focusPlot.append("g").attr("class", "axis y-axis");
+
     vis.xAxisHeatmap = d3.axisBottom(vis.xScaleHeatmap).tickSizeOuter(0);
     vis.xAxisHeatmapG = vis.heatmapPlot
       .append("g")
@@ -179,24 +203,14 @@ export class Chart {
       .append("g")
       .attr("class", "axis y-axis");
 
-    // Initialize LEGEND
-    vis.heatmapLegend = vis.heatmapPlot
+    vis.yAxisHeatmapLegend = d3
+      .axisRight(vis.legendScaleHeatmap)
+      .ticks(6)
+      .tickSize(0);
+    vis.yAxisHeatmapLegendG = vis.heatmapLegend
       .append("g")
-      .attr("class", "legend")
-      .attr("transform", `translate(${vis.bounds.heatmap.width + 10})`);
-    vis.legendLinearGradient = vis.heatmapLegend
-      .append("defs")
-      .append("linearGradient")
-      .attr("id", "linear-gradient")
-      .attr("x1", "0%")
-      .attr("y1", "100%")
-      .attr("x2", "0%")
-      .attr("y2", "0%");
-    vis.legendColorRamp = vis.heatmapLegend
-      .append("rect")
-      .attr("width", `${vis.bounds.heatmap.width / 2}px`)
-      .attr("height", `${vis.bounds.heatmap.height / 2}px`)
-      .style("fill", `url(#linear-gradient)`);
+      .attr("transform", `translate(${vis.bounds.heatmap.width / 2})`)
+      .attr("class", "legend-axis");
 
     // UPDATE
     vis.updateVis();
@@ -292,6 +306,14 @@ export class Chart {
         .domain([0, d3.max(vis.mutEscape, vis.colorAccessorHeatmap)])
         .range(["white", vis.positiveColor]);
     }
+    vis.legendScaleHeatmap
+      .domain([0, d3.max(vis.mutEscape, vis.colorAccessorHeatmap)])
+      .rangeRound(
+        d3.quantize(
+          d3.interpolate(vis.bounds.heatmap.height / 2, 0),
+          vis.colorScaleHeatmap.range().length
+        )
+      );
 
     vis.renderVis();
   }
@@ -518,19 +540,8 @@ export class Chart {
       .join("stop")
       .attr("offset", (d, i) => i / (vis.colorScaleHeatmap.range().length - 1))
       .attr("stop-color", (d) => d);
-    vis.legendScale = vis.colorScaleHeatmap
-      .copy()
-      .rangeRound(
-        d3.quantize(
-          d3.interpolate(vis.bounds.heatmap.height / 2, 0),
-          vis.colorScaleHeatmap.range().length
-        )
-      );
-    vis.legendAxis = d3.axisRight(vis.legendScale).ticks(6).tickSize(0);
-    vis.legendAxisG = vis.heatmapLegend
-      .append("g")
-      .attr("transform", `translate(${vis.bounds.heatmap.width / 2})`)
-      .call(vis.legendAxis)
+    vis.yAxisHeatmapLegendG
+      .call(vis.yAxisHeatmapLegend)
       .call((g) => g.select(".domain").remove());
   }
 }
