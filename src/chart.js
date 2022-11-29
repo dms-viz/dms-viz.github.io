@@ -190,8 +190,31 @@ export class Chart {
       .append("g")
       .attr("class", "axis x-axis")
       .attr("transform", `translate(0, ${vis.bounds.focus.height})`);
+    vis.xAxisFocusG
+      .append("text")
+      .attr("class", "axis-label")
+      .attr("x", vis.bounds.focus.width / 2)
+      .attr("y", 30)
+      .attr("fill", "black")
+      .attr("font-size", "16px")
+      .attr("text-anchor", "middle")
+      .text("Site");
     vis.yAxisFocus = d3.axisLeft(vis.yScaleFocus).tickSizeOuter(0);
     vis.yAxisFocusG = vis.focusPlot.append("g").attr("class", "axis y-axis");
+    vis.yAxisFocusG
+      .append("text")
+      .attr("class", "axis-label")
+      .text(
+        `${
+          vis.config.metric.charAt(0).toUpperCase() + vis.config.metric.slice(1)
+        } of Escape`
+      )
+      .attr("transform", "rotate(-90)")
+      .attr("x", -(vis.bounds.focus.height / 2))
+      .attr("y", -30)
+      .attr("fill", "black")
+      .attr("font-size", "16px")
+      .attr("text-anchor", "middle");
 
     vis.xAxisHeatmap = d3.axisBottom(vis.xScaleHeatmap).tickSizeOuter(0);
     vis.xAxisHeatmapG = vis.heatmapPlot
@@ -503,31 +526,15 @@ export class Chart {
     vis.yAxisContextG.call(vis.yAxisContext);
 
     // ------ FOCUS AXES ------ //
-    vis.xAxisFocusG
-      .call(vis.xAxisFocus)
-      .append("text")
-      .attr("class", "axis-label")
-      .text("Site")
-      .attr("x", vis.bounds.focus.width / 2)
-      .attr("y", 30)
-      .attr("fill", "black")
-      .attr("font-size", "16px")
-      .attr("text-anchor", "middle");
+    vis.xAxisFocusG.call(vis.xAxisFocus);
+    vis.yAxisFocusG.call(vis.yAxisFocus);
     vis.yAxisFocusG
-      .call(vis.yAxisFocus)
-      .append("text")
-      .attr("class", "axis-label")
+      .select(".axis-label")
       .text(
         `${
           vis.config.metric.charAt(0).toUpperCase() + vis.config.metric.slice(1)
         } of Escape`
-      )
-      .attr("transform", "rotate(-90)")
-      .attr("x", -(vis.bounds.focus.height / 2))
-      .attr("y", -30)
-      .attr("fill", "black")
-      .attr("font-size", "16px")
-      .attr("text-anchor", "middle");
+      );
 
     // ------ HEATMAP AXES ------ //
     vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
