@@ -236,17 +236,27 @@ export class Chart {
     vis.brushG = vis.contextPlot
       .append("g")
       .attr("class", "brush context-brush");
+
     vis.brush = d3
       .brushX()
       .extent([
         [0, 0],
         [vis.bounds.context.width, vis.bounds.context.height],
       ])
-      .on("brush", function ({ selection }) {
-        if (selection) vis.brushed(selection);
-      })
-      .on("end", function ({ selection }) {
-        if (!selection) vis.brushed(null);
+      .on("brush end", function (evt) {
+        vis.brushed(evt);
+      });
+
+    vis.zoom = d3
+      .zoom()
+      .scaleExtent([1, Infinity])
+      .translateExtent(
+        [0, 0],
+        [vis.bounds.focus.width, vis.bounds.focus.height]
+      )
+      .extent([0, 0], [vis.bounds.focus.width, vis.bounds.focus.height])
+      .on("zoom", function (evt) {
+        vis.zoomed(evt);
       });
 
     // UPDATE
@@ -547,23 +557,19 @@ export class Chart {
   /**
    * React to brush events
    */
-  brushed(selection) {
+  brushed(event) {
     let vis = this;
 
-    // Check if the brush is still active or if it has been removed
-    if (selection) {
-      // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
-      const selectedDomain = selection.map(
-        vis.xScaleContext.invert,
-        vis.xScaleContext
-      );
+    // Ignore brush-by-zoom events
+    if (event.sourceEvent && event.sourceEvent.type == "zoom") return;
 
-      // Update x-scale of the focus view accordingly
-      vis.xScaleFocus.domain(selectedDomain);
-    } else {
-      // Reset x-scale of the focus view (full time period)
-      vis.xScaleFocus.domain(vis.xScaleContext.domain());
-    }
+    // The extent of the brush is either the selection, or the whole range.
+    const extent = event.selection || vis.xScaleContext.range();
+
+    // Update the domain of the focus scale based on the current selection
+    vis.xScaleFocus.domain(
+      extent.map(vis.xScaleContext.invert, vis.xScaleContext)
+    );
 
     // Redraw line and update x-axis labels in focus view
     vis.focusPlot
@@ -573,6 +579,49 @@ export class Chart {
       .selectAll("circle")
       .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
 
+    // Update the x axis of the focus plot based on selection
     vis.xAxisFocusG.call(vis.xAxisFocus);
+
+    // Do something with 'zoom'?
+    vis.svg
+      .selectAll(".zoom")
+      .call(
+        vis.zoom.transform,
+        d3.zoomIdentity
+          .scale(vis.bounds.focus.width / (extent[1] - extent[0]))
+          .translate(-extent[0], 0)
+      );
+  }
+  /**
+   * Zoom on the focus plot
+   */
+  zoomed(event) {
+    let vis = this;
+
+    // Ignore zoom-by-brush events
+    if (event.sourceEvent && event.sourceEvent.type === "brush") return;
+
+    // Update the domain of the focus scale based on the current selection
+    const transform = event.transform;
+    vis.xScaleFocus.domain(transform.rescaleX(vis.xScaleContext).domain());
+
+    // Redraw line and update x-axis labels in focus view
+    vis.focusPlot
+      .selectAll(".focus-line")
+      .attr("d", vis.focusLine(vis.mutEscapeSummary));
+    vis.focusPlot
+      .selectAll("circle")
+      .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
+
+    // Update the x axis of the focus plot based on selection
+    vis.xAxisFocusG.call(vis.xAxisFocus);
+
+    vis.svg
+      .append("g")
+      .selectAll(".brush")
+      .call(
+        vis.brush.move,
+        vis.xScaleFocus.range().map(transform.invertX, transform)
+      );
   }
 }
