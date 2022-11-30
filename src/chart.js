@@ -154,13 +154,11 @@ export class Chart {
 
     // Initialize SCALES
     vis.yScaleContext = d3.scaleLinear().range([vis.bounds.context.height, 0]);
-
     vis.xScaleFocus = d3
       .scaleLinear()
       .range([0, vis.bounds.focus.width])
       .nice();
     vis.yScaleFocus = d3.scaleLinear().range([vis.bounds.focus.height, 0]);
-
     vis.xScaleHeatmap = d3
       .scaleBand()
       .range([0, vis.bounds.heatmap.width])
@@ -170,7 +168,6 @@ export class Chart {
       .range([0, vis.bounds.heatmap.height])
       .padding(0.1);
     vis.colorScaleHeatmap = d3.scaleLinear();
-
     vis.legendScaleHeatmap = vis.colorScaleHeatmap.copy();
 
     // Initialize AXES
@@ -183,7 +180,6 @@ export class Chart {
     vis.yAxisContextG = vis.contextPlot
       .append("g")
       .attr("class", "axis y-axis");
-
     vis.xAxisFocus = d3.axisBottom(vis.xScaleFocus).tickSizeOuter(0);
     vis.xAxisFocusG = vis.focusPlot
       .append("g")
@@ -214,7 +210,6 @@ export class Chart {
       .attr("fill", "black")
       .attr("font-size", "16px")
       .attr("text-anchor", "middle");
-
     vis.xAxisHeatmap = d3.axisBottom(vis.xScaleHeatmap).tickSizeOuter(0);
     vis.xAxisHeatmapG = vis.heatmapPlot
       .append("g")
@@ -224,7 +219,6 @@ export class Chart {
     vis.yAxisHeatmapG = vis.heatmapPlot
       .append("g")
       .attr("class", "axis y-axis");
-
     vis.yAxisHeatmapLegend = d3
       .axisRight(vis.legendScaleHeatmap)
       .ticks(6)
@@ -232,7 +226,7 @@ export class Chart {
     vis.yAxisHeatmapLegendG = vis.heatmapLegend
       .append("g")
       .attr("transform", `translate(${vis.bounds.heatmap.width / 2})`)
-      .attr("class", "legend-axis");
+      .attr("class", "axis legend-axis");
 
     // UPDATE
     vis.updateVis();
@@ -243,7 +237,7 @@ export class Chart {
   updateVis() {
     let vis = this;
 
-    // PROCCESS DATA
+    // Process DATA
     vis.mutEscape = vis.data[vis.config.model].mut_escape_df;
     // Summarize and filter the models based on the selections
     vis.mutEscapeSummary = summarizeEscapeData(vis.mutEscape).filter(
@@ -267,7 +261,7 @@ export class Chart {
     // Get the amino acid alphabet for the model
     vis.alphabet = vis.data[vis.config.model].alphabet;
 
-    // DEFINE ACCESSORS
+    // Define ACCESSORS
     vis.xAccessorContext = (d) => d.site;
     vis.yAccessorContext = (d) => {
       return vis.config.floor && d[vis.config.metric] < 0
@@ -286,12 +280,12 @@ export class Chart {
       return vis.config.floor && d.escape < 0 ? 0 : d.escape;
     };
 
-    // UPDATE SCALES
+    // Update SCALES
     // Adjust the domain to add some padding to each scale
-    let xExtentFocus = d3.extent(vis.mutEscapeSummary, vis.xAccessorFocus);
-    let xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
-    let yExtentFocus = d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus);
-    let yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
+    const xExtentFocus = d3.extent(vis.mutEscapeSummary, vis.xAccessorFocus);
+    const xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
+    const yExtentFocus = d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus);
+    const yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
     vis.yScaleContext.domain([
       yExtentFocus[0],
       yExtentFocus[1] + yRangeFocus * 0.05,
@@ -335,6 +329,21 @@ export class Chart {
         )
       );
 
+    // make the path GENERATORS
+    vis.contextArea = d3
+      .area()
+      .curve(d3.curveLinear)
+      .x((d) => vis.xScaleFocus(vis.xAccessorContext(d)))
+      .y0(vis.yScaleContext(0))
+      .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
+
+    vis.focusLine = d3
+      .line()
+      .curve(d3.curveLinear)
+      .x((d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
+      .y((d) => vis.yScaleFocus(vis.yAccessorFocus(d)));
+
+    // RENDER
     vis.renderVis();
   }
   /**
@@ -344,47 +353,20 @@ export class Chart {
     let vis = this;
     let transition = vis.svg.transition().duration(500);
 
-    // Draw the data:
-
-    // ------ CONTEXT PLOT ------ //
-    vis.contextArea = d3
-      .area()
-      .curve(d3.curveLinear)
-      .x((d) => vis.xScaleFocus(vis.xAccessorContext(d)))
-      .y0(vis.yScaleContext(0))
-      .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
-
-    // Create a update selection: bind to the new data
-    const contextUpdate = vis.contextPlot
+    // Draw the CONTEXT plot
+    vis.contextPlot
       .selectAll(".context-area")
-      .data([vis.mutEscapeSummary], function (d) {
-        return d.site;
-      });
-
-    // Updata the line
-    contextUpdate
+      .data([vis.mutEscapeSummary], (d) => d.site)
       .join("path")
       .attr("class", "context-area")
       .transition(transition)
       .attr("d", vis.contextArea)
       .attr("fill", this.positiveColor);
 
-    // ------ FOCUS PLOT ------ //
-    vis.focusLine = d3
-      .line()
-      .curve(d3.curveLinear)
-      .x((d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
-      .y((d) => vis.yScaleFocus(vis.yAccessorFocus(d)));
-
-    // Create a update selection: bind to the new data
-    const focusUpdate = vis.focusPlot
+    // Draw the FOCUS plot
+    vis.focusPlot
       .selectAll(".focus-line")
-      .data([vis.mutEscapeSummary], function (d) {
-        return d.site;
-      });
-
-    // Updata the line
-    focusUpdate
+      .data([vis.mutEscapeSummary], (d) => d.site)
       .join("path")
       .attr("class", "focus-line")
       .attr("clip-path", "url(#focusClipPath)")
@@ -397,23 +379,14 @@ export class Chart {
       .attr("d", vis.focusLine(vis.mutEscapeSummary))
       .attr("stroke", vis.positiveColor);
 
-    vis.focusPoints = vis.focusPlot
+    vis.focusPlot
       .selectAll("circle")
       .data(vis.mutEscapeSummary, (d) => d.site)
       .join(
         (enter) =>
           enter
             .append("circle")
-            .attr("r", 5)
-            .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
-            .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
-            .attr("clip-path", "url(#focusClipPath)")
-            .attr("fill", "white")
-            .attr("stroke", vis.positiveColor)
-            .attr("stroke-width", 2),
-        // .filter((d) => d.site === vis.initSiteSelection)
-        // .attr("stroke", "black")
-        // .attr("stroke-width", 2),
+            .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d))),
         (update) =>
           update.call((update) =>
             update
@@ -421,9 +394,13 @@ export class Chart {
               .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
           ),
         (exit) => exit.remove()
-      );
-
-    vis.focusPoints
+      )
+      .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
+      .attr("r", 5)
+      .attr("clip-path", "url(#focusClipPath)")
+      .attr("fill", "white")
+      .attr("stroke", vis.positiveColor)
+      .attr("stroke-width", 2)
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
@@ -443,8 +420,7 @@ export class Chart {
         vis.tooltip.style("opacity", 0);
       });
 
-    // ------ HEATMAP PLOT ------ //
-
+    // Draw the HEATMAP plot
     vis.heatmapPlot
       .selectAll(".mutant-rect")
       .data(vis.mutEscapeHeatmap, (d) => d.mutation)
@@ -453,27 +429,22 @@ export class Chart {
           enter
             .append("rect")
             .attr("class", "mutant-rect")
-            .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
-            .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
-            .attr("width", vis.xScaleHeatmap.bandwidth())
-            .attr("height", vis.yScaleHeatmap.bandwidth())
             .style("fill", (d) =>
               vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
             )
             .style("stroke", "black"),
         (update) =>
           update.call((update) =>
-            update
-              .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
-              .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
-              .attr("width", vis.xScaleHeatmap.bandwidth())
-              .attr("height", vis.yScaleHeatmap.bandwidth())
-              .style("fill", (d) =>
-                vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
-              )
+            update.style("fill", (d) =>
+              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+            )
           ),
         (exit) => exit.remove()
       )
+      .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
+      .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
+      .attr("width", vis.xScaleHeatmap.bandwidth())
+      .attr("height", vis.yScaleHeatmap.bandwidth())
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
@@ -495,11 +466,8 @@ export class Chart {
     vis.heatmapPlot
       .selectAll(".wildtype-text")
       .data([vis.wildtype], (d) => d)
-      .join(
-        (enter) => enter.append("text").attr("class", "wildtype-text"),
-        (update) => update,
-        (exit) => exit.remove()
-      )
+      .join("text")
+      .attr("class", "wildtype-text")
       .attr(
         "transform",
         `translate(${vis.bounds.heatmap.width / 2}, ${
@@ -515,14 +483,14 @@ export class Chart {
 
     // Draw the peripherals (axes, labels, etc.):
 
-    // ------ CONTEXT AXES ------ //
+    // Peripherals for the CONTEXT plot
     vis.xAxisContextG
       .call(vis.xAxisContext)
       .call((g) => g.select(".domain").style("stroke-width", ".5"))
       .call((g) => g.selectAll(".tick").remove());
     vis.yAxisContextG.call(vis.yAxisContext);
 
-    // ------ FOCUS AXES ------ //
+    // Peripherals for the FOCUS plot
     vis.xAxisFocusG.call(vis.xAxisFocus);
     vis.yAxisFocusG.call(vis.yAxisFocus);
     vis.yAxisFocusG
@@ -533,11 +501,11 @@ export class Chart {
         } of Escape`
       );
 
-    // ------ HEATMAP AXES ------ //
+    // Peripherals for the HEATMAP plot
     vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
     vis.yAxisHeatmapG.call(vis.yAxisHeatmap);
 
-    // ------ HEATMAP LEGEND ------ //
+    // Peripherals for the HEATMAP legend
     vis.legendLinearGradient
       .selectAll("stop")
       .data(vis.colorScaleHeatmap.range())
