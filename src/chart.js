@@ -154,6 +154,10 @@ export class Chart {
 
     // Initialize SCALES
     vis.yScaleContext = d3.scaleLinear().range([vis.bounds.context.height, 0]);
+    vis.xScaleContext = d3
+      .scaleLinear()
+      .range([0, vis.bounds.context.width])
+      .nice();
     vis.xScaleFocus = d3
       .scaleLinear()
       .range([0, vis.bounds.focus.width])
@@ -171,7 +175,7 @@ export class Chart {
     vis.legendScaleHeatmap = vis.colorScaleHeatmap.copy();
 
     // Initialize AXES
-    vis.xAxisContext = d3.axisBottom(vis.xScaleFocus).tickSizeOuter(0);
+    vis.xAxisContext = d3.axisBottom(vis.xScaleContext).tickSizeOuter(0);
     vis.xAxisContextG = vis.contextPlot
       .append("g")
       .attr("class", "axis x-axis")
@@ -227,6 +231,23 @@ export class Chart {
       .append("g")
       .attr("transform", `translate(${vis.bounds.heatmap.width / 2})`)
       .attr("class", "axis legend-axis");
+
+    // Initialize CONTEXT BRUSH component
+    vis.brushG = vis.contextPlot
+      .append("g")
+      .attr("class", "brush context-brush");
+    vis.brush = d3
+      .brushX()
+      .extent([
+        [0, 0],
+        [vis.bounds.context.width, vis.bounds.context.height],
+      ])
+      .on("brush", function ({ selection }) {
+        if (selection) vis.brushed(selection);
+      })
+      .on("end", function ({ selection }) {
+        if (!selection) vis.brushed(null);
+      });
 
     // UPDATE
     vis.updateVis();
@@ -290,6 +311,10 @@ export class Chart {
       yExtentFocus[0],
       yExtentFocus[1] + yRangeFocus * 0.05,
     ]);
+    vis.xScaleContext.domain([
+      xExtentFocus[0],
+      xExtentFocus[1] + xRangeFocus * 0.05,
+    ]);
     vis.xScaleFocus.domain([
       xExtentFocus[0],
       xExtentFocus[1] + xRangeFocus * 0.05,
@@ -333,7 +358,7 @@ export class Chart {
     vis.contextArea = d3
       .area()
       .curve(d3.curveLinear)
-      .x((d) => vis.xScaleFocus(vis.xAccessorContext(d)))
+      .x((d) => vis.xScaleContext(vis.xAccessorContext(d)))
       .y0(vis.yScaleContext(0))
       .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
 
@@ -515,5 +540,39 @@ export class Chart {
     vis.yAxisHeatmapLegendG
       .call(vis.yAxisHeatmapLegend)
       .call((g) => g.select(".domain").remove());
+
+    // Add brush to the context plot
+    vis.brushG.call(vis.brush).call(vis.brush.move, null);
+  }
+  /**
+   * React to brush events
+   */
+  brushed(selection) {
+    let vis = this;
+
+    // Check if the brush is still active or if it has been removed
+    if (selection) {
+      // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+      const selectedDomain = selection.map(
+        vis.xScaleContext.invert,
+        vis.xScaleContext
+      );
+
+      // Update x-scale of the focus view accordingly
+      vis.xScaleFocus.domain(selectedDomain);
+    } else {
+      // Reset x-scale of the focus view (full time period)
+      vis.xScaleFocus.domain(vis.xScaleContext.domain());
+    }
+
+    // Redraw line and update x-axis labels in focus view
+    vis.focusPlot
+      .selectAll(".focus-line")
+      .attr("d", vis.focusLine(vis.mutEscapeSummary));
+    vis.focusPlot
+      .selectAll("circle")
+      .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
+
+    vis.xAxisFocusG.call(vis.xAxisFocus);
   }
 }
