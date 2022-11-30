@@ -237,26 +237,18 @@ export class Chart {
       .append("g")
       .attr("class", "brush context-brush");
 
+    // Initialize brush component
     vis.brush = d3
       .brushX()
       .extent([
         [0, 0],
         [vis.bounds.context.width, vis.bounds.context.height],
       ])
-      .on("brush end", function (evt) {
-        vis.brushed(evt);
-      });
-
-    vis.zoom = d3
-      .zoom()
-      .scaleExtent([1, Infinity])
-      .translateExtent(
-        [0, 0],
-        [vis.bounds.focus.width, vis.bounds.focus.height]
-      )
-      .extent([0, 0], [vis.bounds.focus.width, vis.bounds.focus.height])
-      .on("zoom", function (evt) {
-        vis.zoomed(evt);
+      .on("brush", function ({ selection }) {
+        if (selection) vis.brushed(selection);
+      })
+      .on("end", function ({ selection }) {
+        if (!selection) vis.brushed(null);
       });
 
     // UPDATE
@@ -386,7 +378,7 @@ export class Chart {
    */
   renderVis() {
     let vis = this;
-    let transition = vis.svg.transition().duration(500);
+    vis.transition = vis.svg.transition().duration(500);
 
     // Draw the CONTEXT plot
     vis.contextPlot
@@ -394,7 +386,7 @@ export class Chart {
       .data([vis.mutEscapeSummary], (d) => d.site)
       .join("path")
       .attr("class", "context-area")
-      .transition(transition)
+      .transition(vis.transition)
       .attr("d", vis.contextArea)
       .attr("fill", this.positiveColor);
 
@@ -410,7 +402,7 @@ export class Chart {
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
-      .transition(transition)
+      .transition(vis.transition)
       .attr("d", vis.focusLine(vis.mutEscapeSummary))
       .attr("stroke", vis.positiveColor);
 
@@ -425,7 +417,7 @@ export class Chart {
         (update) =>
           update.call((update) =>
             update
-              .transition(transition)
+              .transition(vis.transition)
               .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
           ),
         (exit) => exit.remove()
@@ -557,20 +549,25 @@ export class Chart {
   /**
    * React to brush events
    */
-  brushed(event) {
+  brushed(selection) {
+    console.log("brushing");
+
     let vis = this;
 
-    // Ignore brush-by-zoom events
-    if (event.sourceEvent && event.sourceEvent.type == "zoom") return;
+    // Check if the brush is still active or if it has been removed
+    if (selection) {
+      // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+      const selectedDomain = selection.map(
+        vis.xScaleContext.invert,
+        vis.xScaleContext
+      );
 
-    // The extent of the brush is either the selection, or the whole range.
-    const extent = event.selection || vis.xScaleContext.range();
-
-    // Update the domain of the focus scale based on the current selection
-    vis.xScaleFocus.domain(
-      extent.map(vis.xScaleContext.invert, vis.xScaleContext)
-    );
-
+      // Update x-scale of the focus view accordingly
+      vis.xScaleFocus.domain(selectedDomain);
+    } else {
+      // Reset x-scale of the focus view (full time period)
+      vis.xScaleFocus.domain(vis.xScaleContext.domain());
+    }
     // Redraw line and update x-axis labels in focus view
     vis.focusPlot
       .selectAll(".focus-line")
@@ -578,50 +575,7 @@ export class Chart {
     vis.focusPlot
       .selectAll("circle")
       .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
-
     // Update the x axis of the focus plot based on selection
     vis.xAxisFocusG.call(vis.xAxisFocus);
-
-    // Do something with 'zoom'?
-    vis.svg
-      .selectAll(".zoom")
-      .call(
-        vis.zoom.transform,
-        d3.zoomIdentity
-          .scale(vis.bounds.focus.width / (extent[1] - extent[0]))
-          .translate(-extent[0], 0)
-      );
-  }
-  /**
-   * Zoom on the focus plot
-   */
-  zoomed(event) {
-    let vis = this;
-
-    // Ignore zoom-by-brush events
-    if (event.sourceEvent && event.sourceEvent.type === "brush") return;
-
-    // Update the domain of the focus scale based on the current selection
-    const transform = event.transform;
-    vis.xScaleFocus.domain(transform.rescaleX(vis.xScaleContext).domain());
-
-    // Redraw line and update x-axis labels in focus view
-    vis.focusPlot
-      .selectAll(".focus-line")
-      .attr("d", vis.focusLine(vis.mutEscapeSummary));
-    vis.focusPlot
-      .selectAll("circle")
-      .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
-
-    // Update the x axis of the focus plot based on selection
-    vis.xAxisFocusG.call(vis.xAxisFocus);
-
-    vis.svg
-      .append("g")
-      .selectAll(".brush")
-      .call(
-        vis.brush.move,
-        vis.xScaleFocus.range().map(transform.invertX, transform)
-      );
   }
 }
