@@ -159,7 +159,10 @@ export class Chart {
       .nice();
     vis.yScaleContext = d3.scaleLinear().range([vis.bounds.context.height, 0]);
 
-    vis.xScaleFocus = d3.scaleLinear().range([0, vis.bounds.focus.width]);
+    vis.xScaleFocus = d3
+      .scaleLinear()
+      .range([0, vis.bounds.focus.width])
+      .nice();
     vis.yScaleFocus = d3.scaleLinear().range([vis.bounds.focus.height, 0]);
 
     vis.xScaleHeatmap = d3
@@ -288,17 +291,19 @@ export class Chart {
     };
 
     // UPDATE SCALES
-    vis.xScaleContext.domain(
-      d3.extent(vis.mutEscapeSummary, vis.xAccessorContext)
-    );
-    vis.yScaleContext.domain(
-      d3.extent(vis.mutEscapeSummary, vis.yAccessorContext)
-    );
     // Adjust the domain to add some padding to each scale
     let xExtentFocus = d3.extent(vis.mutEscapeSummary, vis.xAccessorFocus);
     let xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
     let yExtentFocus = d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus);
     let yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
+    vis.xScaleContext.domain([
+      xExtentFocus[0],
+      xExtentFocus[1] + xRangeFocus * 0.05,
+    ]);
+    vis.yScaleContext.domain([
+      yExtentFocus[0],
+      yExtentFocus[1] + yRangeFocus * 0.05,
+    ]);
     vis.xScaleFocus.domain([
       xExtentFocus[0],
       xExtentFocus[1] + xRangeFocus * 0.05,
