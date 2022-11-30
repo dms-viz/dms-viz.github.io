@@ -1,4 +1,4 @@
-/* Making a class to hold the chart code inspried by https://github.com/UBC-InfoVis/436V-materials/tree/main/case-studies/case-study_measles-and-vaccines */
+/* Making a class to hold the chart code inspried by https://www.cs.ubc.ca/~tmm/courses/436V-20/reading/reusable_d3_components.pdf */
 import * as d3 from "d3";
 import { summarizeEscapeData, invertColor } from "./utils.js";
 
@@ -76,7 +76,7 @@ export class Chart {
       },
     };
 
-    // Chart CANVAS
+    // Create the chart CANVAS
     vis.svg = d3
       .select(vis.config.parentElement)
       .append("svg")
@@ -153,10 +153,6 @@ export class Chart {
       .style("opacity", 0);
 
     // Initialize SCALES
-    vis.xScaleContext = d3
-      .scaleLinear()
-      .range([0, vis.bounds.context.width])
-      .nice();
     vis.yScaleContext = d3.scaleLinear().range([vis.bounds.context.height, 0]);
 
     vis.xScaleFocus = d3
@@ -178,7 +174,7 @@ export class Chart {
     vis.legendScaleHeatmap = vis.colorScaleHeatmap.copy();
 
     // Initialize AXES
-    vis.xAxisContext = d3.axisBottom(vis.xScaleContext).tickSizeOuter(0);
+    vis.xAxisContext = d3.axisBottom(vis.xScaleFocus).tickSizeOuter(0);
     vis.xAxisContextG = vis.contextPlot
       .append("g")
       .attr("class", "axis x-axis")
@@ -296,10 +292,6 @@ export class Chart {
     let xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
     let yExtentFocus = d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus);
     let yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
-    vis.xScaleContext.domain([
-      xExtentFocus[0],
-      xExtentFocus[1] + xRangeFocus * 0.05,
-    ]);
     vis.yScaleContext.domain([
       yExtentFocus[0],
       yExtentFocus[1] + yRangeFocus * 0.05,
@@ -335,7 +327,7 @@ export class Chart {
         .range(["white", vis.positiveColor]);
     }
     vis.legendScaleHeatmap
-      .domain([0, d3.max(vis.mutEscape, vis.colorAccessorHeatmap)])
+      .domain(vis.colorScaleHeatmap.domain())
       .rangeRound(
         d3.quantize(
           d3.interpolate(vis.bounds.heatmap.height / 2, 0),
@@ -358,7 +350,7 @@ export class Chart {
     vis.contextArea = d3
       .area()
       .curve(d3.curveLinear)
-      .x((d) => vis.xScaleContext(vis.xAccessorContext(d)))
+      .x((d) => vis.xScaleFocus(vis.xAccessorContext(d)))
       .y0(vis.yScaleContext(0))
       .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
 

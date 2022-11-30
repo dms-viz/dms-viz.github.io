@@ -822,3 +822,8 @@ d3.select("#model").on("change", function () {
   chart.config.model = d3.select(this).property("value");
   chart.updateVis();
 });
+
+d3.select("#floor").on("change", function () {
+  chart.config.floor = d3.select(this).property("checked");
+  chart.updateVis();
+});
