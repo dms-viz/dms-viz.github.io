@@ -9,6 +9,9 @@ export class Chart {
    * @param {Object}
    */
   constructor(_config, _data) {
+    // DEBUG MESSAGE
+    console.log("Chart constructor called");
+
     this.config = _config;
     this.config = {
       model: _config.model,
@@ -38,6 +41,8 @@ export class Chart {
    */
   initVis() {
     let vis = this;
+    // DEBUG MESSAGE
+    console.log("Iniatializing chart");
 
     // Initialize the MARGINS around the chart
     vis.margin = {
@@ -244,11 +249,15 @@ export class Chart {
         [0, 0],
         [vis.bounds.context.width, vis.bounds.context.height],
       ])
-      .on("brush", function ({ selection }) {
-        if (selection) vis.brushed(selection);
+      .on("brush", function (event) {
+        // DEBUG MESSAGE
+        console.log("brushing");
+        if (event.selection) vis.brushed(event.selection);
       })
-      .on("end", function ({ selection }) {
-        if (!selection) vis.brushed(null);
+      .on("end", function (event) {
+        // DEBUG MESSAGE
+        console.log("brushing ended");
+        if (!event.selection) vis.brushed(null);
       });
 
     // UPDATE
@@ -259,6 +268,10 @@ export class Chart {
    */
   updateVis() {
     let vis = this;
+
+    // DEBUG MESSAGES
+    console.log("Upadate chart");
+    console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
 
     // Process DATA
     vis.mutEscape = vis.data[vis.config.model].mut_escape_df;
@@ -370,6 +383,10 @@ export class Chart {
       .x((d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
       .y((d) => vis.yScaleFocus(vis.yAccessorFocus(d)));
 
+    // DEBUG MESSAGE
+    console.log("Finished updating");
+    console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
+
     // RENDER
     vis.renderVis();
   }
@@ -377,8 +394,10 @@ export class Chart {
    * Bind data to visual elements
    */
   renderVis() {
+    // DEBUG MESSAGE
+    console.log("Render Data");
+
     let vis = this;
-    vis.transition = vis.svg.transition().duration(500);
 
     // Draw the CONTEXT plot
     vis.contextPlot
@@ -386,7 +405,6 @@ export class Chart {
       .data([vis.mutEscapeSummary], (d) => d.site)
       .join("path")
       .attr("class", "context-area")
-      .transition(vis.transition)
       .attr("d", vis.contextArea)
       .attr("fill", this.positiveColor);
 
@@ -402,9 +420,8 @@ export class Chart {
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
-      .transition(vis.transition)
-      .attr("d", vis.focusLine(vis.mutEscapeSummary))
-      .attr("stroke", vis.positiveColor);
+      .attr("stroke", vis.positiveColor)
+      .attr("d", vis.focusLine(vis.mutEscapeSummary));
 
     vis.focusPlot
       .selectAll("circle")
@@ -416,9 +433,7 @@ export class Chart {
             .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d))),
         (update) =>
           update.call((update) =>
-            update
-              .transition(vis.transition)
-              .attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
+            update.attr("cy", (d) => vis.yScaleFocus(vis.yAccessorFocus(d)))
           ),
         (exit) => exit.remove()
       )
@@ -543,31 +558,43 @@ export class Chart {
       .call(vis.yAxisHeatmapLegend)
       .call((g) => g.select(".domain").remove());
 
-    // Add brush to the context plot
-    vis.brushG.call(vis.brush).call(vis.brush.move, null);
+    // DEBUG MESSAGE
+    console.log("Calling the brush");
+    vis.brushSelection = vis.brushSelection || null;
+    vis.brushG.call(vis.brush).call(vis.brush.move, vis.brushSelection);
+    // DEBUG MESSAGE
+    console.log("Called the brush");
+    console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
+    console.log("vis.brush.extent()", vis.brush.extent());
+    console.log("Done rendering.");
   }
   /**
    * React to brush events
    */
   brushed(selection) {
-    console.log("brushing");
+    // DEBUG MESSAGE
+    console.log("Entering brushed()");
 
     let vis = this;
 
     // Check if the brush is still active or if it has been removed
     if (selection) {
-      // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+      // Convert given pixel coordinates (range: [x0,x1]) into the site domain
       const selectedDomain = selection.map(
         vis.xScaleContext.invert,
         vis.xScaleContext
       );
-
       // Update x-scale of the focus view accordingly
       vis.xScaleFocus.domain(selectedDomain);
     } else {
-      // Reset x-scale of the focus view (full time period)
+      // Reset x-scale of the focus view to the original domain
       vis.xScaleFocus.domain(vis.xScaleContext.domain());
     }
+    // DEBUG MESSAGE
+    console.log("Reset the focus domain");
+    vis.brushSelection = selection;
+    console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
+
     // Redraw line and update x-axis labels in focus view
     vis.focusPlot
       .selectAll(".focus-line")
@@ -577,5 +604,8 @@ export class Chart {
       .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
     // Update the x axis of the focus plot based on selection
     vis.xAxisFocusG.call(vis.xAxisFocus);
+
+    // DEBUG MESSAGE
+    console.log("Redrew the focus plot");
   }
 }
