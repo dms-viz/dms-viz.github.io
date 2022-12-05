@@ -107,7 +107,11 @@ export class Chart {
         "transform",
         `translateY(${vis.margin.innerTop + vis.bounds.context.height}px)`
       )
-      .attr("class", "focus");
+      .attr("class", "focus")
+      .on("dblclick", function () {
+        vis.deselectSites();
+      });
+
     vis.focusPlot
       .append("clipPath")
       .attr("id", "focusClipPath")
@@ -242,7 +246,6 @@ export class Chart {
       .append("g")
       .attr("class", "brush context-brush");
 
-    // Initialize brush component
     vis.brush = d3
       .brushX()
       .extent([
@@ -259,6 +262,22 @@ export class Chart {
         console.log("brushing ended");
         if (!event.selection) vis.brushed(null);
       });
+
+    // Initialize FOCUS BRUSH component
+    vis.focusBrushG = vis.focusPlot
+      .append("g")
+      .attr("class", "brush focus-brush");
+
+    vis.focusBrush = d3
+      .brush()
+      .extent([
+        [0, 0],
+        [vis.bounds.focus.width, vis.bounds.focus.height + 5], // There needs to be y-padding if you floor the values
+      ])
+      .on("end", function (event) {
+        if (event.selection) vis.brushedPoints(event.selection);
+      })
+      .keyModifiers(false);
 
     // UPDATE
     vis.updateVis();
@@ -462,6 +481,9 @@ export class Chart {
         vis.tooltip.style("opacity", 0);
       });
 
+    // Color in the selected points
+    vis.focusPlot.selectAll(".selected").attr("fill", vis.positiveColor);
+
     // Draw the HEATMAP plot
     vis.heatmapPlot
       .selectAll(".mutant-rect")
@@ -567,6 +589,8 @@ export class Chart {
     console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
     console.log("vis.brush.extent()", vis.brush.extent());
     console.log("Done rendering.");
+
+    vis.focusBrushG.call(vis.focusBrush);
   }
   /**
    * React to brush events
@@ -607,5 +631,46 @@ export class Chart {
 
     // DEBUG MESSAGE
     console.log("Redrew the focus plot");
+  }
+
+  brushedPoints(selection) {
+    let vis = this;
+    // DEBUG MESSAGE
+    console.log("Entering brushedPoints()");
+
+    if (selection) {
+      // DEBUG MESSAGE
+      console.log("Selecting points");
+
+      // Destructure the selection bounds
+      const [[x0, y0], [x1, y1]] = selection;
+
+      // Save the `value` as the data attached to each node
+      vis.focusPlot
+        .selectAll("circle")
+        .filter(
+          (d) =>
+            x0 <= vis.xScaleFocus(vis.xAccessorFocus(d)) &&
+            vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
+            y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
+            vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+        )
+        .classed("selected", true)
+        .attr("fill", vis.positiveColor);
+
+      // Clear the brush
+      vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
+    }
+  }
+
+  deselectSites() {
+    let vis = this;
+    // DEBUG MESSAGE
+    console.log("Deselecting sites");
+
+    vis.focusPlot
+      .selectAll(".selected")
+      .classed("selected", false)
+      .attr("fill", "white");
   }
 }
