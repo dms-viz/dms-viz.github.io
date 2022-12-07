@@ -2,6 +2,7 @@ import "../style.css";
 import * as d3 from "d3";
 import polyclonal from "../data/polyclonal.json";
 import { Chart } from "./chart.js";
+import { Protein } from "./protein.js";
 
 // INITIALIZE THE DATA //
 
@@ -61,3 +62,7 @@ d3.select("#floor").on("change", function () {
   chart.config.floor = d3.select(this).property("checked");
   chart.updateVis();
 });
+
+// Load the protein structure from a URL
+const protein = new Protein("viewport");
+protein.load("7QO7");
