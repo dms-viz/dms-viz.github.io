@@ -479,10 +479,25 @@ export class Chart {
       })
       .on("mouseout", () => {
         vis.tooltip.style("opacity", 0);
+      })
+      .on("click", function (evt, d) {
+        vis.updateHeatmap(d);
       });
 
     // Color in the selected points
     vis.focusPlot.selectAll(".selected").attr("fill", vis.positiveColor);
+
+    // Color in the heatmap point
+    vis.focusPlot
+      .selectAll("circle")
+      .filter(
+        (d) =>
+          d.site === vis.initSiteSelection && d.epitope === vis.config.epitope
+      )
+      .classed("heatmap-site", true)
+      .attr("r", 8)
+      .attr("stroke", "black")
+      .attr("stroke-width", 4);
 
     // Draw the HEATMAP plot
     vis.heatmapPlot
@@ -593,7 +608,7 @@ export class Chart {
     vis.focusBrushG.call(vis.focusBrush);
   }
   /**
-   * React to brush events
+   * React to brush events in the context plot.
    */
   brushed(selection) {
     // DEBUG MESSAGE
@@ -632,7 +647,9 @@ export class Chart {
     // DEBUG MESSAGE
     console.log("Redrew the focus plot");
   }
-
+  /**
+   * React to brush events in the focus plot
+   */
   brushedPoints(selection) {
     let vis = this;
     // DEBUG MESSAGE
@@ -662,7 +679,9 @@ export class Chart {
       vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
     }
   }
-
+  /**
+   * Deselect all points in the focus plot
+   */
   deselectSites() {
     let vis = this;
     // DEBUG MESSAGE
@@ -672,5 +691,108 @@ export class Chart {
       .selectAll(".selected")
       .classed("selected", false)
       .attr("fill", "white");
+  }
+  /**
+   * React to click events on focus points
+   */
+  updateHeatmap(datum) {
+    let vis = this;
+    // DEBUG MESSAGE
+    console.log("Entering updateHeatmap()");
+
+    // Get the site information from the datum
+    const site = datum.site;
+    const epitope = datum.epitope;
+    vis.wildtype = datum.wildtype;
+
+    // Remove the previously selected site from the focus plot
+    vis.focusPlot
+      .selectAll(".heatmap-site")
+      .attr("r", 5)
+      .attr("stroke-width", 2)
+      .attr("stroke", vis.positiveColor)
+      .classed("heatmap-site", false);
+
+    // Highlight the selected site in the focus plot
+    vis.focusPlot
+      .selectAll("circle")
+      .filter((d) => d.site === site && d.epitope === epitope)
+      .classed("heatmap-site", true)
+      .attr("r", 8)
+      .attr("stroke", "black")
+      .attr("stroke-width", 4);
+
+    // Initialize the heatmap data for the selected site
+    vis.mutEscapeHeatmap = vis.mutEscape.filter(
+      (e) => e.site === site && e.epitope === epitope
+    );
+
+    // Update the scale based on the site
+    vis.xScaleHeatmap.domain([site]);
+
+    // Re-draw the x-axis based on the updated scale
+    vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
+
+    // Update the heatmap to be this site
+    vis.heatmapPlot
+      .selectAll(".mutant-rect")
+      .data(vis.mutEscapeHeatmap, (d) => d.mutation)
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "mutant-rect")
+            .style("fill", (d) =>
+              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+            )
+            .style("stroke", "black"),
+        (update) =>
+          update.call((update) =>
+            update.style("fill", (d) =>
+              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+            )
+          ),
+        (exit) => exit.remove()
+      )
+      .attr("x", (d) => vis.xScaleHeatmap(vis.xAccessorHeatmap(d)))
+      .attr("y", (d) => vis.yScaleHeatmap(vis.yAccessorHeatmap(d)))
+      .attr("width", vis.xScaleHeatmap.bandwidth())
+      .attr("height", vis.yScaleHeatmap.bandwidth())
+      .on("mouseover", (evt, d) => {
+        vis.tooltip
+          .style("opacity", 1)
+          .html(`Escape: ${d.escape.toFixed(4)}`)
+          .style("border-color", vis.positiveColor)
+          .style("font-size", "1em");
+      })
+      .on("mousemove", (evt) => {
+        vis.tooltip
+          .style("top", evt.pageY - 10 + "px")
+          .style("left", evt.pageX + 10 + "px");
+      })
+      .on("mouseout", () => {
+        vis.tooltip.style("opacity", 0);
+      });
+
+    vis.heatmapPlot
+      .selectAll(".wildtype-text")
+      .data([vis.wildtype], (d) => d)
+      .join("text")
+      .attr("class", "wildtype-text")
+      .attr(
+        "transform",
+        `translate(${vis.bounds.heatmap.width / 2}, ${
+          vis.yScaleHeatmap.bandwidth() / 2
+        })`
+      )
+      .attr("y", (d) => vis.yScaleHeatmap(d))
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "middle")
+      .attr("font-size", "1.25em")
+      .attr("font-weight", "bold")
+      .text("x");
+
+    // DEBUG MESSAGE
+    console.log("Exiting updateHeatmap()");
   }
 }
