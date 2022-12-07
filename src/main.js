@@ -78,5 +78,11 @@ d3.select("#floor").on("change", function () {
 });
 
 // Load the protein structure from a URL
-const protein = new Protein("viewport");
-protein.load("7QO7");
+let protein = new Protein(polyclonal, {
+  parentElement: "viewport",
+  model: model,
+  epitope: epitope,
+  metric: metric,
+  floor: floor,
+  pdbID: "7QO7",
+});
