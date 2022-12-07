@@ -31,55 +31,9 @@ let model = models[0];
 let epitope = polyclonal[model].epitopes[0];
 let metric = "sum";
 let floor = true;
-let selectedSites = [];
-
-// DEFINE FUNCTIONS //
-
-// Function to update html selection with options
-function updateSelection(selection, options) {
-  selection.innerHTML = options
-    .map((option) => `<option value="${option}">${option}</option>`)
-    .join("");
-}
-
-// DOM SELECTIONS AND MANIPULATIONS //
-
-// For each selection element, update with options
-const modelSelection = document.getElementById("model");
-updateSelection(modelSelection, models);
-const epitopeSelection = document.getElementById("epitope");
-updateSelection(epitopeSelection, polyclonal[models[0]].epitopes);
-const metricSelection = document.getElementById("metric");
-updateSelection(metricSelection, ["sum", "mean", "min", "max"]);
-
-// // Add event listener to update model
-// modelSelection.addEventListener("change", (event) => {
-//   model = event.target.value;
-//   const epitopes = polyclonal[model].epitopes;
-//   updateSelection(epitopeSelection, epitopes);
-//   epitopeSelection.dispatchEvent(new Event("change"));
-//   // updatePlot();
-// });
-
-// // Add event listener to update epitope
-// epitopeSelection.addEventListener("change", (event) => {
-//   epitope = event.target.value;
-//   // updatePlot();
-// });
-
-// // Add event listener to update summary metric
-// metricSelection.addEventListener("change", (event) => {
-//   metric = event.target.value;
-//   // updatePlot();
-// });
-
-// // Add event listener to update floor
-// document.getElementById("floor").addEventListener("change", (event) => {
-//   floor = event.target.checked;
-//   // updatePlot();
-// });
 
 // INITIALIZE THE PLOT //
+
 let chart = new Chart(
   {
     model: model,
@@ -90,6 +44,8 @@ let chart = new Chart(
   },
   polyclonal
 );
+
+// DOM SELECTIONS AND MANIPULATIONS //
 
 d3.select("#metric").on("change", function () {
   chart.config.metric = d3.select(this).property("value");
