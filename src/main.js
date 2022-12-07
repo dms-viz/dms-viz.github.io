@@ -33,6 +33,20 @@ let epitope = polyclonal[model].epitopes[0];
 let metric = "sum";
 let floor = true;
 
+// UPDATE SELECT OPTIONS //
+
+function updateSelection(selection, options) {
+  selection
+    .selectAll("option")
+    .data(options)
+    .join("option")
+    .attr("value", (d) => d)
+    .text((d) => d);
+}
+updateSelection(d3.select("#model"), models);
+updateSelection(d3.select("#metric"), ["sum", "mean", "max", "min"]);
+updateSelection(d3.select("#epitope"), polyclonal[model].epitopes);
+
 // INITIALIZE THE PLOT //
 
 let chart = new Chart(

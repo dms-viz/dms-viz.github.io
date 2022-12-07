@@ -22,7 +22,7 @@ export class Protein {
     protein.stage.loadFile(protein.pdbURL).then(function (comp) {
       // Add representation
       comp.addRepresentation("cartoon", {
-        color: "grey",
+        color: "lightgrey",
         opacity: 0.75,
         smoothSheet: true,
         roughness: 1,
