@@ -125,20 +125,16 @@ export class Protein {
         }
       };
     });
-
-    // Color in the selected sites
-    protein.selectSites();
   }
   /**
    * Select sites on the protein structure to color
+   * @param {Array}
    */
-  selectSites() {
+  selectSites(_sites) {
     let protein = this;
 
     // Dummy sites for now
-    protein.selectedSites = [
-      165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
-    ];
+    protein.selectedSites = _sites;
 
     // Function for converting sites into a selection string
     const makeSiteString = (site, chain) =>
