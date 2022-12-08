@@ -49,7 +49,7 @@ updateSelection(d3.select("#epitope"), polyclonal[model].epitopes);
 
 // INITIALIZE THE PLOT //
 
-let chart = new Chart(
+const chart = new Chart(
   {
     model: model,
     epitope: epitope,
@@ -60,25 +60,8 @@ let chart = new Chart(
   polyclonal
 );
 
-// DOM SELECTIONS AND MANIPULATIONS //
-
-d3.select("#metric").on("change", function () {
-  chart.config.metric = d3.select(this).property("value");
-  chart.updateVis();
-});
-
-d3.select("#model").on("change", function () {
-  chart.config.model = d3.select(this).property("value");
-  chart.updateVis();
-});
-
-d3.select("#floor").on("change", function () {
-  chart.config.floor = d3.select(this).property("checked");
-  chart.updateVis();
-});
-
 // Load the protein structure from a URL
-let protein = new Protein(polyclonal, {
+const protein = new Protein(polyclonal, {
   parentElement: "viewport",
   model: model,
   epitope: epitope,
@@ -86,4 +69,27 @@ let protein = new Protein(polyclonal, {
   floor: floor,
   pdbID: "7QO7",
   dispatch: chart.dispatch,
+});
+
+// DOM SELECTIONS AND MANIPULATIONS //
+
+d3.select("#metric").on("change", function () {
+  chart.config.metric = d3.select(this).property("value");
+  chart.updateVis();
+  protein.config.metric = chart.config.metric;
+  protein.makeColorScheme();
+});
+
+d3.select("#model").on("change", function () {
+  chart.config.model = d3.select(this).property("value");
+  chart.updateVis();
+  protein.config.model = chart.config.model;
+  protein.makeColorScheme();
+});
+
+d3.select("#floor").on("change", function () {
+  chart.config.floor = d3.select(this).property("checked");
+  chart.updateVis();
+  protein.config.floor = chart.config.floor;
+  protein.makeColorScheme();
 });

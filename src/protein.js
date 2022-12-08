@@ -131,6 +131,14 @@ export class Protein {
         }
       };
     });
+
+    // Run selectSites to update the color scheme
+    protein.selectSites(
+      d3
+        .selectAll(".selected")
+        .data()
+        .map((e) => e.site)
+    );
   }
   /**
    * Select sites on the protein structure to color
