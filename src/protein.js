@@ -62,7 +62,7 @@ export class Protein {
       protein.makeColorScheme();
 
       // Attach dispatch event
-      protein.config.dispatch.on("brushed", (d) => {
+      protein.config.dispatch.on("updateSites", (d) => {
         protein.selectSites(d.map((e) => e.site));
       });
     });

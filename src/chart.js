@@ -33,7 +33,7 @@ export class Chart {
       },
     };
     this.data = _data;
-    this.dispatch = d3.dispatch("brushed");
+    this.dispatch = d3.dispatch("updateSites");
 
     this.initVis();
   }
@@ -664,7 +664,7 @@ export class Chart {
       const [[x0, y0], [x1, y1]] = selection;
 
       // Save the `value` as the data attached to each node
-      const selectedPoints = vis.focusPlot
+      vis.focusPlot
         .selectAll("circle")
         .filter(
           (d) =>
@@ -672,16 +672,19 @@ export class Chart {
             vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
             y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
             vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
-        );
-
-      // Change the class of the selected points to reflect selection
-      selectedPoints.classed("selected", true).attr("fill", vis.positiveColor);
+        )
+        .classed("selected", true)
+        .attr("fill", vis.positiveColor);
 
       // Clear the brush
       vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
 
       // Dispatch an event with the selected sites
-      this.dispatch.call("brushed", this, selectedPoints.data());
+      this.dispatch.call(
+        "updateSites",
+        this,
+        vis.focusPlot.selectAll(".selected").data()
+      );
     }
   }
   /**
@@ -697,7 +700,7 @@ export class Chart {
       .classed("selected", false)
       .attr("fill", "white");
 
-    this.dispatch.call("brushed", this, []);
+    this.dispatch.call("updateSites", this, []);
   }
   /**
    * React to click events on focus points

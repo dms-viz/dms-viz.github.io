@@ -87,10 +87,3 @@ let protein = new Protein(polyclonal, {
   pdbID: "7QO7",
   dispatch: chart.dispatch,
 });
-
-// Set a timeout of 5 seconds to load the protein
-setTimeout(() => {
-  protein.selectSites([
-    165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
-  ]);
-}, 5000);
