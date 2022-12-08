@@ -85,6 +85,7 @@ let protein = new Protein(polyclonal, {
   metric: metric,
   floor: floor,
   pdbID: "7QO7",
+  dispatch: chart.dispatch,
 });
 
 // Set a timeout of 5 seconds to load the protein

@@ -17,6 +17,7 @@ export class Protein {
       metric: _config.metric,
       floor: _config.floor,
       pdbID: _config.pdbID,
+      dispatch: _config.dispatch,
       height: 500,
       backgroundColor: "#FFFFFF",
       proteinColor: "#D3D3D3",
@@ -59,6 +60,11 @@ export class Protein {
 
       // Make test color scheme
       protein.makeColorScheme();
+
+      // Attach dispatch event
+      protein.config.dispatch.on("brushed", (d) => {
+        protein.selectSites(d.map((e) => e.site));
+      });
     });
   }
   /**
