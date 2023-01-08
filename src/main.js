@@ -1,6 +1,6 @@
 import "../style.css";
 import * as d3 from "d3";
-import polyclonal from "../data/polyclonal.json";
+import polyclonal from "../data/sars2.json";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
 
