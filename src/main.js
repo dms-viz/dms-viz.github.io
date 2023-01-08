@@ -1,6 +1,6 @@
 import "../style.css";
 import * as d3 from "d3";
-import polyclonal from "../data/sars2.json";
+import polyclonal from "../data/hiv.json";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
 
@@ -10,9 +10,6 @@ import { Protein } from "./protein.js";
 for (const selection in polyclonal) {
   // Get the map for reference sites to sequential sites
   const siteMap = polyclonal[selection].sitemap;
-  // Add the epitopes information
-  polyclonal[selection].epitopes = ["1"];
-  polyclonal[selection].epitope_colors = { 1: "#0072B2" };
   polyclonal[selection].mut_escape_df = polyclonal[selection].mut_escape_df.map(
     (e) => {
       return {

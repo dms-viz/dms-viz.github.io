@@ -317,6 +317,14 @@ export class Chart {
     // Get the amino acid alphabet for the model
     vis.alphabet = vis.data[vis.config.model].alphabet;
 
+    // Get a mapping for sequential to reference sites
+    vis.referenceToSequential = vis.data[vis.config.model].sitemap;
+    // Reverse the mapping
+    vis.sequentialToReference = {};
+    for (let key in vis.referenceToSequential) {
+      vis.sequentialToReference[vis.referenceToSequential[key]] = key;
+    }
+
     // Define ACCESSORS
     vis.xAccessorContext = (d) => d.site;
     vis.yAccessorContext = (d) => {
@@ -467,9 +475,9 @@ export class Chart {
         vis.tooltip
           .style("opacity", 1)
           .html(
-            `Site: ${d.site}<br>Escape ${vis.configmetric}: ${d[
-              vis.config.metric
-            ].toFixed(4)}<br>Wildtype: ${d.wildtype}`
+            `Site: ${vis.sequentialToReference[d.site]}<br>Escape ${
+              vis.configmetric
+            }: ${d[vis.config.metric].toFixed(4)}<br>Wildtype: ${d.wildtype}`
           )
           .style("border-color", vis.positiveColor);
       })
@@ -571,7 +579,11 @@ export class Chart {
     vis.yAxisContextG.call(vis.yAxisContext);
 
     // Peripherals for the FOCUS plot
-    vis.xAxisFocusG.call(vis.xAxisFocus);
+    vis.xAxisFocusG.call(
+      vis.xAxisFocus.tickFormat(function (d) {
+        return vis.sequentialToReference[d];
+      })
+    );
     vis.yAxisFocusG.call(vis.yAxisFocus);
     vis.yAxisFocusG
       .select(".axis-label")
@@ -582,7 +594,11 @@ export class Chart {
       );
 
     // Peripherals for the HEATMAP plot
-    vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
+    vis.xAxisHeatmapG.call(
+      vis.xAxisHeatmap.tickFormat(function (d) {
+        return vis.sequentialToReference[d];
+      })
+    );
     vis.yAxisHeatmapG.call(vis.yAxisHeatmap);
 
     // Peripherals for the HEATMAP legend
