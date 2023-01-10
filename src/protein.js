@@ -111,7 +111,10 @@ export class Protein {
     // Use the scale function to map data to a color
     protein.colorMap = new Map(
       protein.mutEscapeSummary.map((d) => {
-        return [d.site, protein.colorScale(d[protein.config.metric])];
+        return [
+          parseInt(d.site_protein),
+          protein.colorScale(d[protein.config.metric]),
+        ];
       })
     );
 
