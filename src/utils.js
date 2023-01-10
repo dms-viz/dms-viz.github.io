@@ -24,6 +24,8 @@ export function summarizeEscapeData(data) {
         epitope: e.epitope,
         site: e.site,
         site_reference: e.site_reference,
+        site_protein: e.site_reference,
+        site_chain: e.site_chain,
         wildtype: e.wildtype,
         ...escapeDataRollup.get(e.site).get(e.epitope),
       };

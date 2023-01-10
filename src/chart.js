@@ -317,13 +317,12 @@ export class Chart {
     // Get the amino acid alphabet for the model
     vis.alphabet = vis.data[vis.config.model].alphabet;
 
-    // Get a mapping for sequential to reference sites
-    vis.referenceToSequential = vis.data[vis.config.model].sitemap;
-    // Reverse the mapping
-    vis.sequentialToReference = {};
-    for (let key in vis.referenceToSequential) {
-      vis.sequentialToReference[vis.referenceToSequential[key]] = key;
-    }
+    // Make a map for the sequential site to the labels used on the x-axis
+    vis.siteMap = new Map();
+    Object.entries(vis.data[vis.config.model].sitemap).forEach((entry) => {
+      const [key, value] = entry;
+      vis.siteMap.set(value.sequential_site, key);
+    });
 
     // Define ACCESSORS
     vis.xAccessorContext = (d) => d.site;
@@ -475,9 +474,9 @@ export class Chart {
         vis.tooltip
           .style("opacity", 1)
           .html(
-            `Site: ${vis.sequentialToReference[d.site]}<br>Escape ${
-              vis.configmetric
-            }: ${d[vis.config.metric].toFixed(4)}<br>Wildtype: ${d.wildtype}`
+            `Site: ${d.site_reference}<br>Escape ${vis.configmetric}: ${d[
+              vis.config.metric
+            ].toFixed(4)}<br>Wildtype: ${d.wildtype}`
           )
           .style("border-color", vis.positiveColor);
       })
@@ -581,7 +580,7 @@ export class Chart {
     // Peripherals for the FOCUS plot
     vis.xAxisFocusG.call(
       vis.xAxisFocus.tickFormat(function (d) {
-        return vis.sequentialToReference[d];
+        return vis.siteMap.get(d);
       })
     );
     vis.yAxisFocusG.call(vis.yAxisFocus);
@@ -596,7 +595,7 @@ export class Chart {
     // Peripherals for the HEATMAP plot
     vis.xAxisHeatmapG.call(
       vis.xAxisHeatmap.tickFormat(function (d) {
-        return vis.sequentialToReference[d];
+        return vis.siteMap.get(d);
       })
     );
     vis.yAxisHeatmapG.call(vis.yAxisHeatmap);

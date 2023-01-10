@@ -14,13 +14,17 @@ for (const selection in polyclonal) {
     (e) => {
       return {
         ...e,
-        site: siteMap[e.site],
+        site: siteMap[e.site].sequential_site,
         site_reference: e.site,
+        site_protein: siteMap[e.site].protein_site,
+        site_chain: siteMap[e.site].chains,
         escape: e.escape_mean,
       };
     }
   );
 }
+
+console.log(polyclonal);
 
 // INITIALIZE DEFAULTS //
 
