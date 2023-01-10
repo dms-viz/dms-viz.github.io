@@ -63,7 +63,7 @@ export class Protein {
 
       // Attach dispatch event
       protein.config.dispatch.on("updateSites", (d) => {
-        protein.selectSites(d.map((e) => e.site));
+        protein.selectSites(d.map((e) => parseInt(e.site_protein)));
       });
     });
   }
@@ -136,7 +136,7 @@ export class Protein {
       d3
         .selectAll(".selected")
         .data()
-        .map((e) => e.site)
+        .map((e) => parseInt(e.site_protein))
     );
   }
   /**
