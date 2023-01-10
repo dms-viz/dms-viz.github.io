@@ -23,6 +23,7 @@ export function summarizeEscapeData(data) {
       return {
         epitope: e.epitope,
         site: e.site,
+        site_reference: e.site_reference,
         wildtype: e.wildtype,
         ...escapeDataRollup.get(e.site).get(e.epitope),
       };

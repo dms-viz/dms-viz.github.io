@@ -64,7 +64,7 @@ const protein = new Protein(polyclonal, {
   epitope: epitope,
   metric: metric,
   floor: floor,
-  pdbID: "7QO7",
+  pdbID: "6UDJ",
   dispatch: chart.dispatch,
 });
 
