@@ -117,10 +117,8 @@ export class Protein {
 
     // Define a schemeId with the color registry for this data combination
     protein.schemeId = NGL.ColormakerRegistry.addScheme(function () {
-      console.log(this);
       this.atomColor = (atom) => {
         if (protein.colorMap.has(atom.resno)) {
-          console.log(atom.chainname);
           // Color by array of escape summary - must be hexbase integer
           return parseInt(
             d3.color(protein.colorMap.get(atom.resno)).formatHex().slice(1),
