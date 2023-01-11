@@ -68,6 +68,17 @@ export class Protein {
     });
   }
   /**
+   * Clear the protein structure and reload it
+   */
+  clear() {
+    let protein = this;
+
+    protein.stage.removeAllComponents();
+
+    protein.load(protein.config.pdbID);
+  }
+
+  /**
    * Make and Update the color scheme for the protein
    */
   makeColorScheme() {

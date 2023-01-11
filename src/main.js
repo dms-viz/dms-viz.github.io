@@ -33,6 +33,7 @@ let model = models[0];
 let epitope = polyclonal[model].epitopes[0];
 let metric = "sum";
 let floor = true;
+let pdbID = polyclonal[model].pdb;
 
 // UPDATE SELECT OPTIONS //
 
@@ -68,7 +69,7 @@ const protein = new Protein(polyclonal, {
   epitope: epitope,
   metric: metric,
   floor: floor,
-  pdbID: "6UDJ",
+  pdbID: pdbID,
   dispatch: chart.dispatch,
 });
 
@@ -85,6 +86,8 @@ d3.select("#model").on("change", function () {
   chart.config.model = d3.select(this).property("value");
   chart.updateVis();
   protein.config.model = chart.config.model;
+  protein.config.pdbID = polyclonal[chart.config.model].pdb;
+  protein.clear();
   protein.makeColorScheme();
 });
 
