@@ -86,6 +86,7 @@ d3.select("#model").on("change", function () {
   chart.config.model = d3.select(this).property("value");
   chart.updateVis();
   protein.config.model = chart.config.model;
+  // Clears the current structure and reloads it
   protein.config.pdbID = polyclonal[chart.config.model].pdb;
   protein.clear();
 });
