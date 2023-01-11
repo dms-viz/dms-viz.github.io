@@ -88,7 +88,6 @@ d3.select("#model").on("change", function () {
   protein.config.model = chart.config.model;
   protein.config.pdbID = polyclonal[chart.config.model].pdb;
   protein.clear();
-  protein.makeColorScheme();
 });
 
 d3.select("#floor").on("change", function () {

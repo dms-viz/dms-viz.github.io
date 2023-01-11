@@ -73,8 +73,8 @@ export class Protein {
   clear() {
     let protein = this;
 
+    // Clear the protein structure
     protein.stage.removeAllComponents();
-
     protein.load(protein.config.pdbID);
   }
 
