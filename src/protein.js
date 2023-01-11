@@ -63,7 +63,7 @@ export class Protein {
 
       // Attach dispatch event
       protein.config.dispatch.on("updateSites", (d) => {
-        protein.selectSites(d.map((e) => parseInt(e.site_protein)));
+        protein.selectSites(d);
       });
     });
   }
@@ -135,36 +135,54 @@ export class Protein {
     });
 
     // Run selectSites to update the color scheme
-    protein.selectSites(
-      d3
-        .selectAll(".selected")
-        .data()
-        .map((e) => parseInt(e.site_protein))
-    );
+    protein.selectSites(d3.selectAll(".selected").data());
+  }
+  /**
+   * Format site string for selection
+   * @param {Int16Array}
+   * @param {String}
+   */
+  _makeSiteString(site, chain) {
+    return `${chain != "polymer" ? ":" : ""}${chain} and ${site}`;
   }
   /**
    * Select sites on the protein structure to color
    * @param {Array}
    */
-  selectSites(_sites) {
+  selectSites(data) {
     let protein = this;
 
-    // Dummy sites for now
-    protein.selectedSites = _sites;
+    // Define a placeholder for the selected sites
+    protein.selectedSitesStrings = [];
 
-    // Function for converting sites into a selection string
-    const makeSiteString = (site, chain) =>
-      `${chain != "polymer" ? ":" : ""}${chain} and ${site}`;
+    // Iterate over each selected data point
+    data.forEach((d) => {
+      // Get the residue number on the protein structure
+      const site = d.site_protein;
+      // Get the chains on the protein structure for this site
+      const chains = d.site_chain.split(" ");
+
+      // Only make site strings for site on the protein structure
+      if (isNaN(parseInt(site))) {
+        return;
+      } else {
+        // For each chain in chains, make the site string
+        const siteStrings = chains
+          .map((chain) => protein._makeSiteString(site, chain))
+          .join(" or ");
+        // Add the site string to the array of selected sites
+        protein.selectedSitesStrings.push(siteStrings);
+      }
+    });
 
     // Convert the selected sites into a selection string
-    protein.currentSelection = protein.selectedSites.length
-      ? protein.selectedSites
-          .map((site) => makeSiteString(site, "polymer") + " or ")
-          .join("")
+    protein.currentSelectionSiteString = protein.selectedSitesStrings.length
+      ? protein.selectedSitesStrings.join(" or ")
       : undefined;
 
-    if (protein.currentSelection !== undefined) {
-      console.log("selecting some stuff");
+    // Create a representation of the selected sites on the protein structure
+    if (protein.currentSelectionSiteString !== undefined) {
+      console.log("selecting some new stuff");
       protein.stage.getRepresentationsByName("currentSelection").dispose();
       return protein.component
         .addRepresentation("spacefill", {
@@ -173,7 +191,7 @@ export class Protein {
           name: "currentSelection",
           surfaceType: "av",
         })
-        .setSelection(protein.currentSelection);
+        .setSelection(protein.currentSelectionSiteString);
     } else {
       protein.stage.getRepresentationsByName("currentSelection").dispose();
     }
