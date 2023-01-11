@@ -292,6 +292,7 @@ export class Chart {
     // DEBUG MESSAGES
     console.log("Upadate chart");
     console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
+    console.log("Epitope:", typeof vis.config.epitope);
 
     // Process DATA
     vis.mutEscape = vis.data[vis.config.model].mut_escape_df;
@@ -299,6 +300,7 @@ export class Chart {
     vis.mutEscapeSummary = summarizeEscapeData(vis.mutEscape).filter(
       (e) => e.epitope === vis.config.epitope
     );
+    console.log(vis.mutEscapeSummary);
     // Pick the site with the highest escape for the selected summary metric
     vis.initSiteSelection = vis.mutEscapeSummary.filter(
       (d) =>

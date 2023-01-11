@@ -75,25 +75,34 @@ const protein = new Protein(polyclonal, {
 
 // DOM SELECTIONS AND MANIPULATIONS //
 
-d3.select("#metric").on("change", function () {
-  chart.config.metric = d3.select(this).property("value");
-  chart.updateVis();
-  protein.config.metric = chart.config.metric;
-  protein.makeColorScheme();
-});
-
 d3.select("#model").on("change", function () {
   chart.config.model = d3.select(this).property("value");
-  chart.updateVis();
-  protein.config.model = chart.config.model;
-  // Clears the current structure and reloads it
-  protein.config.pdbID = polyclonal[chart.config.model].pdb;
-  protein.clear();
+  chart.config.epitope = polyclonal[chart.config.model].epitopes[0];
   // Update the epitope selection
   updateSelection(
     d3.select("#epitope"),
     polyclonal[chart.config.model].epitopes
   );
+  chart.updateVis();
+  protein.config.model = chart.config.model;
+  protein.config.epitope = polyclonal[chart.config.model].epitopes[0];
+  // Clears the current structure and reloads it
+  protein.config.pdbID = polyclonal[chart.config.model].pdb;
+  protein.clear();
+});
+
+d3.select("#epitope").on("change", function () {
+  chart.config.epitope = parseInt(d3.select(this).property("value"));
+  chart.updateVis();
+  protein.config.epitope = chart.config.epitope;
+  protein.makeColorScheme();
+});
+
+d3.select("#metric").on("change", function () {
+  chart.config.metric = d3.select(this).property("value");
+  chart.updateVis();
+  protein.config.metric = chart.config.metric;
+  protein.makeColorScheme();
 });
 
 d3.select("#floor").on("change", function () {
