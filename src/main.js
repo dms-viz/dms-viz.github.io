@@ -89,6 +89,11 @@ d3.select("#model").on("change", function () {
   // Clears the current structure and reloads it
   protein.config.pdbID = polyclonal[chart.config.model].pdb;
   protein.clear();
+  // Update the epitope selection
+  updateSelection(
+    d3.select("#epitope"),
+    polyclonal[chart.config.model].epitopes
+  );
 });
 
 d3.select("#floor").on("change", function () {
