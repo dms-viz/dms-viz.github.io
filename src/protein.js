@@ -19,14 +19,18 @@ export class Protein {
       pdbID: _config.pdbID,
       dispatch: _config.dispatch,
       height: 500,
-      backgroundColor: "#FFFFFF",
+      stageColor: "#FFFFFF",
+      proteinRepresentation: "cartoon",
+      selectionRepresentation: "spacefill",
+      backgroundRepresentation: "rope",
       proteinColor: "#D3D3D3",
+      backgroundColor: "#808080",
     };
     this.data = _data;
 
     // Initialize the stage object for the parent element
     this.stage = new NGL.Stage(this.config.parentElement, {
-      backgroundColor: this.config.backgroundColor,
+      backgroundColor: this.config.stageColor,
     });
 
     // Load the protein structure
@@ -38,14 +42,27 @@ export class Protein {
    */
   load(pdbID) {
     let protein = this;
+
     // Turn the PDB ID into a URL
     protein.pdbURL = `rcsb://${pdbID}`;
+
+    // Get the list of chains to color in the protein structure
+    protein.chains = protein.data[protein.config.model].chains;
+
     // Load the structure from a URL
     protein.stage.loadFile(protein.pdbURL).then(function (comp) {
-      // Add representation
-      comp.addRepresentation("cartoon", {
+      // Add base protein representation
+      comp.addRepresentation(protein.config.proteinRepresentation, {
+        sele: `:${protein.chains.join(" or :")}`,
         color: protein.config.proteinColor,
       });
+
+      // Add background representation for non-data chains
+      comp.addRepresentation(protein.config.backgroundRepresentation, {
+        sele: `not :${protein.chains.join(" and not :")}`,
+        color: protein.config.backgroundColor,
+      });
+
       // Set the zoom of the structure
       protein.stage.autoView();
       // Turn off the spinning animation
@@ -196,7 +213,7 @@ export class Protein {
       console.log("selecting some new stuff");
       protein.stage.getRepresentationsByName("currentSelection").dispose();
       return protein.component
-        .addRepresentation("spacefill", {
+        .addRepresentation(protein.config.selectionRepresentation, {
           color: protein.schemeId,
           roughness: 1,
           name: "currentSelection",
