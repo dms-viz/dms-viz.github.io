@@ -160,3 +160,33 @@ d3.select("#downloadProtein").on("click", function () {
       NGL.download(blob, "protein_plot.png");
     });
 });
+
+d3.select("#json-file").on("change", function () {
+  // Get the file input element
+  const input = document.getElementById("json-file");
+
+  // Check if a file was selected
+  if (input.files.length === 0) {
+    alert("Please select a JSON file to upload.");
+    return;
+  }
+  // Get the selected file
+  const file = input.files[0];
+
+  // Check if the selected file is a JSON file
+  if (file.type !== "application/json") {
+    alert("Please select a valid JSON file.");
+    return;
+  }
+
+  // Use the FileReader API to read the contents of the JSON file
+  const reader = new FileReader();
+  reader.onload = function () {
+    // Parse the JSON file
+    const json = JSON.parse(reader.result);
+
+    // Do something with the JSON data (e.g. display it on the page)
+    console.log(json);
+  };
+  reader.readAsText(file);
+});
