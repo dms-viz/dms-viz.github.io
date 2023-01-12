@@ -1,5 +1,6 @@
 import "../style.css";
 import * as d3 from "d3";
+import * as NGL from "ngl";
 import polyclonal from "../data/hiv.json";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
@@ -145,4 +146,17 @@ d3.select("#proteinColor").on("change", function () {
 d3.select("#backgroundColor").on("change", function () {
   protein.config.backgroundColor = d3.select(this).property("value");
   protein.clear();
+});
+
+d3.select("#downloadProtein").on("click", function () {
+  protein.stage
+    .makeImage({
+      factor: 4,
+      antialias: true,
+      trim: false,
+      transparent: false,
+    })
+    .then(function (blob) {
+      NGL.download(blob, "protein_plot.png");
+    });
 });
