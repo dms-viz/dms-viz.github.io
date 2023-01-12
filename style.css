@@ -17,6 +17,22 @@ h1 code {
   gap: 1em;
 }
 
+#protein-config {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: right;
+}
+
+#protein-config label {
+    width: 50%;
+    height: 1.5em;
+}
+
+#protein-config select {
+  width: 25%;
+  height: 1.5em;
+}
+
 #chart {
   margin-top: 20px;
 }

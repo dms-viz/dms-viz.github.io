@@ -45,9 +45,18 @@ function updateSelection(selection, options) {
     .attr("value", (d) => d)
     .text((d) => d);
 }
+// Set the chart config selection boxes
 updateSelection(d3.select("#model"), models);
 updateSelection(d3.select("#metric"), ["sum", "mean", "max", "min"]);
 updateSelection(d3.select("#epitope"), polyclonal[model].epitopes);
+// Set the protein config selection boxes
+updateSelection(d3.select("#proteinRepr"), ["cartoon", "rope", "ball+stick"]);
+updateSelection(d3.select("#selectionRepr"), ["spacefill", "surface"]);
+updateSelection(d3.select("#backgroundRepr"), [
+  "rope",
+  "cartoon",
+  "ball+stick",
+]);
 
 // INITIALIZE THE PLOT //
 
@@ -110,4 +119,30 @@ d3.select("#floor").on("change", function () {
   chart.updateVis();
   protein.config.floor = chart.config.floor;
   protein.makeColorScheme();
+});
+
+// Update the protein representation
+d3.select("#proteinRepr").on("change", function () {
+  protein.config.proteinRepresentation = d3.select(this).property("value");
+  protein.clear();
+});
+
+d3.select("#selectionRepr").on("change", function () {
+  protein.config.selectionRepresentation = d3.select(this).property("value");
+  protein.clear();
+});
+
+d3.select("#backgroundRepr").on("change", function () {
+  protein.config.backgroundRepresentation = d3.select(this).property("value");
+  protein.clear();
+});
+
+d3.select("#proteinColor").on("change", function () {
+  protein.config.proteinColor = d3.select(this).property("value");
+  protein.clear();
+});
+
+d3.select("#backgroundColor").on("change", function () {
+  protein.config.backgroundColor = d3.select(this).property("value");
+  protein.clear();
 });

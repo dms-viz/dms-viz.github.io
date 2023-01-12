@@ -24,7 +24,7 @@ export class Protein {
       selectionRepresentation: "spacefill",
       backgroundRepresentation: "rope",
       proteinColor: "#D3D3D3",
-      backgroundColor: "#808080",
+      backgroundColor: "#D3D3D3",
     };
     this.data = _data;
 
