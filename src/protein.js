@@ -5,7 +5,7 @@ import { summarizeEscapeData, invertColor } from "./utils.js";
 export class Protein {
   /**
    * Class constructor with initial configuration
-   * @param {String}
+   * @param {Object}
    * @param {Object}
    */
   constructor(_data, _config) {
@@ -43,25 +43,53 @@ export class Protein {
   load(pdbID) {
     let protein = this;
 
-    // Turn the PDB ID into a URL
-    protein.pdbURL = `rcsb://${pdbID}`;
+    // Determine if the strcutre is custom or from the RCSB PDB
+    if (pdbID.slice(-4) !== ".pdb") {
+      // Set the pdbURL to the RCSB PDB URL
+      protein.pdbURL = `rcsb://${pdbID}`;
+    } else {
+      // Set the pdbURL to the local file
+      protein.pdbURL = pdbID;
+    }
 
-    // Get the list of chains to color in the protein structure
-    protein.chains = protein.data[protein.config.model].chains;
+    // Determine how to handle the chains in the protein structure
+    protein.dataChains = protein.data[protein.config.model].dataChains;
+    protein.excludeChains = protein.data[protein.config.model].excludeChains;
+
+    // Make the selection of chains to include in the protein structure
+    if (protein.dataChains != "polymer") {
+      protein.dataChainSelection = `:${protein.dataChains.join(" or :")}`;
+      protein.backgroundChainSelection = `not :${protein.dataChains.join(
+        " and not :"
+      )}`;
+      if (protein.excludeChains != "none") {
+        protein.backgroundChainSelection += ` and not :${protein.excludeChains.join(
+          " and not :"
+        )}`;
+      }
+    } else {
+      protein.dataChainSelection = "polymer";
+      protein.backgroundChainSelection = "none";
+    }
+
+    console.log(protein.dataChainSelection);
+    console.log(protein.backgroundChainSelection);
 
     // Load the structure from a URL
     protein.stage.loadFile(protein.pdbURL).then(function (comp) {
       // Add base protein representation
       comp.addRepresentation(protein.config.proteinRepresentation, {
-        sele: `:${protein.chains.join(" or :")}`,
+        sele: protein.dataChainSelection,
         color: protein.config.proteinColor,
       });
 
-      // Add background representation for non-data chains
-      comp.addRepresentation(protein.config.backgroundRepresentation, {
-        sele: `not :${protein.chains.join(" and not :")}`,
-        color: protein.config.backgroundColor,
-      });
+      // Add background representation for non-data chains and non-excluded chains
+      if (protein.backgroundChainSelection != "none") {
+        comp.addRepresentation(protein.config.backgroundRepresentation, {
+          sele: protein.backgroundChainSelection,
+          color: protein.config.backgroundColor,
+        });
+      }
 
       // Set the zoom of the structure
       protein.stage.autoView();
