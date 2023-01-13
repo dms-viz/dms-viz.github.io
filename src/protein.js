@@ -49,7 +49,7 @@ export class Protein {
       protein.pdbURL = `rcsb://${pdbID}`;
     } else {
       // Set the pdbURL to the local file
-      protein.pdbURL = pdbID;
+      protein.pdbURL = `../data/pdbs/${pdbID}`;
     }
 
     // Determine how to handle the chains in the protein structure
