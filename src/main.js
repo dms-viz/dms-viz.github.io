@@ -1,11 +1,14 @@
 import "../style.css";
 import * as d3 from "d3";
 import * as NGL from "ngl";
-import polyclonal from "../data/hiv.json";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
+import exampleData from "../data/h3n2.json";
 
-// INITIALIZE THE DATA //
+// INITIALIZE THE EXAMPLE DATA //
+
+// Call the example data polyclonal
+let polyclonal = exampleData;
 
 // Format the JSON for each antibody model
 for (const selection in polyclonal) {
@@ -24,8 +27,6 @@ for (const selection in polyclonal) {
     }
   );
 }
-
-console.log(polyclonal);
 
 // INITIALIZE DEFAULTS //
 
@@ -87,6 +88,7 @@ const protein = new Protein(polyclonal, {
 
 d3.select("#model").on("change", function () {
   chart.config.model = d3.select(this).property("value");
+  console.log(polyclonal);
   chart.config.epitope = polyclonal[chart.config.model].epitopes[0];
   // Update the epitope selection
   updateSelection(
@@ -187,6 +189,55 @@ d3.select("#json-file").on("change", function () {
 
     // Do something with the JSON data (e.g. display it on the page)
     console.log(json);
+
+    // UPDATE THE MODEL BASED ON NEW DATA //
+    polyclonal = json;
+
+    // Format the JSON for each antibody model
+    for (const selection in polyclonal) {
+      // Get the map for reference sites to sequential sites
+      const siteMap = polyclonal[selection].sitemap;
+      polyclonal[selection].mut_escape_df = polyclonal[
+        selection
+      ].mut_escape_df.map((e) => {
+        return {
+          ...e,
+          site: siteMap[e.site].sequential_site,
+          site_reference: e.site,
+          site_protein: siteMap[e.site].protein_site,
+          site_chain: siteMap[e.site].chains,
+          escape: e.escape_mean,
+        };
+      });
+    }
+
+    const models = Object.keys(polyclonal);
+    let model = models[0];
+    let epitope = polyclonal[model].epitopes[0];
+    let metric = "sum";
+    let floor = true;
+    let pdbID = polyclonal[model].pdb;
+
+    // Set the chart config selection boxes
+    updateSelection(d3.select("#model"), models);
+    updateSelection(d3.select("#epitope"), polyclonal[model].epitopes);
+
+    // Update the chart
+    chart.config.model = model;
+    chart.config.epitope = epitope;
+    chart.config.metric = metric;
+    chart.config.floor = floor;
+    chart.data = polyclonal;
+    chart.updateVis();
+
+    // Update the protein
+    protein.config.model = model;
+    protein.config.epitope = epitope;
+    protein.config.metric = metric;
+    protein.config.floor = floor;
+    protein.config.pdbID = pdbID;
+    protein.data = polyclonal;
+    protein.clear();
   };
   reader.readAsText(file);
 });
