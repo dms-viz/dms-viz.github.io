@@ -476,7 +476,7 @@ export class Chart {
         vis.tooltip
           .style("opacity", 1)
           .html(
-            `Site: ${d.site_reference}<br>Escape ${vis.configmetric}: ${d[
+            `Site: ${d.site_reference}<br>Escape ${vis.config.metric}: ${d[
               vis.config.metric
             ].toFixed(4)}<br>Wildtype: ${d.wildtype}`
           )
