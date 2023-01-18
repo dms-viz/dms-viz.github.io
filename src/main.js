@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import * as NGL from "ngl";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
-import exampleData from "../data/h3n2.json";
+import exampleData from "../data/hiv.json";
 
 // INITIALIZE THE EXAMPLE DATA //
 
