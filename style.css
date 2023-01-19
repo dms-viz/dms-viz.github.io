@@ -2,26 +2,32 @@
 @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
 
 :root {
-  --primary-bg-color: rgb(120, 89, 146);
-  --light-bg-color: rgb(220, 215, 225);
+  --primary-bg-color:#8b7fba;
+  --light-bg-color: #afa5d9;
+  --white-color: #f7f6fb;
   --primary-font: Open Sans, sans-serif;
+  --normal-font-size: 1rem;
+  --header-height: 2em;
 }
 
 body {
   font-family: var(--primary-font);
-  margin: 0;
+  margin: var(--header-height) 0 0 0; 
   padding: 0;
 }
 
 header {
   position: fixed; 
   top: 0; 
+  left: 0;
+  padding: 0 1rem;
   width: 100%; 
-  height: 2em;
-  background-color: var(--light-bg-color);
+  height: var(--header-height);
+  background: var(--white-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: var(--z-fixed);
 }
 
 nav a {
@@ -36,9 +42,15 @@ nav .logo {
   padding: 0 0.5em 0 0.5em;
 }
 
-
-
-
+.sidebar {
+  position: fixed;
+  top: 0;
+  width: 200px;
+  height: 100vh;
+  background-color: var(--primary-bg-color);
+  padding: 0.5rem 1rem 0 0;
+  z-index: 100;
+  }
 
 
 
