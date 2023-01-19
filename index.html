@@ -11,26 +11,23 @@
     <!-- Wrap the main contents in a container -->
     <div class="container">
       <!-- Header contains the logo and name of the Application -->
-      <div class="header">
-        <h1><code>dms-viz</code></h1>
-        <details>
-          <summary><h3 style="display: inline">Instructions</h3></summary>
-          <p>
-            <strong>To use this visualization tool</strong>, with the menu
-            below, select an antibody, epitope, and how escape at each site
-            should be summarized. Drag your mouse in the context plot just below
-            the menu to zoom into a region of the focus plot. To see how
-            individual mutations at a site contribute to escape, click on a
-            point. To visualize sites on a protein, drag to select a group of
-            points To clear your selections, double click on the plot. You can
-            configure the protein options with the collapsible menu below the
-            plot.
-          </p>
-        </details>
-        <hr />
-      </div>
+      <header>
+        <nav>
+          <h1 class="logo">
+            <a href="https://github.com/dms-viz/dms-viz.github.io">dms-viz</a>
+          </h1>
+        </nav>
+      </header>
       <!-- Sidebar contains plot configuration options -->
-      <div class="sidebar"></div>
+      <div class="sidebar">
+        <ul class="config-list">
+          <li class="config-option">Upload Data</li>
+          <li class="config-option">Configure Chart</li>
+          <li class="config-option">Configure Protein</li>
+          <li class="config-option">Filter Data</li>
+          <li class="config-option">Download Session</li>
+        </ul>
+      </div>
       <!-- Chart contains the main D3 chart -->
       <div class="chartbox" id="chart">
         <div id="chart-config">
