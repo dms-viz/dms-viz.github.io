@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+  <!-- Header of the Document -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dms-viz</title>
   </head>
+  <!-- Body Contents -->
   <body>
-    <div id="root">
+    <!-- Wrap the main contents in a container -->
+    <div class="container">
+      <!-- Header contains the logo and name of the Application -->
       <div class="header">
         <h1><code>dms-viz</code></h1>
         <details>
@@ -25,7 +29,10 @@
         </details>
         <hr />
       </div>
-      <div id="chart">
+      <!-- Sidebar contains plot configuration options -->
+      <div class="sidebar"></div>
+      <!-- Chart contains the main D3 chart -->
+      <div class="chartbox" id="chart">
         <div id="chart-config">
           <label for="Model">Select Model:</label>
           <select name="Model" id="model"></select>
@@ -37,7 +44,9 @@
           <input type="checkbox" checked="True" name="Floor" id="floor" />
         </div>
       </div>
-      <div id="viewport"></div>
+      <!-- Protein contains the protein(s) -->
+      <div class="proteinbox" id="viewport"></div>
+      <!-- TODO : move anything below here to a sidebar -->
       <input type="file" id="json-file" accept=".json" />
       <details>
         <summary>Protein Config</summary>

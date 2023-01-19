@@ -241,3 +241,7 @@ d3.select("#json-file").on("change", function () {
   };
   reader.readAsText(file);
 });
+
+window.addEventListener("resize", function () {
+  chart.svg.attr("width", window.innerWidth);
+});
