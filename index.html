@@ -20,48 +20,31 @@
       </header>
       <!-- Sidebar contains plot configuration options -->
       <div class="sidebar">
-        <ul class="config-list">
-          <li class="config-option">Upload Data</li>
-          <li class="config-option">Configure Chart</li>
-          <li class="config-option">Configure Protein</li>
-          <li class="config-option">Filter Data</li>
-          <li class="config-option">Download Session</li>
-        </ul>
+        <input type="file" id="json-file" accept=".json" />
+        <label for="Model">Select Model:</label>
+        <select name="Model" id="model"></select>
+        <label for="Epitope">Select Epitope:</label>
+        <select name="Epitope" id="epitope"></select>
+        <label for="Metric">Select Summary Metric:</label>
+        <select name="Metric" id="metric"></select>
+        <label for="Floor">Floor:</label>
+        <input type="checkbox" checked="True" name="Floor" id="floor" />
+        <label for="ProteinRepr">Protein Representation:</label>
+        <select name="ProteinRepr" id="proteinRepr"></select>
+        <label for="SelectionRepr">Selection Representation:</label>
+        <select name="SelectionRepr" id="selectionRepr"></select>
+        <label for="BackgroundRepr">Background Representation:</label>
+        <select name="BackgroundRepr" id="backgroundRepr"></select>
+        <label for="proteinColor">Protein Color:</label>
+        <input type="color" value="#D3D3D3" id="proteinColor" />
+        <label for="backgroundColor">Background Color:</label>
+        <input type="color" value="#D3D3D3" id="backgroundColor" />
+        <button id="downloadProtein">Download Protein Image</button>
       </div>
       <!-- Chart contains the main D3 chart -->
-      <div class="chartbox" id="chart">
-        <div id="chart-config">
-          <label for="Model">Select Model:</label>
-          <select name="Model" id="model"></select>
-          <label for="Epitope">Select Epitope:</label>
-          <select name="Epitope" id="epitope"></select>
-          <label for="Metric">Select Summary Metric:</label>
-          <select name="Metric" id="metric"></select>
-          <label for="Floor">Floor:</label>
-          <input type="checkbox" checked="True" name="Floor" id="floor" />
-        </div>
-      </div>
+      <div class="chart" id="chart"></div>
       <!-- Protein contains the protein(s) -->
-      <div class="proteinbox" id="viewport"></div>
-      <!-- TODO : move anything below here to a sidebar -->
-      <input type="file" id="json-file" accept=".json" />
-      <details>
-        <summary>Protein Config</summary>
-        <div id="protein-config">
-          <label for="ProteinRepr">Protein Representation:</label>
-          <select name="ProteinRepr" id="proteinRepr"></select>
-          <label for="SelectionRepr">Selection Representation:</label>
-          <select name="SelectionRepr" id="selectionRepr"></select>
-          <label for="BackgroundRepr">Background Representation:</label>
-          <select name="BackgroundRepr" id="backgroundRepr"></select>
-          <label for="proteinColor">Protein Color:</label>
-          <input type="color" value="#D3D3D3" id="proteinColor" />
-          <label for="backgroundColor">Background Color:</label>
-          <input type="color" value="#D3D3D3" id="backgroundColor" />
-        </div>
-        <!-- Download Button for protein structure -->
-        <button id="downloadProtein">Download Protein Image</button>
-      </details>
+      <div class="protein" id="viewport"></div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

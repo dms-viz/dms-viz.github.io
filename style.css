@@ -8,6 +8,8 @@
   --primary-font: Open Sans, sans-serif;
   --normal-font-size: 1rem;
   --header-height: 2em;
+  --nav-width: 200px;
+  --z-fixed: 100;
 }
 
 body {
@@ -20,7 +22,7 @@ header {
   position: fixed; 
   top: 0; 
   left: 0;
-  padding: 0 1rem;
+  padding: 0 2rem 0 calc(var(--nav-width) + 2rem);
   width: 100%; 
   height: var(--header-height);
   background: var(--white-color);
@@ -47,40 +49,23 @@ nav .logo {
   top: 0;
   width: 200px;
   height: 100vh;
-  background-color: var(--primary-bg-color);
-  padding: 0.5rem 1rem 0 0;
+  background-color: var(--light-bg-color);
+  padding: 1rem;
   z-index: 100;
-  }
-
-
-
-#chart-config {
   display: flex;
+  flex-direction: column;
   gap: 1em;
+  overflow: scroll;
 }
 
-#protein-config {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: right;
+.chart {
+  postion: relative;
+  
+  margin: 0 0 0 calc(var(--nav-width) + 4em);
 }
 
-#protein-config label {
-    width: 50%;
-    height: 1.5em;
-}
-
-#protein-config select {
-  width: 25%;
-  height: 1.5em;
-}
-
-#chart {
-  margin-top: 20px;
-}
-
-#chart .wrapper {
-  margin-top: 10px;
+.protein {
+  margin: 0 0 0 calc(var(--nav-width) + 4em);
 }
 
 #viewport {
