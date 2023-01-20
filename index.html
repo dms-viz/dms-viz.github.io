@@ -5,6 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dms-viz</title>
+    <!-- Link to the svg boxicons -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
   </head>
   <!-- Body Contents -->
   <body>
@@ -13,11 +18,31 @@
       <!-- Header contains the logo and name of the Application -->
       <header class="header">
         <nav>
+          <button class="trigger">
+            <i class="bx bx-help-circle help"></i>
+          </button>
           <h1 class="logo">
             <a href="https://github.com/dms-viz/dms-viz.github.io">dms-viz</a>
           </h1>
         </nav>
       </header>
+      <!-- Modal with Instructions -->
+      <div class="modal">
+        <div class="modal-content">
+          <span class="close-button">&times;</span>
+          <h3>Instructions</h3>
+          <p>
+            To use this visualization tool, with the menu below, select an
+            antibody, epitope, and how escape at each site should be summarized.
+            Drag your mouse in the context plot just below the menu to zoom into
+            a region of the focus plot. To see how individual mutations at a
+            site contribute to escape, click on a point. To visualize sites on a
+            protein, drag to select a group of points To clear your selections,
+            double click on the plot. You can configure the protein options with
+            the collapsible menu below the plot.
+          </p>
+        </div>
+      </div>
       <!-- Sidebar contains plot configuration options -->
       <div class="sidebar">
         <input type="file" id="json-file" accept=".json" />
