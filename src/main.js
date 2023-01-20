@@ -242,6 +242,9 @@ d3.select("#json-file").on("change", function () {
   reader.readAsText(file);
 });
 
+// Add event listener to respond to window resizing
 window.addEventListener("resize", function () {
-  chart.svg.attr("width", window.innerWidth);
+  console.log("Calling resize");
+  chart.resize();
+  protein.stage.handleResize();
 });

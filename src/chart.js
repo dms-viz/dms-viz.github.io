@@ -20,7 +20,7 @@ export class Chart {
       floor: _config.floor,
       parentElement: _config.parentElement,
       width: 1080,
-      height: 420,
+      height: 400,
       scaling: {
         top: 0.025,
         left: 0.04,
@@ -82,6 +82,8 @@ export class Chart {
       },
     };
 
+    vis.aspect = vis.config.width / vis.config.height;
+
     // Create the chart CANVAS
     vis.svg = d3
       .select(vis.config.parentElement)
@@ -89,6 +91,14 @@ export class Chart {
       .attr("width", vis.config.width)
       .attr("height", vis.config.height)
       .attr("class", "wrapper");
+
+    // Make the chart responsive to resizing
+    vis.svg
+      .attr("viewBox", `0 0 ${vis.config.width} ${vis.config.height}`)
+      .attr("preserveAspectRatio", "xMidYMid")
+      .call(function () {
+        vis.resize();
+      });
 
     // Define chart AREA
     vis.boundedArea = vis.svg
@@ -821,5 +831,23 @@ export class Chart {
 
     // DEBUG MESSAGE
     console.log("Exiting updateHeatmap()");
+  }
+  /**
+   * React to the window being resized
+   */
+  resize() {
+    let vis = this;
+
+    // Get the parent node of the SVG element
+    const parentNode = d3.select(vis.config.parentElement).node();
+
+    // Derive the new width and height of the SVG element
+    vis.config.width = parentNode.offsetWidth;
+    vis.config.height = parentNode.offsetHeight;
+
+    // Resize the SVG element
+    vis.svg
+      .attr("width", vis.config.width)
+      .attr("height", vis.config.width / vis.aspect);
   }
 }
