@@ -286,3 +286,31 @@ accordionBtns.forEach((accordion) => {
     }
   };
 });
+
+// Sidebar UI
+document.addEventListener("DOMContentLoaded", function (event) {
+  const showNavbar = (toggleId, navId) => {
+    const toggle = document.getElementById(toggleId),
+      nav = document.getElementById(navId),
+      headerpd = document.getElementById("header"),
+      mainpd = document.getElementById("main");
+
+    // Validate that all variables exist
+    if (toggle && nav && headerpd && mainpd) {
+      toggle.addEventListener("click", () => {
+        // show navbar
+        nav.classList.toggle("sidebar--collapsed");
+        // change icon
+        toggle.classList.toggle("bx-x");
+        // add padding to header
+        headerpd.classList.toggle("body-pad");
+        // add padding to main
+        mainpd.classList.toggle("body-pad");
+      });
+    }
+  };
+
+  showNavbar("sidebar-toggle", "sidebar");
+
+  // Your code to run since DOM is loaded and ready
+});

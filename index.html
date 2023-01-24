@@ -17,11 +17,16 @@
     <!-- Wrap the main contents in a container -->
     <div class="container">
       <!-- Header contains the logo and name of the Application -->
-      <header class="header">
+      <header class="header body-pad" id="header">
         <nav>
-          <button class="trigger">
-            <i class="bx bx-help-circle help"></i>
-          </button>
+          <div class="controls">
+            <div class="sidebar-toggle">
+              <i class="bx bx-menu" id="sidebar-toggle"></i>
+            </div>
+            <button class="trigger">
+              <i class="bx bx-help-circle help"></i>
+            </button>
+          </div>
           <h1 class="logo">dms-viz</h1>
         </nav>
       </header>
@@ -43,7 +48,14 @@
         </div>
       </div>
       <!-- Sidebar contains plot configuration options -->
-      <div class="sidebar">
+      <div class="sidebar" , id="sidebar">
+        <!-- Menu Title -->
+        <div class="header">
+          <div class="icon">
+            <i class="bx bx-layer"></i>
+          </div>
+          <span class="title">Configuration</span>
+        </div>
         <!-- Upload Options -->
         <div class="submenu">
           <button class="accordion">
@@ -143,10 +155,13 @@
           </div>
         </div>
       </div>
-      <!-- Chart contains the main D3 chart -->
-      <div class="chart" id="chart"></div>
-      <!-- Protein contains the protein(s) -->
-      <div class="protein" id="viewport"></div>
+      <!-- Main container with plot and protein content -->
+      <div class="main body-pad" id="main">
+        <!-- Chart contains the main D3 chart -->
+        <div class="chart" id="chart"></div>
+        <!-- Protein contains the protein(s) -->
+        <div class="protein" id="viewport"></div>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

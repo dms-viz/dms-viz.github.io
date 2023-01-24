@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
 @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
 
 :root {
@@ -30,16 +30,25 @@ header {
   left: 0;
   width: 100%; 
   height: var(--header-height);
-  background: var(--primary-bg-color);
+  background: white;
   z-index: var(--z-fixed);
+  padding: 0 2rem 0 calc(var(--nav-icon-width) + 2rem);
+  transition: 0.5s;
+
+
 }
 
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2.5rem 0 calc(var(--nav-width) + 2.5rem);
   height: var(--header-height);
+}
+
+nav .controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 nav a {
@@ -54,12 +63,12 @@ nav .logo {
 }
 
 nav .help {
-  color:  rgba(0, 0, 0, 0.5);;
+  color:  rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
 
 nav .help:hover {
-  color: black;
+  color: rgba(0, 0, 0, 0.75)
 }
 
 nav .trigger {
@@ -67,6 +76,16 @@ nav .trigger {
   outline:none;
   background: none;
   font-size: 1.25em;
+}
+
+nav .sidebar-toggle {
+  font-size: 1.25em;
+  color:  rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+nav .sidebar-toggle:hover {
+  color: rgba(0, 0, 0, 0.75)
 }
 
 /* Instruction Modal */
@@ -123,12 +142,20 @@ nav .trigger {
   width: var(--nav-width);
   height: 100vh;
   background-color: var(--primary-bg-color);
-  /* padding: 1rem; */
   z-index: 100;
-  /* display: flex;
-  flex-direction: column; */
-  /* gap: 1em; */
   overflow: scroll;
+  transition: 0.5s;
+}
+
+.sidebar .header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  height: var(--header-height);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+
 }
 
 .sidebar .accordion {
@@ -143,6 +170,8 @@ nav .trigger {
   font-size: 1.25rem;
   font-weight: bold;
   margin-bottom: 0.5em;
+  padding: 0;
+  white-space: nowrap
 }
 
 .sidebar .accordion:hover {
@@ -189,18 +218,21 @@ nav .trigger {
   width: var(--nav-icon-width);
 }
 
-.sidebar--collapsed .title {
-  display: none;
+.body-pad {
+  padding: 0 3rem 0 calc(var(--nav-width) + 3rem);
+}
+
+.main {
+  margin: 0 3em 0 calc(var(--nav-icon-width) + 3em);
+  transition: 0.5s;
 }
 
 .chart {  
-  margin: 0 0 0 calc(var(--nav-width) + 4em);
   max-width: 1080px; 
   min-width: 750px;
 }
 
 .protein {
-  margin: 0 0 0 calc(var(--nav-width) + 4em);
   max-width: 1080px; 
   min-width: 750px;
 }
