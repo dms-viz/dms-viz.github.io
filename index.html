@@ -1,63 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
+  <!-- Header of the Document -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dms-viz</title>
-    <script type="module" crossorigin src="/assets/index.3dc1e235.js"></script>
-    <link rel="stylesheet" href="/assets/index.b8562c35.css">
+    <!-- Link to the svg boxicons -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    
+    <script type="module" crossorigin src="/assets/index.164527a9.js"></script>
+    <link rel="stylesheet" href="/assets/index.f4a3d41c.css">
   </head>
+  <!-- Body Contents -->
   <body>
-    <div id="root">
-      <div class="header">
-        <h1><code>dms-viz</code></h1>
-        <details>
-          <summary><h3 style="display: inline">Instructions</h3></summary>
+    <!-- Wrap the main contents in a container -->
+    <div class="container">
+      <!-- Header contains the logo and name of the Application -->
+      <header class="header" id="header">
+        <nav>
+          <div class="controls">
+            <div class="sidebar-toggle">
+              <i class="bx bx-x bx-menu" id="sidebar-toggle"></i>
+            </div>
+            <button class="trigger">
+              <i class="bx bx-help-circle help"></i>
+            </button>
+          </div>
+          <h1 class="logo">dms-viz</h1>
+        </nav>
+      </header>
+      <!-- Modal with Instructions -->
+      <div class="modal">
+        <div class="modal-content">
+          <span class="close-button">&times;</span>
+          <h3>Instructions</h3>
           <p>
-            <strong>To use this visualization tool</strong>, with the menu
-            below, select an antibody, epitope, and how escape at each site
-            should be summarized. Drag your mouse in the context plot just below
-            the menu to zoom into a region of the focus plot. To see how
-            individual mutations at a site contribute to escape, click on a
-            point. To visualize sites on a protein, drag to select a group of
-            points To clear your selections, double click on the plot. You can
-            configure the protein options with the collapsible menu below the
-            plot.
+            To use this visualization tool, with the menu below, select an
+            antibody, epitope, and how escape at each site should be summarized.
+            Drag your mouse in the context plot just below the menu to zoom into
+            a region of the focus plot. To see how individual mutations at a
+            site contribute to escape, click on a point. To visualize sites on a
+            protein, drag to select a group of points To clear your selections,
+            double click on the plot. You can configure the protein options with
+            the collapsible menu below the plot.
           </p>
-        </details>
-        <hr />
-      </div>
-      <div id="chart">
-        <div id="chart-config">
-          <label for="Model">Select Model:</label>
-          <select name="Model" id="model"></select>
-          <label for="Epitope">Select Epitope:</label>
-          <select name="Epitope" id="epitope"></select>
-          <label for="Metric">Select Summary Metric:</label>
-          <select name="Metric" id="metric"></select>
-          <label for="Floor">Floor:</label>
-          <input type="checkbox" checked="True" name="Floor" id="floor" />
         </div>
       </div>
-      <div id="viewport"></div>
-      <input type="file" id="json-file" accept=".json" />
-      <details>
-        <summary>Protein Config</summary>
-        <div id="protein-config">
-          <label for="ProteinRepr">Protein Representation:</label>
-          <select name="ProteinRepr" id="proteinRepr"></select>
-          <label for="SelectionRepr">Selection Representation:</label>
-          <select name="SelectionRepr" id="selectionRepr"></select>
-          <label for="BackgroundRepr">Background Representation:</label>
-          <select name="BackgroundRepr" id="backgroundRepr"></select>
-          <label for="proteinColor">Protein Color:</label>
-          <input type="color" value="#D3D3D3" id="proteinColor" />
-          <label for="backgroundColor">Background Color:</label>
-          <input type="color" value="#D3D3D3" id="backgroundColor" />
+      <!-- Sidebar contains plot configuration options -->
+      <div class="sidebar" , id="sidebar">
+        <!-- Menu Title -->
+        <div class="header">
+          <div class="icon">
+            <i class="bx bx-layer"></i>
+          </div>
+          <span class="title">Configuration</span>
         </div>
-        <!-- Download Button for protein structure -->
-        <button id="downloadProtein">Download Protein Image</button>
-      </details>
+        <!-- Upload Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-upload"></i>
+            </div>
+            <span class="title">Upload Data</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <input type="file" id="json-file" accept=".json" />
+            </div>
+          </div>
+        </div>
+        <!-- Chart Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-scatter-chart"></i>
+            </div>
+            <span class="title">Chart Options</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <label for="Model">Model</label>
+              <select name="Model" id="model"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="Epitope">Epitope</label>
+              <select name="Epitope" id="epitope"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="Metric">Metric</label>
+              <select name="Metric" id="metric"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="Floor"
+                >Floor
+                <input type="checkbox" checked="True" name="Floor" id="floor" />
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Protein Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bxs-virus"></i>
+            </div>
+            <span class="title">Protien Options</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <label for="ProteinRepr">Protein Representation</label>
+              <select name="ProteinRepr" id="proteinRepr"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="SelectionRepr">Selection Representation</label>
+              <select name="SelectionRepr" id="selectionRepr"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="BackgroundRepr">Background Representation</label>
+              <select name="BackgroundRepr" id="backgroundRepr"></select>
+            </div>
+            <div class="accordion-option color">
+              <label for="proteinColor">Protein Color </label>
+              <input type="color" value="#D3D3D3" id="proteinColor" />
+            </div>
+            <div class="accordion-option color">
+              <label for="backgroundColor">Background Color </label>
+              <input type="color" value="#D3D3D3" id="backgroundColor" />
+            </div>
+          </div>
+        </div>
+        <!-- Filter Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-slider-alt"></i>
+            </div>
+            <span class="title">Filter Sites</span>
+          </button>
+          <div class="accordion-content"></div>
+        </div>
+        <!-- Download Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-download"></i>
+            </div>
+            <span class="title">Download Session</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <button id="downloadProtein">Download Protein Image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Main container with plot and protein content -->
+      <div class="main" id="main">
+        <!-- Chart contains the main D3 chart -->
+        <div class="chart" id="chart"></div>
+        <!-- Protein contains the protein(s) -->
+        <div class="protein" id="viewport"></div>
+      </div>
     </div>
     
   </body>
