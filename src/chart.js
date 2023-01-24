@@ -23,8 +23,8 @@ export class Chart {
       height: 400,
       scaling: {
         top: 0.025,
-        left: 0.04,
-        bottom: 0.1,
+        left: 0.06,
+        bottom: 0.12,
         right: 0.06,
         innerTop: 0.05,
         innerRight: 0.08,
@@ -213,7 +213,7 @@ export class Chart {
       .append("text")
       .attr("class", "axis-label")
       .attr("x", vis.bounds.focus.width / 2)
-      .attr("y", 30)
+      .attr("y", 40)
       .attr("fill", "black")
       .attr("font-size", "16px")
       .attr("text-anchor", "middle")
@@ -230,7 +230,7 @@ export class Chart {
       )
       .attr("transform", "rotate(-90)")
       .attr("x", -(vis.bounds.focus.height / 2))
-      .attr("y", -30)
+      .attr("y", -40)
       .attr("fill", "black")
       .attr("font-size", "16px")
       .attr("text-anchor", "middle");

@@ -55,13 +55,6 @@ nav a {
   text-decoration: none;
 }
 
-nav .logo {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 1em;
-  font-weight: bold;
-  color: rgba(0, 0, 0, 0.75);
-}
-
 nav .help {
   color:  rgba(0, 0, 0, 0.5);
   cursor: pointer;
@@ -148,14 +141,22 @@ nav .sidebar-toggle:hover {
 }
 
 .sidebar .header {
-  display: flex;
-  align-items: center;
   margin-bottom: 2.5rem;
   height: var(--header-height);
   font-size: 1.25rem;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.75);
 
+}
+
+.sidebar .header .logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1em;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+  padding-left: 52px;
+  padding-right: 52px;
+  white-space: nowrap;
 }
 
 .sidebar .accordion {
@@ -228,6 +229,15 @@ nav .sidebar-toggle:hover {
   transition: 0.5s;
 }
 
+@media (min-width: 1400px) {
+  .body-pad {
+    padding: 0 6em 0 calc(var(--nav-icon-width) + 6em) !important;
+  }
+  .main {
+    padding: 0 6em 0 calc(var(--nav-width) + 6em);
+  }
+}
+
 .chart {  
   max-width: 1080px; 
   min-width: 750px;
@@ -240,6 +250,20 @@ nav .sidebar-toggle:hover {
 
 #viewport {
   height: 500px;
+}
+
+@media (max-width: 500px) {
+  .chart {  
+    min-width: 300px;
+  }
+  
+  .protein {
+    min-width: 300px;
+  }
+  
+  #viewport {
+    height: 400px;
+  }
 }
 
 .tooltip {
@@ -256,6 +280,7 @@ nav .sidebar-toggle:hover {
   backdrop-filter: blur(4px);
   background: rgba(250,240,255,0.2);
   backdrop-filter: blur(7px);
+  z-index: var(--z-fixed);
 }
 
 .axis {
@@ -263,4 +288,10 @@ nav .sidebar-toggle:hover {
   -moz-user-select: none;    
   -ms-user-select: none;      
   user-select: none;
+  font-size: .9rem;
+}
+
+.axis-label {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
