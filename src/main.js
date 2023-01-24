@@ -270,26 +270,56 @@ closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
 
 // Accordian UI
-const accordionBtns = document.querySelectorAll(".accordion");
+const accordionBtns = document.querySelectorAll(".accordion"),
+  sidebar = document.getElementById("sidebar"),
+  toggle = document.getElementById("sidebar-toggle"),
+  headerpd = document.getElementById("header"),
+  mainpd = document.getElementById("main");
 
 accordionBtns.forEach((accordion) => {
   accordion.onclick = function () {
-    this.classList.toggle("is-open");
-    let content = this.nextElementSibling;
+    // Check if the sidebar has a class of closed
+    if (sidebar.classList.contains("sidebar--collapsed")) {
+      // change sidebar state
+      sidebar.classList.toggle("sidebar--collapsed");
+      // change icon state
+      toggle.classList.toggle("bx-x");
+      // change header padding state
+      headerpd.classList.toggle("body-pad");
+      // change main padding state
+      mainpd.classList.toggle("body-pad");
+      // trigger resize event
+      setTimeout(() => {
+        window.dispatchEvent(new Event("resize"));
+        this.classList.toggle("is-open");
+        let content = this.nextElementSibling;
 
-    if (content.style.maxHeight) {
-      //this is if the accordion is open
-      content.style.maxHeight = null;
+        if (content.style.maxHeight) {
+          //this is if the accordion is open
+          content.style.maxHeight = null;
+        } else {
+          //if the accordion is currently closed
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      }, 500);
     } else {
-      //if the accordion is currently closed
-      content.style.maxHeight = content.scrollHeight + "px";
+      this.classList.toggle("is-open");
+      let content = this.nextElementSibling;
+
+      if (content.style.maxHeight) {
+        //this is if the accordion is open
+        content.style.maxHeight = null;
+      } else {
+        //if the accordion is currently closed
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
     }
   };
 });
 
 // Sidebar UI
 document.addEventListener("DOMContentLoaded", function (event) {
-  const showNavbar = (toggleId, navId) => {
+  const hideNavbar = (toggleId, navId) => {
     const toggle = document.getElementById(toggleId),
       nav = document.getElementById(navId),
       headerpd = document.getElementById("header"),
@@ -306,11 +336,25 @@ document.addEventListener("DOMContentLoaded", function (event) {
         headerpd.classList.toggle("body-pad");
         // add padding to main
         mainpd.classList.toggle("body-pad");
+
+        // Trigger the resize event
+        // Set a timeout to make sure the event is triggered after the animation
+        setTimeout(() => {
+          window.dispatchEvent(new Event("resize"));
+        }, 500);
+
+        // Finally, close the accoridon menu
+        const accordions = document.querySelectorAll(".accordion");
+        accordions.forEach((accordion) => {
+          accordion.classList.remove("is-open");
+          let content = accordion.nextElementSibling;
+          content.style.maxHeight = null;
+        });
       });
     }
   };
 
-  showNavbar("sidebar-toggle", "sidebar");
+  hideNavbar("sidebar-toggle", "sidebar");
 
   // Your code to run since DOM is loaded and ready
 });

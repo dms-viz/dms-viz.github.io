@@ -6,7 +6,7 @@
   --primary-font: Open Sans, sans-serif;
   --normal-font-size: 1rem;
   --header-height: 2em;
-  --nav-width: 270px;
+  --nav-width: 250px;
   --nav-icon-width: 50px;
   --z-fixed: 100;
 }
@@ -32,7 +32,7 @@ header {
   height: var(--header-height);
   background: white;
   z-index: var(--z-fixed);
-  padding: 0 2rem 0 calc(var(--nav-icon-width) + 2rem);
+  padding: 0 3em 0 calc(var(--nav-width) + 3em);
   transition: 0.5s;
 
 
@@ -99,14 +99,14 @@ nav .sidebar-toggle:hover {
   opacity: 0;
   visibility: hidden;
   transform: scale(1.1);
-  z-index: var(--z-fixed);
+  z-index: calc(var(--z-fixed) + 1);
   transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
 
 .modal-content {
   position: absolute;
   top: 50%;
-  left: calc(50% + var(--nav-width));
+  left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
   padding: 1rem 1.5rem;
@@ -216,14 +216,15 @@ nav .sidebar-toggle:hover {
 
 .sidebar--collapsed {
   width: var(--nav-icon-width);
+  overflow-x: hidden;
 }
 
 .body-pad {
-  padding: 0 3rem 0 calc(var(--nav-width) + 3rem);
+  padding: 0 3em 0 calc(var(--nav-icon-width) + 3em) !important;
 }
 
 .main {
-  margin: 0 3em 0 calc(var(--nav-icon-width) + 3em);
+  padding: 0 3em 0 calc(var(--nav-width) + 3em);
   transition: 0.5s;
 }
 
