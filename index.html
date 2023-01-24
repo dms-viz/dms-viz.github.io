@@ -10,6 +10,7 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <!-- Body Contents -->
   <body>
@@ -21,9 +22,7 @@
           <button class="trigger">
             <i class="bx bx-help-circle help"></i>
           </button>
-          <h1 class="logo">
-            <a href="https://github.com/dms-viz/dms-viz.github.io">dms-viz</a>
-          </h1>
+          <h1 class="logo">dms-viz</h1>
         </nav>
       </header>
       <!-- Modal with Instructions -->
@@ -45,26 +44,104 @@
       </div>
       <!-- Sidebar contains plot configuration options -->
       <div class="sidebar">
-        <input type="file" id="json-file" accept=".json" />
-        <label for="Model">Select Model:</label>
-        <select name="Model" id="model"></select>
-        <label for="Epitope">Select Epitope:</label>
-        <select name="Epitope" id="epitope"></select>
-        <label for="Metric">Select Summary Metric:</label>
-        <select name="Metric" id="metric"></select>
-        <label for="Floor">Floor:</label>
-        <input type="checkbox" checked="True" name="Floor" id="floor" />
-        <label for="ProteinRepr">Protein Representation:</label>
-        <select name="ProteinRepr" id="proteinRepr"></select>
-        <label for="SelectionRepr">Selection Representation:</label>
-        <select name="SelectionRepr" id="selectionRepr"></select>
-        <label for="BackgroundRepr">Background Representation:</label>
-        <select name="BackgroundRepr" id="backgroundRepr"></select>
-        <label for="proteinColor">Protein Color:</label>
-        <input type="color" value="#D3D3D3" id="proteinColor" />
-        <label for="backgroundColor">Background Color:</label>
-        <input type="color" value="#D3D3D3" id="backgroundColor" />
-        <button id="downloadProtein">Download Protein Image</button>
+        <!-- Upload Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-upload"></i>
+            </div>
+            <span class="title">Upload Data</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <input type="file" id="json-file" accept=".json" />
+            </div>
+          </div>
+        </div>
+        <!-- Chart Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-scatter-chart"></i>
+            </div>
+            <span class="title">Chart Options</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <label for="Model">Model</label>
+              <select name="Model" id="model"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="Epitope">Epitope</label>
+              <select name="Epitope" id="epitope"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="Metric">Metric</label>
+              <select name="Metric" id="metric"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="Floor"
+                >Floor
+                <input type="checkbox" checked="True" name="Floor" id="floor" />
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Protein Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bxs-virus"></i>
+            </div>
+            <span class="title">Protien Options</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <label for="ProteinRepr">Protein Representation</label>
+              <select name="ProteinRepr" id="proteinRepr"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="SelectionRepr">Selection Representation</label>
+              <select name="SelectionRepr" id="selectionRepr"></select>
+            </div>
+            <div class="accordion-option">
+              <label for="BackgroundRepr">Background Representation</label>
+              <select name="BackgroundRepr" id="backgroundRepr"></select>
+            </div>
+            <div class="accordion-option color">
+              <label for="proteinColor">Protein Color </label>
+              <input type="color" value="#D3D3D3" id="proteinColor" />
+            </div>
+            <div class="accordion-option color">
+              <label for="backgroundColor">Background Color </label>
+              <input type="color" value="#D3D3D3" id="backgroundColor" />
+            </div>
+          </div>
+        </div>
+        <!-- Filter Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-slider-alt"></i>
+            </div>
+            <span class="title">Filter Sites</span>
+          </button>
+          <div class="accordion-content"></div>
+        </div>
+        <!-- Download Options -->
+        <div class="submenu">
+          <button class="accordion">
+            <div class="icon">
+              <i class="bx bx-download"></i>
+            </div>
+            <span class="title">Download Session</span>
+          </button>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <button id="downloadProtein">Download Protein Image</button>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Chart contains the main D3 chart -->
       <div class="chart" id="chart"></div>

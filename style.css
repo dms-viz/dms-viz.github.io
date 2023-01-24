@@ -2,14 +2,19 @@
 @import url('https://fonts.googleapis.com/css?family=Press+Start+2P');
 
 :root {
-  --primary-bg-color:#8b7fba;
-  --light-bg-color: #afa5d9;
-  --white-color: #f7f6fb;
+  --primary-bg-color: rgba(240, 242, 246);
   --primary-font: Open Sans, sans-serif;
   --normal-font-size: 1rem;
   --header-height: 2em;
-  --nav-width: 200px;
+  --nav-width: 270px;
+  --nav-icon-width: 50px;
   --z-fixed: 100;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
@@ -18,13 +23,14 @@ body {
   padding: 0;
 }
 
+/* Header navigation bar */
 header {
   position: fixed; 
   top: 0; 
   left: 0;
   width: 100%; 
   height: var(--header-height);
-  background: var(--white-color);
+  background: var(--primary-bg-color);
   z-index: var(--z-fixed);
 }
 
@@ -44,12 +50,11 @@ nav .logo {
   font-family: 'Press Start 2P', monospace;
   font-size: 1em;
   font-weight: bold;
-  color: var(--primary-bg-color);
-  /* padding: 0 0.5em 0 0.5em; */
+  color: rgba(0, 0, 0, 0.75);
 }
 
 nav .help {
-  color: var(--primary-bg-color);
+  color:  rgba(0, 0, 0, 0.5);;
   cursor: pointer;
 }
 
@@ -64,6 +69,7 @@ nav .trigger {
   font-size: 1.25em;
 }
 
+/* Instruction Modal */
 .modal {
   position: fixed;
   left: 0;
@@ -110,18 +116,81 @@ nav .trigger {
   transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }
 
+/* Sidebar menu */
 .sidebar {
   position: fixed;
   top: 0;
-  width: 200px;
+  width: var(--nav-width);
   height: 100vh;
-  background-color: var(--light-bg-color);
-  padding: 1rem;
+  background-color: var(--primary-bg-color);
+  /* padding: 1rem; */
   z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
+  /* display: flex;
+  flex-direction: column; */
+  /* gap: 1em; */
   overflow: scroll;
+}
+
+.sidebar .accordion {
+  width:100%;
+  display: flex;
+  align-items: center;
+  border: none;
+  outline:none;
+  background: none;
+  color: rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.sidebar .accordion:hover {
+  background-color: #dddddd;
+}
+
+.sidebar .accordion-content {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  gap: 0.5em;
+  transition: max-height 0.2s ease-in-out;
+}
+
+.sidebar .accordion-content label {
+  font-size: .8rem;
+}
+
+.sidebar .accordion-content select {
+  width: 100%;
+  height: 2em;
+}
+
+.sidebar .color{
+  display: flex;
+  justify-content: space-between;
+
+}
+.sidebar .accordion-option {
+  padding-bottom: 10px;
+}
+
+.sidebar .icon {
+  width: var(--nav-icon-width);
+  height: var(--nav-icon-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.75rem;
+}
+
+.sidebar--collapsed {
+  width: var(--nav-icon-width);
+}
+
+.sidebar--collapsed .title {
+  display: none;
 }
 
 .chart {  
