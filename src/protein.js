@@ -8,7 +8,7 @@ export class Protein {
    * @param {Object}
    * @param {Object}
    */
-  constructor(_data, _config) {
+  constructor(_config, _data) {
     this.config = _config;
     this.config = {
       parentElement: _config.parentElement,

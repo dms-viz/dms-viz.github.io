@@ -1,168 +1,14 @@
 import "../style.css";
+import "./ui.js";
 import * as d3 from "d3";
 import * as NGL from "ngl";
-import { Chart } from "./chart.js";
-import { Protein } from "./protein.js";
+import { Tool } from "./tool.js";
 import exampleData from "../data/hiv.json";
 
-// INITIALIZE THE EXAMPLE DATA //
+// Initialize the tool and it's state
+const State = new Tool(exampleData);
 
-// Call the example data polyclonal
-let polyclonal = exampleData;
-
-// Format the JSON for each antibody model
-for (const selection in polyclonal) {
-  // Get the map for reference sites to sequential sites
-  const siteMap = polyclonal[selection].sitemap;
-  polyclonal[selection].mut_escape_df = polyclonal[selection].mut_escape_df.map(
-    (e) => {
-      return {
-        ...e,
-        site: siteMap[e.site].sequential_site,
-        site_reference: e.site,
-        site_protein: siteMap[e.site].protein_site,
-        site_chain: siteMap[e.site].chains,
-        escape: e.escape_mean,
-      };
-    }
-  );
-}
-
-// INITIALIZE DEFAULTS //
-
-const models = Object.keys(polyclonal);
-let model = models[0];
-let epitope = polyclonal[model].epitopes[0];
-let metric = "sum";
-let floor = true;
-let pdbID = polyclonal[model].pdb;
-
-// UPDATE SELECT OPTIONS //
-
-function updateSelection(selection, options) {
-  selection
-    .selectAll("option")
-    .data(options)
-    .join("option")
-    .attr("value", (d) => d)
-    .text((d) => d);
-}
-// Set the chart config selection boxes
-updateSelection(d3.select("#model"), models);
-updateSelection(d3.select("#metric"), ["sum", "mean", "max", "min"]);
-updateSelection(d3.select("#epitope"), polyclonal[model].epitopes);
-// Set the protein config selection boxes
-updateSelection(d3.select("#proteinRepr"), ["cartoon", "rope", "ball+stick"]);
-updateSelection(d3.select("#selectionRepr"), ["spacefill", "surface"]);
-updateSelection(d3.select("#backgroundRepr"), [
-  "rope",
-  "cartoon",
-  "ball+stick",
-]);
-
-// INITIALIZE THE PLOT //
-
-const chart = new Chart(
-  {
-    model: model,
-    epitope: epitope,
-    metric: metric,
-    floor: floor,
-    parentElement: "#chart",
-  },
-  polyclonal
-);
-
-// Load the protein structure from a URL
-const protein = new Protein(polyclonal, {
-  parentElement: "viewport",
-  model: model,
-  epitope: epitope,
-  metric: metric,
-  floor: floor,
-  pdbID: pdbID,
-  dispatch: chart.dispatch,
-});
-
-// DOM SELECTIONS AND MANIPULATIONS //
-
-d3.select("#model").on("change", function () {
-  chart.config.model = d3.select(this).property("value");
-  console.log(polyclonal);
-  chart.config.epitope = polyclonal[chart.config.model].epitopes[0];
-  // Update the epitope selection
-  updateSelection(
-    d3.select("#epitope"),
-    polyclonal[chart.config.model].epitopes
-  );
-  chart.updateVis();
-  protein.config.model = chart.config.model;
-  protein.config.epitope = polyclonal[chart.config.model].epitopes[0];
-  // Clears the current structure and reloads it
-  protein.config.pdbID = polyclonal[chart.config.model].pdb;
-  protein.clear();
-});
-
-d3.select("#epitope").on("change", function () {
-  chart.config.epitope = parseInt(d3.select(this).property("value"));
-  chart.updateVis();
-  protein.config.epitope = chart.config.epitope;
-  protein.makeColorScheme();
-});
-
-d3.select("#metric").on("change", function () {
-  chart.config.metric = d3.select(this).property("value");
-  chart.updateVis();
-  protein.config.metric = chart.config.metric;
-  protein.makeColorScheme();
-});
-
-d3.select("#floor").on("change", function () {
-  chart.config.floor = d3.select(this).property("checked");
-  chart.updateVis();
-  protein.config.floor = chart.config.floor;
-  protein.makeColorScheme();
-});
-
-// Update the protein representation
-d3.select("#proteinRepr").on("change", function () {
-  protein.config.proteinRepresentation = d3.select(this).property("value");
-  protein.clear();
-});
-
-d3.select("#selectionRepr").on("change", function () {
-  protein.config.selectionRepresentation = d3.select(this).property("value");
-  protein.clear();
-});
-
-d3.select("#backgroundRepr").on("change", function () {
-  protein.config.backgroundRepresentation = d3.select(this).property("value");
-  protein.clear();
-});
-
-d3.select("#proteinColor").on("change", function () {
-  protein.config.proteinColor = d3.select(this).property("value");
-  protein.clear();
-});
-
-d3.select("#backgroundColor").on("change", function () {
-  protein.config.backgroundColor = d3.select(this).property("value");
-  protein.clear();
-});
-
-d3.select("#downloadProtein").on("click", function () {
-  protein.stage
-    .makeImage({
-      factor: 4,
-      antialias: true,
-      trim: false,
-      transparent: false,
-    })
-    .then(function (blob) {
-      NGL.download(blob, "protein_plot.png");
-    });
-});
-
+// Set up the event listener for the JSON file upload
 d3.select("#json-file").on("change", function () {
   // Get the file input element
   const input = document.getElementById("json-file");
@@ -184,177 +30,64 @@ d3.select("#json-file").on("change", function () {
   // Use the FileReader API to read the contents of the JSON file
   const reader = new FileReader();
   reader.onload = function () {
-    // Parse the JSON file
-    const json = JSON.parse(reader.result);
-
-    // Do something with the JSON data (e.g. display it on the page)
-    console.log(json);
-
-    // UPDATE THE MODEL BASED ON NEW DATA //
-    polyclonal = json;
-
-    // Format the JSON for each antibody model
-    for (const selection in polyclonal) {
-      // Get the map for reference sites to sequential sites
-      const siteMap = polyclonal[selection].sitemap;
-      console.log(siteMap);
-      polyclonal[selection].mut_escape_df = polyclonal[
-        selection
-      ].mut_escape_df.map((e) => {
-        return {
-          ...e,
-          site: siteMap[e.site].sequential_site,
-          site_reference: e.site,
-          site_protein: siteMap[e.site].protein_site,
-          site_chain: siteMap[e.site].chains,
-          escape: e.escape_mean,
-        };
-      });
-    }
-
-    const models = Object.keys(polyclonal);
-    let model = models[0];
-    let epitope = polyclonal[model].epitopes[0];
-    let metric = "sum";
-    let floor = true;
-    let pdbID = polyclonal[model].pdb;
-
-    // Set the chart config selection boxes
-    updateSelection(d3.select("#model"), models);
-    updateSelection(d3.select("#epitope"), polyclonal[model].epitopes);
-
-    // Update the chart
-    chart.config.model = model;
-    chart.config.epitope = epitope;
-    chart.config.metric = metric;
-    chart.config.floor = floor;
-    chart.data = polyclonal;
-    chart.updateVis();
-
-    // Update the protein
-    protein.config.model = model;
-    protein.config.epitope = epitope;
-    protein.config.metric = metric;
-    protein.config.floor = floor;
-    protein.config.pdbID = pdbID;
-    protein.data = polyclonal;
-    protein.clear();
+    // Parse the JSON file into an object and write it to data
+    const data = JSON.parse(reader.result);
+    // Update the tool's state
+    State.data = data;
+    State.initTool();
   };
   reader.readAsText(file);
 });
 
-// Add event listener to respond to window resizing
+// Set up the event listeners for the chart options
+d3.select("#model").on("change", function () {
+  State.model = d3.select(this).property("value");
+  State.updateModel();
+});
+d3.select("#epitope").on("change", function () {
+  State.updateData(this);
+});
+d3.select("#metric").on("change", function () {
+  State.updateData(this);
+});
+d3.select("#floor").on("change", function () {
+  State.updateData(this);
+});
+
+// Set up the event listeners for the protein options
+d3.select("#proteinRepresentation").on("change", function () {
+  State.updateProtein(this);
+});
+d3.select("#selectionRepresentation").on("change", function () {
+  State.updateProtein(this);
+});
+d3.select("#backgroundRepresentation").on("change", function () {
+  State.updateProtein(this);
+});
+d3.select("#proteinColor").on("change", function () {
+  State.updateProtein(this);
+});
+d3.select("#backgroundColor").on("change", function () {
+  State.updateProtein(this);
+});
+
+// Set up the event listeners for the download buttons
+d3.select("#downloadProtein").on("click", function () {
+  State.protein.stage
+    .makeImage({
+      factor: 4,
+      antialias: true,
+      trim: false,
+      transparent: false,
+    })
+    .then(function (blob) {
+      NGL.download(blob, "protein_plot.png");
+    });
+});
+
+// Set up the event listener to respond to window resizing
 window.addEventListener("resize", function () {
   console.log("Calling resize");
-  chart.resize();
-  protein.stage.handleResize();
-});
-
-// Modal UI
-const modal = document.querySelector(".modal");
-const trigger = document.querySelector(".trigger");
-const closeButton = document.querySelector(".close-button");
-
-function toggleModal() {
-  modal.classList.toggle("show-modal");
-}
-
-function windowOnClick(event) {
-  if (event.target === modal) {
-    toggleModal();
-  }
-}
-
-trigger.addEventListener("click", toggleModal);
-closeButton.addEventListener("click", toggleModal);
-window.addEventListener("click", windowOnClick);
-
-// Accordian UI
-const accordionBtns = document.querySelectorAll(".accordion"),
-  sidebar = document.getElementById("sidebar"),
-  toggle = document.getElementById("sidebar-toggle"),
-  headerpd = document.getElementById("header"),
-  mainpd = document.getElementById("main");
-
-accordionBtns.forEach((accordion) => {
-  accordion.onclick = function () {
-    // Check if the sidebar has a class of closed
-    if (sidebar.classList.contains("sidebar--collapsed")) {
-      // change sidebar state
-      sidebar.classList.toggle("sidebar--collapsed");
-      // change icon state
-      toggle.classList.toggle("bx-x");
-      // change header padding state
-      headerpd.classList.toggle("body-pad");
-      // change main padding state
-      mainpd.classList.toggle("body-pad");
-      // trigger resize event
-      setTimeout(() => {
-        window.dispatchEvent(new Event("resize"));
-        this.classList.toggle("is-open");
-        let content = this.nextElementSibling;
-
-        if (content.style.maxHeight) {
-          //this is if the accordion is open
-          content.style.maxHeight = null;
-        } else {
-          //if the accordion is currently closed
-          content.style.maxHeight = content.scrollHeight + "px";
-        }
-      }, 500);
-    } else {
-      this.classList.toggle("is-open");
-      let content = this.nextElementSibling;
-
-      if (content.style.maxHeight) {
-        //this is if the accordion is open
-        content.style.maxHeight = null;
-      } else {
-        //if the accordion is currently closed
-        content.style.maxHeight = content.scrollHeight + "px";
-      }
-    }
-  };
-});
-
-// Sidebar UI
-document.addEventListener("DOMContentLoaded", function (event) {
-  const hideNavbar = (toggleId, navId) => {
-    const toggle = document.getElementById(toggleId),
-      nav = document.getElementById(navId),
-      headerpd = document.getElementById("header"),
-      mainpd = document.getElementById("main");
-
-    // Validate that all variables exist
-    if (toggle && nav && headerpd && mainpd) {
-      toggle.addEventListener("click", () => {
-        // show navbar
-        nav.classList.toggle("sidebar--collapsed");
-        // change icon
-        toggle.classList.toggle("bx-x");
-        // add padding to header
-        headerpd.classList.toggle("body-pad");
-        // add padding to main
-        mainpd.classList.toggle("body-pad");
-
-        // Trigger the resize event
-        // Set a timeout to make sure the event is triggered after the animation
-        setTimeout(() => {
-          window.dispatchEvent(new Event("resize"));
-        }, 500);
-
-        // Finally, close the accoridon menu
-        const accordions = document.querySelectorAll(".accordion");
-        accordions.forEach((accordion) => {
-          accordion.classList.remove("is-open");
-          let content = accordion.nextElementSibling;
-          content.style.maxHeight = null;
-        });
-      });
-    }
-  };
-
-  hideNavbar("sidebar-toggle", "sidebar");
-
-  // Your code to run since DOM is loaded and ready
+  State.chart.resize();
+  State.protein.stage.handleResize();
 });
