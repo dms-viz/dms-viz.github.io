@@ -195,6 +195,9 @@ nav .sidebar-toggle:hover {
   width: 100%;
   height: 2em;
 }
+.sidebar .accordion-content input[type="range"] {
+  width: 100%;
+}
 
 .sidebar .color{
   display: flex;
@@ -203,6 +206,13 @@ nav .sidebar-toggle:hover {
 }
 .sidebar .accordion-option {
   padding-bottom: 10px;
+}
+
+.sidebar .accordion-option .output {
+  float: right;
+  font-size: .75rem;
+  font-family: monospace;
+  color: #963c10;
 }
 
 .sidebar .icon {

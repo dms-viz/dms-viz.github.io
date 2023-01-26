@@ -41,8 +41,7 @@ d3.select("#json-file").on("change", function () {
 
 // Set up the event listeners for the chart options
 d3.select("#model").on("change", function () {
-  State.model = d3.select(this).property("value");
-  State.updateModel();
+  State.updateModel(this);
 });
 d3.select("#epitope").on("change", function () {
   State.updateData(this);
@@ -69,6 +68,15 @@ d3.select("#proteinColor").on("change", function () {
 });
 d3.select("#backgroundColor").on("change", function () {
   State.updateProtein(this);
+});
+
+// TESTING event listeners for the range filters
+const rangeInput = document.getElementById("times_seen");
+const rangeOutput = document.getElementById("times_seen-output");
+rangeInput.addEventListener("input", function () {
+  rangeOutput.textContent = this.value;
+  // Filter the chart data based on the range input
+  State.filterData(this);
 });
 
 // Set up the event listeners for the download buttons

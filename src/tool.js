@@ -31,13 +31,14 @@ export class Tool {
     tool.floor = true;
     tool.pdb = tool.data[tool.model].pdb;
 
-    // Set up the selection menus
+    // Set up the chart selection menus
     tool._updateSelection(d3.select("#model"), tool.models);
     tool._updateSelection(
       d3.select("#epitope"),
       tool.data[tool.model].epitopes
     );
     tool._updateSelection(d3.select("#metric"), ["sum", "mean", "max", "min"]);
+    // Set up the protein selection menus
     tool._updateSelection(d3.select("#proteinRepresentation"), [
       "cartoon",
       "rope",
@@ -52,6 +53,14 @@ export class Tool {
       "cartoon",
       "ball+stick",
     ]);
+
+    // Testing the filters and update the sliders
+    // Get the min and max values for times seen from mut_escape_df
+    const timesSeen = d3.extent(
+      tool.data[tool.model].mut_escape_df,
+      (d) => d.times_seen
+    );
+    tool._updateSlider(d3.select("#times_seen"), ...timesSeen, 0, 1);
 
     // Set up the initial chart
     document.getElementById("chart").innerHTML = "";
@@ -85,9 +94,10 @@ export class Tool {
   /**
    * Handle updates to the model selection
    */
-  updateModel() {
+  updateModel(node) {
     let tool = this;
     // Update the model selection in the chart and protein
+    tool.model = d3.select(node).property("value");
     tool.chart.config.model = tool.model;
     tool.protein.config.model = tool.model;
     // Update the epitope selection because models have different epitopes
@@ -127,6 +137,24 @@ export class Tool {
     // Update the chart and protein
     tool.chart.updateVis();
     tool.protein.makeColorScheme();
+  }
+  /**
+   * Filter the data based on the range of times seen
+   */
+  filterData(node) {
+    let tool = this;
+    // Get the value of the slider
+    const value = parseInt(d3.select(node).property("value"));
+    const filterData = tool.data[tool.model].mut_escape_df.filter(
+      (d) => d.times_seen >= value
+    );
+
+    console.log(tool.data[tool.model].mut_escape_df.length, filterData.length);
+
+    tool.chart.data[tool.model].mut_escape_df = filterData;
+
+    // Update the chart
+    tool.chart.updateVis();
   }
   /**
    * Handle updates to the protein representation
@@ -185,5 +213,15 @@ export class Tool {
       .join("option")
       .attr("value", (d) => d)
       .text((d) => d);
+  }
+  /**
+   * Update the slider
+   */
+  _updateSlider(selection, min, max, start, step) {
+    selection
+      .attr("min", min)
+      .attr("max", max)
+      .attr("value", start)
+      .attr("step", step);
   }
 }

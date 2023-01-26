@@ -32,7 +32,8 @@ export class Chart {
         focusHeatmapRatio: 0.03,
       },
     };
-    this.data = _data;
+    // Data is a deep copy of the data
+    this.data = JSON.parse(JSON.stringify(_data));
     this.dispatch = d3.dispatch("updateSites");
 
     this.initVis();
@@ -415,7 +416,6 @@ export class Chart {
       .x((d) => vis.xScaleContext(vis.xAccessorContext(d)))
       .y0(vis.yScaleContext(0))
       .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
-
     vis.focusLine = d3
       .line()
       .curve(d3.curveLinear)
@@ -425,7 +425,6 @@ export class Chart {
     // DEBUG MESSAGE
     console.log("Finished updating");
     console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
-
     // RENDER
     vis.renderVis();
   }
@@ -832,6 +831,10 @@ export class Chart {
     // DEBUG MESSAGE
     console.log("Exiting updateHeatmap()");
   }
+  /**
+   * Filter sites on the focus plot and amino acids on the heatmap
+   */
+  filterSites() {}
   /**
    * React to the window being resized
    */
