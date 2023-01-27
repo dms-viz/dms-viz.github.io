@@ -440,17 +440,27 @@ export class Chart {
     // Draw the CONTEXT plot
     vis.contextPlot
       .selectAll(".context-area")
-      .data([vis.mutEscapeSummary], (d) => d.site)
+      .data(vis.mutEscapeSummary, (d) => d.site)
       .join("path")
       .attr("class", "context-area")
-      .attr("d", vis.contextArea)
-      .attr("fill", this.positiveColor);
+      // .attr("d", vis.contextArea)
+      .attr("d", (d, i) =>
+        i < vis.mutEscapeSummary.length - 1 &&
+        d.site + 1 === vis.mutEscapeSummary[i + 1].site
+          ? vis.contextArea([d, vis.mutEscapeSummary[i + 1]])
+          : null
+      )
+      .attr("fill", vis.positiveColor);
 
-    // Draw the FOCUS plot
-    vis.focusPlot
+    // Testing another approach
+    vis.lines = vis.focusPlot
       .selectAll(".focus-line")
-      .data([vis.mutEscapeSummary], (d) => d.site)
-      .join("path")
+      .data(vis.mutEscapeSummary, (d) => d.site);
+
+    // create new elements for any new data points
+    vis.lines
+      .enter()
+      .append("path")
       .attr("class", "focus-line")
       .attr("clip-path", "url(#focusClipPath)")
       .attr("fill", "none")
@@ -458,8 +468,33 @@ export class Chart {
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
-      .attr("stroke", vis.positiveColor)
-      .attr("d", vis.focusLine(vis.mutEscapeSummary));
+      .attr("stroke", vis.positiveColor);
+
+    // update the existing elements with the new data
+    vis.lines.attr("d", (d, i) =>
+      i < vis.mutEscapeSummary.length - 1 &&
+      d.site + 1 === vis.mutEscapeSummary[i + 1].site
+        ? vis.focusLine([d, vis.mutEscapeSummary[i + 1]])
+        : null
+    );
+
+    // remove any elements that no longer have data
+    vis.lines.exit().remove();
+
+    // Draw the FOCUS plot
+    // vis.focusPlot
+    //   .selectAll(".focus-line")
+    //   .data([vis.mutEscapeSummary], (d) => d.site)
+    //   .join("path")
+    //   .attr("class", "focus-line")
+    //   .attr("clip-path", "url(#focusClipPath)")
+    //   .attr("fill", "none")
+    //   .attr("stroke-width", 1.5)
+    //   .attr("stroke-linecap", "round")
+    //   .attr("stroke-linejoin", "round")
+    //   .attr("stroke-opacity", 1)
+    //   .attr("stroke", vis.positiveColor)
+    //   .attr("d", vis.focusLine(vis.mutEscapeSummary));
 
     vis.focusPlot
       .selectAll("circle")
@@ -662,9 +697,37 @@ export class Chart {
     console.log("vis.xScaleFocus.domain():", vis.xScaleFocus.domain());
 
     // Redraw line and update x-axis labels in focus view
-    vis.focusPlot
+    // vis.focusPlot
+    //   .selectAll(".focus-line")
+    //   .attr("d", vis.focusLine(vis.mutEscapeSummary));
+    // Testing another approach
+    vis.lines = vis.focusPlot
       .selectAll(".focus-line")
-      .attr("d", vis.focusLine(vis.mutEscapeSummary));
+      .data(vis.mutEscapeSummary, (d) => d.site);
+
+    // create new elements for any new data points
+    vis.lines
+      .enter()
+      .append("path")
+      .attr("class", "focus-line")
+      .attr("clip-path", "url(#focusClipPath)")
+      .attr("fill", "none")
+      .attr("stroke-width", 1.5)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-opacity", 1)
+      .attr("stroke", vis.positiveColor);
+
+    // update the existing elements with the new data
+    vis.lines.attr("d", (d, i) =>
+      i < vis.mutEscapeSummary.length - 1 &&
+      d.site + 1 === vis.mutEscapeSummary[i + 1].site
+        ? vis.focusLine([d, vis.mutEscapeSummary[i + 1]])
+        : null
+    );
+
+    // remove any elements that no longer have data
+    vis.lines.exit().remove();
     vis.focusPlot
       .selectAll("circle")
       .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
