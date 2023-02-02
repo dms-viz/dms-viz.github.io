@@ -90,6 +90,8 @@ export class Tool {
       },
       tool.data
     );
+
+    tool.proteinLoaded = tool.protein.dispatch;
   }
   /**
    * Handle updates to the model selection
@@ -112,9 +114,14 @@ export class Tool {
       d3.select("#epitope"),
       tool.data[tool.model].epitopes
     );
-    // Update the chart and protein
+
     tool.chart.updateVis();
-    tool.protein.clear();
+
+    // Set a timeout to make sure the chart has been updated
+    // This prevents the odd loading issue with the protein on Chrome
+    setTimeout(() => {
+      tool.protein.clear();
+    }, 100);
   }
   /**
    * Handle updates within a single model
@@ -132,8 +139,6 @@ export class Tool {
     tool.chart.config[id] = value;
     tool.protein.config[id] = value;
 
-    console.log(id, value);
-
     // Update the chart and protein
     tool.chart.updateVis();
     tool.protein.makeColorScheme();
@@ -148,8 +153,6 @@ export class Tool {
     const filterData = tool.data[tool.model].mut_escape_df.filter(
       (d) => d.times_seen >= value
     );
-
-    console.log(tool.data[tool.model].mut_escape_df.length, filterData.length);
 
     tool.chart.data[tool.model].mut_escape_df = filterData;
 

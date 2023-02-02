@@ -27,6 +27,7 @@ export class Protein {
       backgroundColor: "#D3D3D3",
     };
     this.data = _data;
+    this.dispatch = d3.dispatch("proteinLoaded");
 
     // Initialize the stage object for the parent element
     this.stage = new NGL.Stage(this.config.parentElement, {
@@ -72,9 +73,6 @@ export class Protein {
       protein.backgroundChainSelection = "none";
     }
 
-    console.log(protein.dataChainSelection);
-    console.log(protein.backgroundChainSelection);
-
     // Load the structure from a URL
     protein.stage.loadFile(protein.pdbURL).then(function (comp) {
       // Add base protein representation
@@ -117,7 +115,6 @@ export class Protein {
    */
   clear() {
     let protein = this;
-
     // Clear the protein structure
     protein.stage.removeAllComponents();
     protein.load(protein.config.pdbID);
@@ -238,7 +235,6 @@ export class Protein {
 
     // Create a representation of the selected sites on the protein structure
     if (protein.currentSelectionSiteString !== undefined) {
-      console.log("selecting some new stuff");
       protein.stage.getRepresentationsByName("currentSelection").dispose();
       return protein.component
         .addRepresentation(protein.config.selectionRepresentation, {
