@@ -11,8 +11,8 @@
       rel="stylesheet"
     />
     
-    <script type="module" crossorigin src="/assets/index.3f9db07b.js"></script>
-    <link rel="stylesheet" href="/assets/index.92dcd4d3.css">
+    <script type="module" crossorigin src="/assets/index.2cee4b65.js"></script>
+    <link rel="stylesheet" href="/assets/index.79680606.css">
   </head>
   <!-- Body Contents -->
   <body>
@@ -104,20 +104,26 @@
             <div class="icon">
               <i class="bx bxs-virus"></i>
             </div>
-            <span class="title">Protien Options</span>
+            <span class="title">Protein Options</span>
           </button>
           <div class="accordion-content">
             <div class="accordion-option">
               <label for="ProteinRepr">Protein Representation</label>
-              <select name="ProteinRepr" id="proteinRepr"></select>
+              <select name="ProteinRepr" id="proteinRepresentation"></select>
             </div>
             <div class="accordion-option">
               <label for="SelectionRepr">Selection Representation</label>
-              <select name="SelectionRepr" id="selectionRepr"></select>
+              <select
+                name="SelectionRepr"
+                id="selectionRepresentation"
+              ></select>
             </div>
             <div class="accordion-option">
               <label for="BackgroundRepr">Background Representation</label>
-              <select name="BackgroundRepr" id="backgroundRepr"></select>
+              <select
+                name="BackgroundRepr"
+                id="backgroundRepresentation"
+              ></select>
             </div>
             <div class="accordion-option color">
               <label for="proteinColor">Protein Color </label>
@@ -137,7 +143,19 @@
             </div>
             <span class="title">Filter Sites</span>
           </button>
-          <div class="accordion-content"></div>
+          <div class="accordion-content">
+            <div class="accordion-option">
+              <!-- Range slider -->
+              <label for="times_seen" style="display: block">Times Seen</label>
+              <input id="times_seen" type="range" />
+              <span id="times_seen-output" class="time_seen output"></span>
+              <label for="func_effect" style="display: block"
+                >Functional Effect</label
+              >
+              <input id="func_effect" type="range" />
+              <span id="func_effect-output" class="func_effect output"></span>
+            </div>
+          </div>
         </div>
         <!-- Download Options -->
         <div class="submenu">
