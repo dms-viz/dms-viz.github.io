@@ -141,6 +141,8 @@ export class Tool {
       tool.data[tool.model].epitopes
     );
 
+    // Update the chart and deselect all sites
+    tool.chart.deselectSites();
     tool.chart.updateVis();
 
     // Set a timeout to make sure the chart has been updated
