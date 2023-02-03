@@ -207,6 +207,7 @@ export class Tool {
 
     // // Update the chart
     tool.chart.updateVis();
+    tool.protein.makeColorScheme();
   }
   /**
    * Handle updates to the protein representation
