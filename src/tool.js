@@ -69,24 +69,14 @@ export class Tool {
         [col]: [],
       };
       // Update the slider and set the text below the sliders
-      tool._updateSlider(d3.select(`#${col}`), ...colRange, colRange[0], 0.1);
+      tool._updateSlider(
+        d3.select(`#${col}`),
+        ...colRange,
+        colRange[0],
+        (colRange[1] - colRange[0]) / 100
+      );
       document.getElementById(`${col}-output`).textContent = colRange[0];
     });
-
-    // // Get the min and max values for times seen from mut_escape_df
-    // const timesSeen = d3.extent(
-    //   tool.data[tool.model].mut_escape_df,
-    //   (d) => d.times_seen
-    // );
-
-    // // Make an object that holds the filters and a corresponding mask of indices
-    // tool.filters = {
-    //   times_seen: [],
-    // };
-
-    // // Update the slider and set the text below the sliders
-    // tool._updateSlider(d3.select("#times_seen"), ...timesSeen, 0, 1);
-    // document.getElementById("times_seen-output").textContent = timesSeen[0];
 
     // Set up the initial chart
     document.getElementById("chart").innerHTML = "";
