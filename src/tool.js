@@ -31,6 +31,9 @@ export class Tool {
     tool.floor = true;
     tool.pdb = tool.data[tool.model].pdb;
 
+    // Columns to filter on
+    tool.filterCols = tool.data[tool.model].filter_cols;
+
     // Set up the chart selection menus
     tool._updateSelection(d3.select("#model"), tool.models);
     tool._updateSelection(
@@ -54,24 +57,36 @@ export class Tool {
       "ball+stick",
     ]);
 
-    // Testing the filters and update the sliders
+    // Add the sliders for the filters
+    tool.filterCols.forEach((col) => {
+      // Get the min and max values for the column
+      const colRange = d3.extent(
+        tool.data[tool.model].mut_escape_df,
+        (d) => d[col]
+      );
+      // Make an object that holds the filters and a corresponding mask of indices
+      tool.filters = {
+        [col]: [],
+      };
+      // Update the slider and set the text below the sliders
+      tool._updateSlider(d3.select(`#${col}`), ...colRange, colRange[0], 0.1);
+      document.getElementById(`${col}-output`).textContent = colRange[0];
+    });
 
-    // Get the min and max values for times seen from mut_escape_df
-    const timesSeen = d3.extent(
-      tool.data[tool.model].mut_escape_df,
-      (d) => d.times_seen
-    );
+    // // Get the min and max values for times seen from mut_escape_df
+    // const timesSeen = d3.extent(
+    //   tool.data[tool.model].mut_escape_df,
+    //   (d) => d.times_seen
+    // );
 
-    // Make an object that holds the filters and a corresponding mask of indices
-    tool.filters = {
-      times_seen: [],
-    };
+    // // Make an object that holds the filters and a corresponding mask of indices
+    // tool.filters = {
+    //   times_seen: [],
+    // };
 
-    // Update the slider and set the text below the sliders
-    tool._updateSlider(d3.select("#times_seen"), ...timesSeen, 0, 1);
-    document.getElementById("times_seen-output").textContent = timesSeen[0];
-
-    // Testing the filters and update the sliders
+    // // Update the slider and set the text below the sliders
+    // tool._updateSlider(d3.select("#times_seen"), ...timesSeen, 0, 1);
+    // document.getElementById("times_seen-output").textContent = timesSeen[0];
 
     // Set up the initial chart
     document.getElementById("chart").innerHTML = "";
@@ -161,10 +176,13 @@ export class Tool {
     let tool = this;
 
     // Get the value of the slider
-    const value = parseInt(d3.select(node).property("value"));
-
+    const value = parseFloat(d3.select(node).property("value"));
     // Get the name of the element
     const id = d3.select(node).attr("id");
+
+    // Set the text below the slider
+    const rangeOutput = document.getElementById(`${id}-output`);
+    rangeOutput.textContent = value;
 
     // Get the index of the regions to filter
     const indices = tool.data[tool.model].mut_escape_df
@@ -175,22 +193,17 @@ export class Tool {
     tool.filters[id] = indices;
 
     // Collate all of the masks into a single array
-    const mask = tool.filters.times_seen;
+    const mask = Array.from(
+      new Set([].concat(...Object.values(tool.filters)))
+    ).sort((a, b) => a - b);
+
+    // if the length of the mask is equal to the length of the data, then don't update the chart
+    if (mask.length == tool.data[tool.model].mut_escape_df.length) {
+      return;
+    }
 
     // Add the mask to the chart
     tool.chart["maskedIndicies"] = mask;
-
-    // // Set the value of the metric to null for filtered data
-    // tool.filteredData = tool.data[tool.model].mut_escape_df.map((d) => {
-    //   let newRow = { ...d }; // make a copy of the original object
-    //   if (d[id] < value) {
-    //     newRow.escape = null;
-    //   }
-    //   return newRow;
-    // });
-
-    // // Update the data
-    // tool.chart.data[tool.model].mut_escape_df = tool.filteredData;
 
     // // Update the chart
     tool.chart.updateVis();

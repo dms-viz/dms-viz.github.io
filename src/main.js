@@ -70,13 +70,13 @@ d3.select("#backgroundColor").on("change", function () {
   State.updateProtein(this);
 });
 
-// TESTING event listeners for the range filters
-const rangeInput = document.getElementById("times_seen");
-const rangeOutput = document.getElementById("times_seen-output");
-rangeInput.addEventListener("input", function () {
-  rangeOutput.textContent = this.value;
-  // Filter the chart data based on the range input
-  State.filterData(this);
+// Add event listeners for the range filters
+State.filterCols.forEach((col) => {
+  const rangeInput = document.getElementById(col);
+  rangeInput.addEventListener("input", function () {
+    // Filter the chart data based on the range input
+    State.filterData(this);
+  });
 });
 
 // Set up the event listeners for the download buttons

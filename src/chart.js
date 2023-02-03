@@ -301,13 +301,6 @@ export class Chart {
   updateVis() {
     let vis = this;
 
-    // DEBUG MESSAGE
-    if (vis.maskedIndicies) {
-      console.log(`Filter ${vis.maskedIndicies.length} data points`);
-    } else {
-      console.log("Not filtering data");
-    }
-
     // Process DATA
     vis.originalMutEscape = vis.data[vis.config.model].mut_escape_df;
     vis.mutEscape = vis.originalMutEscape.map((d, i) => {
