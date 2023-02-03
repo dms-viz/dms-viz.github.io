@@ -148,13 +148,23 @@ export class Tool {
    */
   filterData(node) {
     let tool = this;
+
     // Get the value of the slider
     const value = parseInt(d3.select(node).property("value"));
-    const filterData = tool.data[tool.model].mut_escape_df.filter(
-      (d) => d.times_seen >= value
-    );
+    // Get the name of the element
+    const id = d3.select(node).attr("id");
 
-    tool.chart.data[tool.model].mut_escape_df = filterData;
+    // Set the value of the metric to null for filtered data
+    tool.filteredData = tool.data[tool.model].mut_escape_df.map((d) => {
+      let newRow = { ...d }; // make a copy of the original object
+      if (d[id] < value) {
+        newRow.escape = null;
+      }
+      return newRow;
+    });
+
+    // Update the data
+    tool.chart.data[tool.model].mut_escape_df = tool.filteredData;
 
     // Update the chart
     tool.chart.updateVis();

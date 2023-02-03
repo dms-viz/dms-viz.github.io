@@ -307,6 +307,10 @@ export class Chart {
     vis.mutEscapeSummary = summarizeEscapeData(vis.mutEscape).filter(
       (e) => e.epitope === vis.config.epitope
     );
+    // Filter out the sites where the escape is undefined
+    vis.filteredMutEscapeSummary = vis.mutEscapeSummary.filter(
+      (d) => d[vis.config.metric] !== null
+    );
     // Pick the site with the highest escape for the selected summary metric
     vis.initSiteSelection = vis.mutEscapeSummary.filter(
       (d) =>
@@ -410,12 +414,12 @@ export class Chart {
       .curve(d3.curveLinear)
       .x((d) => vis.xScaleContext(vis.xAccessorContext(d)))
       .y0(vis.yScaleContext(0))
-      .y1((d) => vis.yScaleContext(vis.yAccessorContext(d)));
+      .y1((d) => vis.yScaleContext(vis.yAccessorContext(d) || 0));
     vis.focusLine = d3
       .line()
       .curve(d3.curveLinear)
       .x((d) => vis.xScaleFocus(vis.xAccessorFocus(d)))
-      .y((d) => vis.yScaleFocus(vis.yAccessorFocus(d)));
+      .y((d) => vis.yScaleFocus(vis.yAccessorFocus(d) || 0));
 
     // RENDER
     vis.renderVis();
@@ -463,7 +467,7 @@ export class Chart {
 
     vis.focusPlot
       .selectAll("circle")
-      .data(vis.mutEscapeSummary, (d) => d.site)
+      .data(vis.filteredMutEscapeSummary, (d) => d.site)
       .join(
         (enter) =>
           enter
@@ -528,13 +532,17 @@ export class Chart {
             .append("rect")
             .attr("class", "mutant-rect")
             .style("fill", (d) =>
-              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+              vis.colorAccessorHeatmap(d) !== null
+                ? vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+                : "grey"
             )
             .style("stroke", "black"),
         (update) =>
           update.call((update) =>
             update.style("fill", (d) =>
-              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+              vis.colorAccessorHeatmap(d) !== null
+                ? vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+                : "grey"
             )
           ),
         (exit) => exit.remove()
@@ -760,13 +768,17 @@ export class Chart {
             .append("rect")
             .attr("class", "mutant-rect")
             .style("fill", (d) =>
-              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+              vis.colorAccessorHeatmap(d) !== null
+                ? vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+                : "grey"
             )
             .style("stroke", "black"),
         (update) =>
           update.call((update) =>
             update.style("fill", (d) =>
-              vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+              vis.colorAccessorHeatmap(d) !== null
+                ? vis.colorScaleHeatmap(vis.colorAccessorHeatmap(d))
+                : "grey"
             )
           ),
         (exit) => exit.remove()
@@ -809,10 +821,6 @@ export class Chart {
       .attr("font-weight", "bold")
       .text("x");
   }
-  /**
-   * Filter sites on the focus plot and amino acids on the heatmap
-   */
-  filterSites() {}
   /**
    * React to the window being resized
    */

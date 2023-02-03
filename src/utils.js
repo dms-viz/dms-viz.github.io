@@ -3,9 +3,31 @@ import * as d3 from "d3";
 // Summarize escape data
 export function summarizeEscapeData(data) {
   // Calculate summary stats for each site/epitope pair
+  // const escapeDataRollup = d3.rollup(
+  //   data,
+  //   (v) => {
+  //     return {
+  //       mean: d3.mean(v, (d) => d.escape),
+  //       sum: d3.sum(v, (d) => d.escape),
+  //       min: d3.min(v, (d) => d.escape),
+  //       max: d3.max(v, (d) => d.escape),
+  //     };
+  //   },
+  //   (d) => d.site,
+  //   (d) => d.epitope
+  // );
+
   const escapeDataRollup = d3.rollup(
     data,
     (v) => {
+      if (v.every((d) => d.escape === null)) {
+        return {
+          mean: null,
+          sum: null,
+          min: null,
+          max: null,
+        };
+      }
       return {
         mean: d3.mean(v, (d) => d.escape),
         sum: d3.sum(v, (d) => d.escape),
