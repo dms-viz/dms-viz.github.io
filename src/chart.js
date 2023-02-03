@@ -808,7 +808,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.escape.toFixed(4)}`)
+          .html(`Escape: ${d.escape ? d.escape.toFixed(4) : "Filtered"}`)
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
