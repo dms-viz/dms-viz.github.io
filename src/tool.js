@@ -55,12 +55,23 @@ export class Tool {
     ]);
 
     // Testing the filters and update the sliders
+
     // Get the min and max values for times seen from mut_escape_df
     const timesSeen = d3.extent(
       tool.data[tool.model].mut_escape_df,
       (d) => d.times_seen
     );
+
+    // Make an object that holds the filters and a corresponding mask of indices
+    tool.filters = {
+      times_seen: [],
+    };
+
+    // Update the slider and set the text below the sliders
     tool._updateSlider(d3.select("#times_seen"), ...timesSeen, 0, 1);
+    document.getElementById("times_seen-output").textContent = timesSeen[0];
+
+    // Testing the filters and update the sliders
 
     // Set up the initial chart
     document.getElementById("chart").innerHTML = "";
@@ -151,22 +162,37 @@ export class Tool {
 
     // Get the value of the slider
     const value = parseInt(d3.select(node).property("value"));
+
     // Get the name of the element
     const id = d3.select(node).attr("id");
 
-    // Set the value of the metric to null for filtered data
-    tool.filteredData = tool.data[tool.model].mut_escape_df.map((d) => {
-      let newRow = { ...d }; // make a copy of the original object
-      if (d[id] < value) {
-        newRow.escape = null;
-      }
-      return newRow;
-    });
+    // Get the index of the regions to filter
+    const indices = tool.data[tool.model].mut_escape_df
+      .filter((d) => d[id] < value)
+      .map((d) => tool.data[tool.model].mut_escape_df.indexOf(d));
 
-    // Update the data
-    tool.chart.data[tool.model].mut_escape_df = tool.filteredData;
+    // Update the filter object
+    tool.filters[id] = indices;
 
-    // Update the chart
+    // Collate all of the masks into a single array
+    const mask = tool.filters.times_seen;
+
+    // Add the mask to the chart
+    tool.chart["maskedIndicies"] = mask;
+
+    // // Set the value of the metric to null for filtered data
+    // tool.filteredData = tool.data[tool.model].mut_escape_df.map((d) => {
+    //   let newRow = { ...d }; // make a copy of the original object
+    //   if (d[id] < value) {
+    //     newRow.escape = null;
+    //   }
+    //   return newRow;
+    // });
+
+    // // Update the data
+    // tool.chart.data[tool.model].mut_escape_df = tool.filteredData;
+
+    // // Update the chart
     tool.chart.updateVis();
   }
   /**

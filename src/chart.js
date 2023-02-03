@@ -301,8 +301,22 @@ export class Chart {
   updateVis() {
     let vis = this;
 
+    // DEBUG MESSAGE
+    if (vis.maskedIndicies) {
+      console.log(`Filter ${vis.maskedIndicies.length} data points`);
+    } else {
+      console.log("Not filtering data");
+    }
+
     // Process DATA
-    vis.mutEscape = vis.data[vis.config.model].mut_escape_df;
+    vis.originalMutEscape = vis.data[vis.config.model].mut_escape_df;
+    vis.mutEscape = vis.originalMutEscape.map((d, i) => {
+      let newRow = { ...d }; // make a copy of the original object
+      if (vis.maskedIndicies && vis.maskedIndicies.includes(i)) {
+        newRow.escape = null;
+      }
+      return newRow;
+    });
     // Summarize and filter the models based on the selections
     vis.mutEscapeSummary = summarizeEscapeData(vis.mutEscape).filter(
       (e) => e.epitope === vis.config.epitope
@@ -386,17 +400,21 @@ export class Chart {
       vis.colorScaleHeatmap
         .domain([
           -d3.max(
-            d3.extent(vis.mutEscape, vis.colorAccessorHeatmap).map(Math.abs)
+            d3
+              .extent(vis.originalMutEscape, vis.colorAccessorHeatmap)
+              .map(Math.abs)
           ),
           0,
           d3.max(
-            d3.extent(vis.mutEscape, vis.colorAccessorHeatmap).map(Math.abs)
+            d3
+              .extent(vis.originalMutEscape, vis.colorAccessorHeatmap)
+              .map(Math.abs)
           ),
         ])
         .range([vis.negativeColor, "white", vis.positiveColor]);
     } else {
       vis.colorScaleHeatmap
-        .domain([0, d3.max(vis.mutEscape, vis.colorAccessorHeatmap)])
+        .domain([0, d3.max(vis.originalMutEscape, vis.colorAccessorHeatmap)])
         .range(["white", vis.positiveColor]);
     }
     vis.legendScaleHeatmap
@@ -554,7 +572,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.escape.toFixed(4)}`)
+          .html(`Escape: ${d.escape ? d.escape.toFixed(4) : "Filtered"}`)
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
