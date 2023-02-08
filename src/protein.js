@@ -109,6 +109,35 @@ export class Protein {
         protein.selectSites(d);
       });
     });
+
+    // Add a custom tooltip to the protein structure
+    const tooltip = document.createElement("div");
+    tooltip.className = "protein-tooltip";
+    document.body.appendChild(tooltip);
+
+    // Add a tooltip to the protein structure
+    protein.stage.mouseControls.remove("hoverPick");
+    protein.stage.signals.hovered.add(function (pickingProxy) {
+      if (pickingProxy && pickingProxy.atom) {
+        let atom = pickingProxy.atom;
+        // Tooltip content
+        tooltip.innerHTML = `Site: ${atom.resno} </br > Residue: ${atom.resname} </br > Chain: ${atom.chainname}`;
+        tooltip.style.display = "block";
+      } else {
+        tooltip.style.display = "none";
+      }
+    });
+
+    // Register an event lister for mouse position on the viewport
+    protein.stage.viewer.container.addEventListener("mousemove", (e) => {
+      tooltip.style.top = e.pageY - 10 + "px";
+      tooltip.style.left = e.pageX + 10 + "px";
+    });
+
+    // Set tooltip display to none when the mouse leaves the viewport
+    protein.stage.viewer.container.addEventListener("mouseleave", () => {
+      tooltip.style.display = "none";
+    });
   }
   /**
    * Clear the protein structure and reload it
