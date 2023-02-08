@@ -69,6 +69,9 @@ d3.select("#proteinColor").on("change", function () {
 d3.select("#backgroundColor").on("change", function () {
   State.updateProtein(this);
 });
+d3.select("#showGlycans").on("change", function () {
+  State.updateProtein(this);
+});
 
 // Add event listeners for the range filters
 State.filterCols.forEach((col) => {

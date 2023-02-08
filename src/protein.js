@@ -25,6 +25,7 @@ export class Protein {
       backgroundRepresentation: "rope",
       proteinColor: "#D3D3D3",
       backgroundColor: "#D3D3D3",
+      showGlycans: false,
     };
     this.data = _data;
     this.dispatch = d3.dispatch("proteinLoaded");
@@ -89,6 +90,14 @@ export class Protein {
         });
       }
 
+      // If ligands is true, add a representation of the ligands
+      if (protein.config.showGlycans) {
+        comp.addRepresentation("ball+stick", {
+          sele: "ligand",
+          color: "element",
+        });
+      }
+
       // Set the zoom of the structure
       protein.stage.autoView();
       // Turn off the spinning animation
@@ -111,6 +120,12 @@ export class Protein {
     });
 
     // Add a custom tooltip to the protein structure
+    // remove the old tooltip if it exists
+    if (document.querySelector(".protein-tooltip")) {
+      document.querySelector(".protein-tooltip").remove();
+    }
+
+    // Create a new tooltip and add it to the body
     const tooltip = document.createElement("div");
     tooltip.className = "protein-tooltip";
     document.body.appendChild(tooltip);

@@ -210,7 +210,7 @@ export class Tool {
     // Select the node
     const selection = d3.select(node);
     const id = selection.attr("id");
-    const value = selection.property("value");
+    const value = selection.property(id == "showGlycans" ? "checked" : "value");
 
     // Update the config
     tool.protein.config[id] = value;
