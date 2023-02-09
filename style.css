@@ -35,8 +35,6 @@ header {
   z-index: var(--z-fixed);
   padding: 0 3em 0 calc(var(--nav-width) + 3em);
   transition: 0.5s;
-
-
 }
 
 nav {
@@ -104,8 +102,28 @@ nav .sidebar-toggle:hover {
   transform: translate(-50%, -50%);
   background-color: white;
   padding: 1rem 1.5rem;
-  width: 24rem;
+  width: 50%;
   border-radius: 0.5rem;
+  word-spacing: 0.3rem;
+}
+
+.modal-content .logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: .8rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+kbd {
+  border: 2px solid; 
+  box-shadow: 2px 2px; 
+  font-size: .8em; 
+  line-height: .8em; 
+  display: inline-block;
+  font-weight: 600;
+  letter-spacing: .05em; 
+  padding: 3px 5px;
+  white-space: nowrap;
 }
 
 .close-button {
