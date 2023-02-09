@@ -502,7 +502,7 @@ export class Chart {
           .html(
             `Site: ${d.site_reference}<br>Escape ${vis.config.metric}: ${d[
               vis.config.metric
-            ].toFixed(4)}<br>Wildtype: ${d.wildtype}`
+            ].toFixed(2)}<br>Wildtype: ${d.wildtype}`
           )
           .style("border-color", vis.positiveColor);
       })
@@ -565,7 +565,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.escape ? d.escape.toFixed(4) : "Filtered"}`)
+          .html(`Escape: ${d.escape ? d.escape.toFixed(2) : "Filtered"}`)
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
@@ -801,7 +801,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.escape ? d.escape.toFixed(4) : "Filtered"}`)
+          .html(`Escape: ${d.escape ? d.escape.toFixed(2) : "Filtered"}`)
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })

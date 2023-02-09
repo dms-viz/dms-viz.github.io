@@ -75,7 +75,9 @@ export class Tool {
         colRange[0],
         (colRange[1] - colRange[0]) / 100
       );
-      document.getElementById(`${col}-output`).textContent = colRange[0];
+      document.getElementById(`${col}-output`).textContent = d3.format(".2f")(
+        colRange[0]
+      );
     });
 
     // Set up the initial chart
@@ -174,7 +176,7 @@ export class Tool {
 
     // Set the text below the slider
     const rangeOutput = document.getElementById(`${id}-output`);
-    rangeOutput.textContent = value;
+    rangeOutput.textContent = d3.format(".2f")(value);
 
     // Get the index of the regions to filter
     const indices = tool.data[tool.model].mut_escape_df
