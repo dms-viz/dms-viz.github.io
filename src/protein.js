@@ -45,13 +45,15 @@ export class Protein {
   load(pdbID) {
     let protein = this;
 
-    // Determine if the strcutre is custom or from the RCSB PDB
-    if (pdbID.slice(-4) !== ".pdb") {
+    // Determine if the strcutre is a file or a URL
+    if (pdbID.length == 4) {
       // Set the pdbURL to the RCSB PDB URL
       protein.pdbURL = `rcsb://${pdbID}`;
+      protein.loadConfig = {};
     } else {
       // Set the pdbURL to the local file
-      protein.pdbURL = `../data/pdbs/${pdbID}`;
+      protein.pdbURL = new Blob([pdbID], { type: "text/plain" });
+      protein.loadConfig = { ext: "pdb" };
     }
 
     // Determine how to handle the chains in the protein structure
@@ -75,49 +77,51 @@ export class Protein {
     }
 
     // Load the structure from a URL
-    protein.stage.loadFile(protein.pdbURL).then(function (comp) {
-      // Add base protein representation
-      comp.addRepresentation(protein.config.proteinRepresentation, {
-        sele: protein.dataChainSelection,
-        color: protein.config.proteinColor,
-      });
-
-      // Add background representation for non-data chains and non-excluded chains
-      if (protein.backgroundChainSelection != "none") {
-        comp.addRepresentation(protein.config.backgroundRepresentation, {
-          sele: protein.backgroundChainSelection,
-          color: protein.config.backgroundColor,
+    protein.stage
+      .loadFile(protein.pdbURL, protein.loadConfig)
+      .then(function (comp) {
+        // Add base protein representation
+        comp.addRepresentation(protein.config.proteinRepresentation, {
+          sele: protein.dataChainSelection,
+          color: protein.config.proteinColor,
         });
-      }
 
-      // If ligands is true, add a representation of the ligands
-      if (protein.config.showGlycans) {
-        comp.addRepresentation("ball+stick", {
-          sele: "ligand",
-          color: "element",
+        // Add background representation for non-data chains and non-excluded chains
+        if (protein.backgroundChainSelection != "none") {
+          comp.addRepresentation(protein.config.backgroundRepresentation, {
+            sele: protein.backgroundChainSelection,
+            color: protein.config.backgroundColor,
+          });
+        }
+
+        // If ligands is true, add a representation of the ligands
+        if (protein.config.showGlycans) {
+          comp.addRepresentation("ball+stick", {
+            sele: "ligand",
+            color: "element",
+          });
+        }
+
+        // Set the zoom of the structure
+        protein.stage.autoView();
+        // Turn off the spinning animation
+        protein.stage.setSpin(false);
+        // Set the rotation of the structure
+        comp.setRotation([2, 0, 0]);
+        // Center and zoom the visualization to fit the protein structure
+        comp.autoView();
+
+        // Protein structure
+        protein.component = comp;
+
+        // Make test color scheme
+        protein.makeColorScheme();
+
+        // Attach dispatch event
+        protein.config.dispatch.on("updateSites", (d) => {
+          protein.selectSites(d);
         });
-      }
-
-      // Set the zoom of the structure
-      protein.stage.autoView();
-      // Turn off the spinning animation
-      protein.stage.setSpin(false);
-      // Set the rotation of the structure
-      comp.setRotation([2, 0, 0]);
-      // Center and zoom the visualization to fit the protein structure
-      comp.autoView();
-
-      // Protein structure
-      protein.component = comp;
-
-      // Make test color scheme
-      protein.makeColorScheme();
-
-      // Attach dispatch event
-      protein.config.dispatch.on("updateSites", (d) => {
-        protein.selectSites(d);
       });
-    });
 
     // Add a custom tooltip to the protein structure
     // remove the old tooltip if it exists
