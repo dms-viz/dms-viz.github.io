@@ -57,8 +57,6 @@ export class Tool {
       "ball+stick",
     ]);
 
-    console.log(tool.data[tool.model].mut_escape_df);
-
     // Add the sliders for the filters
     tool.filterCols.forEach((col) => {
       // Get the min and max values for the column
@@ -66,8 +64,6 @@ export class Tool {
         tool.data[tool.model].mut_escape_df,
         (d) => d[col]
       );
-
-      console.log(colRange, col);
 
       // Make an object that holds the filters and a corresponding mask of indices
       tool.filters = {
@@ -245,10 +241,10 @@ export class Tool {
       ].mut_escape_df.map((e) => {
         return {
           ...e,
-          site: siteMap[e.site].sequential_site,
-          site_reference: e.site,
-          site_protein: siteMap[e.site].protein_site,
-          site_chain: siteMap[e.site].chains,
+          site: siteMap[e.reference_site].sequential_site,
+          site_reference: e.reference_site,
+          site_protein: siteMap[e.reference_site].protein_site,
+          site_chain: siteMap[e.reference_site].chains,
           escape: e.escape_mean,
           epitope: e.epitope.toString(),
         };
