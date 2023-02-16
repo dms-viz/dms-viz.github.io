@@ -40,8 +40,8 @@ d3.select("#json-file").on("change", function () {
 });
 
 // Set up the event listeners for the chart options
-d3.select("#model").on("change", function () {
-  State.updateModel(this);
+d3.select("#experiment").on("change", function () {
+  State.updateExperiment(this);
 });
 d3.select("#epitope").on("change", function () {
   State.updateData(this);

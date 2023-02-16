@@ -11,7 +11,7 @@ export class Chart {
   constructor(_config, _data) {
     this.config = _config;
     this.config = {
-      model: _config.model,
+      experiment: _config.experiment,
       epitope: _config.epitope,
       summary: _config.summary,
       floor: _config.floor,
@@ -304,7 +304,7 @@ export class Chart {
     let vis = this;
 
     // Process DATA
-    vis.originalMutMetric = vis.data[vis.config.model].mut_metric_df;
+    vis.originalMutMetric = vis.data[vis.config.experiment].mut_metric_df;
     vis.mutMetric = vis.originalMutMetric.map((d, i) => {
       let newRow = { ...d }; // make a copy of the original object
       if (vis.maskedIndicies && vis.maskedIndicies.includes(i)) {
@@ -312,7 +312,7 @@ export class Chart {
       }
       return newRow;
     });
-    // Summarize and filter the models based on the selections
+    // Summarize and filter the experiments based on the selections
     vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter(
       (e) => e.epitope === vis.config.epitope
     );
@@ -333,14 +333,14 @@ export class Chart {
     );
     // Make the color scheme for the plots
     vis.positiveColor =
-      vis.data[vis.config.model].epitope_colors[vis.config.epitope];
+      vis.data[vis.config.experiment].epitope_colors[vis.config.epitope];
     vis.negativeColor = invertColor(vis.positiveColor);
-    // Get the amino acid alphabet for the model
-    vis.alphabet = vis.data[vis.config.model].alphabet;
+    // Get the amino acid alphabet for the experiment
+    vis.alphabet = vis.data[vis.config.experiment].alphabet;
 
     // Make a map for the sequential site to the labels used on the x-axis
     vis.siteMap = new Map();
-    Object.entries(vis.data[vis.config.model].sitemap).forEach((entry) => {
+    Object.entries(vis.data[vis.config.experiment].sitemap).forEach((entry) => {
       const [key, value] = entry;
       vis.siteMap.set(value.sequential_site, key);
     });

@@ -21,25 +21,25 @@ export class Tool {
     // Format the JSON data
     tool._formatData();
 
-    // Get the available models
-    tool.models = Object.keys(tool.data);
+    // Get the available experiments
+    tool.experiments = Object.keys(tool.data);
 
     // Set the default selections
-    tool.model = tool.models[0];
-    tool.epitope = tool.data[tool.model].epitopes[0].toString();
+    tool.experiment = tool.experiments[0];
+    tool.epitope = tool.data[tool.experiment].epitopes[0].toString();
     tool.summary = "sum";
     tool.floor = true;
-    tool.pdb = tool.data[tool.model].pdb;
-    tool.metric = tool.data[tool.model].metric_col;
+    tool.pdb = tool.data[tool.experiment].pdb;
+    tool.metric = tool.data[tool.experiment].metric_col;
 
     // Columns to filter on
-    tool.filterCols = tool.data[tool.model].filter_cols;
+    tool.filterCols = tool.data[tool.experiment].filter_cols;
 
     // Set up the chart selection menus
-    tool._updateSelection(d3.select("#model"), tool.models);
+    tool._updateSelection(d3.select("#experiment"), tool.experiments);
     tool._updateSelection(
       d3.select("#epitope"),
-      tool.data[tool.model].epitopes
+      tool.data[tool.experiment].epitopes
     );
     tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
     // Set up the protein selection menus
@@ -70,7 +70,7 @@ export class Tool {
 
         // Get the min and max values for the column
         const colRange = d3.extent(
-          tool.data[tool.model].mut_metric_df,
+          tool.data[tool.experiment].mut_metric_df,
           (d) => d[col]
         );
 
@@ -96,7 +96,7 @@ export class Tool {
     d3.selectAll(".tooltip").remove();
     tool.chart = new Chart(
       {
-        model: tool.model,
+        experiment: tool.experiment,
         epitope: tool.epitope,
         summary: tool.summary,
         floor: tool.floor,
@@ -111,7 +111,7 @@ export class Tool {
     tool.protein = new Protein(
       {
         parentElement: "viewport",
-        model: tool.model,
+        experiment: tool.experiment,
         epitope: tool.epitope,
         summary: tool.summary,
         floor: tool.floor,
@@ -124,25 +124,25 @@ export class Tool {
     tool.proteinLoaded = tool.protein.dispatch;
   }
   /**
-   * Handle updates to the model selection
+   * Handle updates to the experiment selection
    */
-  updateModel(node) {
+  updateExperiment(node) {
     let tool = this;
-    // Update the model selection in the chart and protein
-    tool.model = d3.select(node).property("value");
-    tool.chart.config.model = tool.model;
-    tool.protein.config.model = tool.model;
-    // Update the epitope selection because models have different epitopes
-    tool.epitope = tool.data[tool.model].epitopes[0];
+    // Update the experiment selection in the chart and protein
+    tool.experiment = d3.select(node).property("value");
+    tool.chart.config.experiment = tool.experiment;
+    tool.protein.config.experiment = tool.experiment;
+    // Update the epitope selection because experiments have different epitopes
+    tool.epitope = tool.data[tool.experiment].epitopes[0];
     tool.chart.config.epitope = tool.epitope;
     tool.protein.config.epitope = tool.epitope;
-    // Update the pdb structure since this is also model specific
-    tool.pdb = tool.data[tool.model].pdb;
+    // Update the pdb structure since this is also experiment specific
+    tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
     // Update the epitope selection menu
     tool._updateSelection(
       d3.select("#epitope"),
-      tool.data[tool.model].epitopes
+      tool.data[tool.experiment].epitopes
     );
 
     // Update the chart and deselect all sites
@@ -156,7 +156,7 @@ export class Tool {
     }, 100);
   }
   /**
-   * Handle updates within a single model
+   * Handle updates within a single experiment
    */
   updateData(node) {
     let tool = this;
@@ -191,9 +191,9 @@ export class Tool {
     rangeOutput.textContent = d3.format(".2f")(value);
 
     // Get the index of the regions to filter
-    const indices = tool.data[tool.model].mut_metric_df
+    const indices = tool.data[tool.experiment].mut_metric_df
       .filter((d) => d[id] < value)
-      .map((d) => tool.data[tool.model].mut_metric_df.indexOf(d));
+      .map((d) => tool.data[tool.experiment].mut_metric_df.indexOf(d));
 
     // Update the filter object
     tool.filters[id] = indices;
@@ -204,7 +204,7 @@ export class Tool {
     ).sort((a, b) => a - b);
 
     // if the length of the mask is equal to the length of the data, then don't update the chart
-    if (mask.length == tool.data[tool.model].mut_metric_df.length) {
+    if (mask.length == tool.data[tool.experiment].mut_metric_df.length) {
       return;
     }
 
@@ -238,9 +238,9 @@ export class Tool {
   _formatData() {
     let tool = this;
 
-    // Format data for each antibody model
+    // Format data for each antibody experiment
     for (const selection in tool.data) {
-      // Get the epitopes for the model and convert to strings
+      // Get the epitopes for the experiment and convert to strings
       tool.data[selection].epitopes = tool.data[selection].epitopes.map((e) =>
         e.toString()
       );

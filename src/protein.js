@@ -12,7 +12,7 @@ export class Protein {
     this.config = _config;
     this.config = {
       parentElement: _config.parentElement,
-      model: _config.model,
+      experiment: _config.experiment,
       epitope: _config.epitope,
       summary: _config.summary,
       floor: _config.floor,
@@ -57,8 +57,9 @@ export class Protein {
     }
 
     // Determine how to handle the chains in the protein structure
-    protein.dataChains = protein.data[protein.config.model].dataChains;
-    protein.excludeChains = protein.data[protein.config.model].excludeChains;
+    protein.dataChains = protein.data[protein.config.experiment].dataChains;
+    protein.excludeChains =
+      protein.data[protein.config.experiment].excludeChains;
 
     // Make the selection of chains to include in the protein structure
     if (protein.dataChains != "polymer") {
@@ -175,14 +176,16 @@ export class Protein {
     let protein = this;
 
     // Process DATA
-    protein.mutMetric = protein.data[protein.config.model].mut_metric_df;
+    protein.mutMetric = protein.data[protein.config.experiment].mut_metric_df;
     protein.mutMetricSummary = summarizeMetricData(protein.mutMetric).filter(
       (e) => e.epitope === protein.config.epitope
     );
 
     // Make the COLOR SCALE
     protein.positiveColor =
-      protein.data[protein.config.model].epitope_colors[protein.config.epitope];
+      protein.data[protein.config.experiment].epitope_colors[
+        protein.config.epitope
+      ];
     protein.negativeColor = invertColor(protein.positiveColor);
     // Color is dynamic depending on whether the data is floored
     protein.colorAccessor = (d) => {
