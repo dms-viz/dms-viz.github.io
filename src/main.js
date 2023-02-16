@@ -74,13 +74,15 @@ d3.select("#showGlycans").on("change", function () {
 });
 
 // Add event listeners for the range filters
-Object.keys(State.filterCols).forEach((col) => {
-  const rangeInput = document.getElementById(col);
-  rangeInput.addEventListener("input", function () {
-    // Filter the chart data based on the range input
-    State.filterData(this);
+if (State.filterCols) {
+  Object.keys(State.filterCols).forEach((col) => {
+    const rangeInput = document.getElementById(col);
+    rangeInput.addEventListener("input", function () {
+      // Filter the chart data based on the range input
+      State.filterData(this);
+    });
   });
-});
+}
 
 // Set up the event listeners for the download buttons
 d3.select("#downloadProtein").on("click", function () {

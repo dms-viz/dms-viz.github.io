@@ -59,35 +59,37 @@ export class Tool {
     ]);
 
     // Add the sliders for the filters
-    Object.keys(tool.filterCols).forEach((col) => {
-      // Add the html for each slider
-      document.getElementById("filters").innerHTML += `
-        <label for="${col}" style="display: block">${tool.filterCols[col]}</label>
-        <input id="${col}" type="range" />
-        <span id="${col}-output" class="output"></span>
-      `;
+    if (tool.filterCols) {
+      Object.keys(tool.filterCols).forEach((col) => {
+        // Add the html for each slider
+        document.getElementById("filters").innerHTML += `
+          <label for="${col}" style="display: block">${tool.filterCols[col]}</label>
+          <input id="${col}" type="range" />
+          <span id="${col}-output" class="output"></span>
+        `;
 
-      // Get the min and max values for the column
-      const colRange = d3.extent(
-        tool.data[tool.model].mut_metric_df,
-        (d) => d[col]
-      );
+        // Get the min and max values for the column
+        const colRange = d3.extent(
+          tool.data[tool.model].mut_metric_df,
+          (d) => d[col]
+        );
 
-      // Make an object that holds the filters and a corresponding mask of indices
-      tool.filters = {
-        [col]: [],
-      };
-      // Update the slider and set the text below the sliders
-      tool._updateSlider(
-        d3.select(`#${col}`),
-        ...colRange,
-        colRange[0],
-        (colRange[1] - colRange[0]) / 100
-      );
-      document.getElementById(`${col}-output`).textContent = d3.format(".2f")(
-        colRange[0]
-      );
-    });
+        // Make an object that holds the filters and a corresponding mask of indices
+        tool.filters = {
+          [col]: [],
+        };
+        // Update the slider and set the text below the sliders
+        tool._updateSlider(
+          d3.select(`#${col}`),
+          ...colRange,
+          colRange[0],
+          (colRange[1] - colRange[0]) / 100
+        );
+        document.getElementById(`${col}-output`).textContent = d3.format(".2f")(
+          colRange[0]
+        );
+      });
+    }
 
     // Set up the initial chart
     document.getElementById("chart").innerHTML = "";
