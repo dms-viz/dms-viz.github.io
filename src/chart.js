@@ -13,7 +13,7 @@ export class Chart {
     this.config = {
       model: _config.model,
       epitope: _config.epitope,
-      metric: _config.metric,
+      summary: _config.summary,
       floor: _config.floor,
       parentElement: _config.parentElement,
       width: 1080,
@@ -229,7 +229,8 @@ export class Chart {
       .attr("class", "axis-label")
       .text(
         `${
-          vis.config.metric.charAt(0).toUpperCase() + vis.config.metric.slice(1)
+          vis.config.summary.charAt(0).toUpperCase() +
+          vis.config.summary.slice(1)
         } of Escape`
       )
       .attr("transform", "rotate(-90)")
@@ -316,13 +317,13 @@ export class Chart {
     );
     // Filter out the sites where the escape is undefined
     vis.filteredMutEscapeSummary = vis.mutEscapeSummary.filter(
-      (d) => d[vis.config.metric] !== null
+      (d) => d[vis.config.summary] !== null
     );
     // Pick the site with the highest escape for the selected summary metric
     vis.initSiteSelection = vis.mutEscapeSummary.filter(
       (d) =>
-        d[vis.config.metric] ===
-        d3.max(vis.mutEscapeSummary, (d) => d[vis.config.metric])
+        d[vis.config.summary] ===
+        d3.max(vis.mutEscapeSummary, (d) => d[vis.config.summary])
     )[0].site;
     // Initialize the heatmap data for the selected site
     vis.mutEscapeHeatmap = vis.mutEscape.filter(
@@ -346,15 +347,15 @@ export class Chart {
     // Define ACCESSORS
     vis.xAccessorContext = (d) => d.site;
     vis.yAccessorContext = (d) => {
-      return vis.config.floor && d[vis.config.metric] < 0
+      return vis.config.floor && d[vis.config.summary] < 0
         ? 0
-        : d[vis.config.metric];
+        : d[vis.config.summary];
     };
     vis.xAccessorFocus = (d) => d.site;
     vis.yAccessorFocus = (d) => {
-      return vis.config.floor && d[vis.config.metric] < 0
+      return vis.config.floor && d[vis.config.summary] < 0
         ? 0
-        : d[vis.config.metric];
+        : d[vis.config.summary];
     };
     vis.xAccessorHeatmap = (d) => d.site;
     vis.yAccessorHeatmap = (d) => d.mutant;
@@ -500,8 +501,8 @@ export class Chart {
         vis.tooltip
           .style("opacity", 1)
           .html(
-            `Site: ${d.site_reference}<br>Escape ${vis.config.metric}: ${d[
-              vis.config.metric
+            `Site: ${d.site_reference}<br>Escape ${vis.config.summary}: ${d[
+              vis.config.summary
             ].toFixed(2)}<br>Wildtype: ${d.wildtype}`
           )
           .style("border-color", vis.positiveColor);
@@ -618,7 +619,8 @@ export class Chart {
       .select(".axis-label")
       .text(
         `${
-          vis.config.metric.charAt(0).toUpperCase() + vis.config.metric.slice(1)
+          vis.config.summary.charAt(0).toUpperCase() +
+          vis.config.summary.slice(1)
         } of Escape`
       );
 

@@ -27,7 +27,7 @@ export class Tool {
     // Set the default selections
     tool.model = tool.models[0];
     tool.epitope = tool.data[tool.model].epitopes[0].toString();
-    tool.metric = "sum";
+    tool.summary = "sum";
     tool.floor = true;
     tool.pdb = tool.data[tool.model].pdb;
 
@@ -40,7 +40,7 @@ export class Tool {
       d3.select("#epitope"),
       tool.data[tool.model].epitopes
     );
-    tool._updateSelection(d3.select("#metric"), ["sum", "mean", "max", "min"]);
+    tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
     // Set up the protein selection menus
     tool._updateSelection(d3.select("#proteinRepresentation"), [
       "cartoon",
@@ -102,7 +102,7 @@ export class Tool {
       {
         model: tool.model,
         epitope: tool.epitope,
-        metric: tool.metric,
+        summary: tool.summary,
         floor: tool.floor,
         parentElement: "#chart",
       },
@@ -116,7 +116,7 @@ export class Tool {
         parentElement: "viewport",
         model: tool.model,
         epitope: tool.epitope,
-        metric: tool.metric,
+        summary: tool.summary,
         floor: tool.floor,
         pdbID: tool.pdb,
         dispatch: tool.chart.dispatch,

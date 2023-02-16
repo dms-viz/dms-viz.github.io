@@ -14,7 +14,7 @@ export class Protein {
       parentElement: _config.parentElement,
       model: _config.model,
       epitope: _config.epitope,
-      metric: _config.metric,
+      summary: _config.summary,
       floor: _config.floor,
       pdbID: _config.pdbID,
       dispatch: _config.dispatch,
@@ -186,9 +186,9 @@ export class Protein {
     protein.negativeColor = invertColor(protein.positiveColor);
     // Color is dynamic depending on whether the data is floored
     protein.colorAccessor = (d) => {
-      return protein.config.floor && d[protein.config.metric] < 0
+      return protein.config.floor && d[protein.config.summary] < 0
         ? 0
-        : d[protein.config.metric];
+        : d[protein.config.summary];
     };
     protein.metricExtent = d3
       .extent(protein.mutEscapeSummary, protein.colorAccessor)
@@ -214,7 +214,7 @@ export class Protein {
       protein.mutEscapeSummary.map((d) => {
         return [
           parseInt(d.site_protein),
-          protein.colorScale(d[protein.config.metric]),
+          protein.colorScale(d[protein.config.summary]),
         ];
       })
     );

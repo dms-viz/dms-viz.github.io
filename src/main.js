@@ -46,7 +46,7 @@ d3.select("#model").on("change", function () {
 d3.select("#epitope").on("change", function () {
   State.updateData(this);
 });
-d3.select("#metric").on("change", function () {
+d3.select("#summary").on("change", function () {
   State.updateData(this);
 });
 d3.select("#floor").on("change", function () {
