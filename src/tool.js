@@ -59,6 +59,20 @@ export class Tool {
 
     // Add the sliders for the filters
     tool.filterCols.forEach((col) => {
+      // function to split the column name into words and capitalize the first letter of each word
+      const splitCol = (col) =>
+        col
+          .split("_")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
+      // Add the html for each slider
+      document.getElementById("filters").innerHTML += `
+        <label for="${col}" style="display: block">${splitCol(col)}</label>
+        <input id="${col}" type="range" />
+        <span id="${col}-output" class="${col} output"></span>
+      `;
+
       // Get the min and max values for the column
       const colRange = d3.extent(
         tool.data[tool.model].mut_escape_df,

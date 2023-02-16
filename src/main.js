@@ -3,7 +3,7 @@ import "./ui.js";
 import * as d3 from "d3";
 import * as NGL from "ngl";
 import { Tool } from "./tool.js";
-import exampleData from "../data/hiv.json";
+import exampleData from "../data/example.json";
 
 // Initialize the tool and it's state
 const State = new Tool(exampleData);
