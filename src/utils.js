@@ -1,12 +1,12 @@
 import * as d3 from "d3";
 
-// Summarize escape data
-export function summarizeEscapeData(data) {
+// Summarize metric data
+export function summarizeMetricData(data) {
   // Calculate summary stats for each site/epitope pair
-  const escapeDataRollup = d3.rollup(
+  const metricDataRollup = d3.rollup(
     data,
     (v) => {
-      if (v.every((d) => d.escape === null)) {
+      if (v.every((d) => d.metric === null)) {
         return {
           mean: null,
           sum: null,
@@ -15,18 +15,18 @@ export function summarizeEscapeData(data) {
         };
       }
       return {
-        mean: d3.mean(v, (d) => d.escape),
-        sum: d3.sum(v, (d) => d.escape),
-        min: d3.min(v, (d) => d.escape),
-        max: d3.max(v, (d) => d.escape),
+        mean: d3.mean(v, (d) => d.metric),
+        sum: d3.sum(v, (d) => d.metric),
+        min: d3.min(v, (d) => d.metric),
+        max: d3.max(v, (d) => d.metric),
       };
     },
     (d) => d.site,
     (d) => d.epitope
   );
 
-  // Join the map of summarized escape back to the original
-  const escapeDataSummary = data
+  // Join the map of summarized metric back to the original
+  const metricDataSummary = data
     .map((e) => {
       return {
         epitope: e.epitope,
@@ -35,7 +35,7 @@ export function summarizeEscapeData(data) {
         site_protein: e.site_protein,
         site_chain: e.site_chain,
         wildtype: e.wildtype,
-        ...escapeDataRollup.get(e.site).get(e.epitope),
+        ...metricDataRollup.get(e.site).get(e.epitope),
       };
     })
     .filter(
@@ -46,7 +46,7 @@ export function summarizeEscapeData(data) {
         )
     );
 
-  return escapeDataSummary;
+  return metricDataSummary;
 }
 
 // Find the complement of a hex color string

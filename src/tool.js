@@ -75,7 +75,7 @@ export class Tool {
 
       // Get the min and max values for the column
       const colRange = d3.extent(
-        tool.data[tool.model].mut_escape_df,
+        tool.data[tool.model].mut_metric_df,
         (d) => d[col]
       );
 
@@ -194,9 +194,9 @@ export class Tool {
     rangeOutput.textContent = d3.format(".2f")(value);
 
     // Get the index of the regions to filter
-    const indices = tool.data[tool.model].mut_escape_df
+    const indices = tool.data[tool.model].mut_metric_df
       .filter((d) => d[id] < value)
-      .map((d) => tool.data[tool.model].mut_escape_df.indexOf(d));
+      .map((d) => tool.data[tool.model].mut_metric_df.indexOf(d));
 
     // Update the filter object
     tool.filters[id] = indices;
@@ -207,7 +207,7 @@ export class Tool {
     ).sort((a, b) => a - b);
 
     // if the length of the mask is equal to the length of the data, then don't update the chart
-    if (mask.length == tool.data[tool.model].mut_escape_df.length) {
+    if (mask.length == tool.data[tool.model].mut_metric_df.length) {
       return;
     }
 
@@ -250,16 +250,16 @@ export class Tool {
       // Get the map for reference sites to sequential sites
       const siteMap = tool.data[selection].sitemap;
       // Map the reference sites to sequential and protein sites
-      tool.data[selection].mut_escape_df = tool.data[
+      tool.data[selection].mut_metric_df = tool.data[
         selection
-      ].mut_escape_df.map((e) => {
+      ].mut_metric_df.map((e) => {
         return {
           ...e,
           site: siteMap[e.reference_site].sequential_site,
           site_reference: e.reference_site,
           site_protein: siteMap[e.reference_site].protein_site,
           site_chain: siteMap[e.reference_site].chains,
-          escape: e.escape_mean,
+          metric: e.escape_mean,
           epitope: e.epitope.toString(),
         };
       });

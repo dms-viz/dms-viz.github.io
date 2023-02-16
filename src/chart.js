@@ -1,6 +1,6 @@
 /* Making a class to hold the chart code inspried by https://www.cs.ubc.ca/~tmm/courses/436V-20/reading/reusable_d3_components.pdf */
 import * as d3 from "d3";
-import { summarizeEscapeData, invertColor } from "./utils.js";
+import { summarizeMetricData, invertColor } from "./utils.js";
 
 export class Chart {
   /**
@@ -303,30 +303,30 @@ export class Chart {
     let vis = this;
 
     // Process DATA
-    vis.originalMutEscape = vis.data[vis.config.model].mut_escape_df;
-    vis.mutEscape = vis.originalMutEscape.map((d, i) => {
+    vis.originalMutMetric = vis.data[vis.config.model].mut_metric_df;
+    vis.mutMetric = vis.originalMutMetric.map((d, i) => {
       let newRow = { ...d }; // make a copy of the original object
       if (vis.maskedIndicies && vis.maskedIndicies.includes(i)) {
-        newRow.escape = null;
+        newRow.metric = null;
       }
       return newRow;
     });
     // Summarize and filter the models based on the selections
-    vis.mutEscapeSummary = summarizeEscapeData(vis.mutEscape).filter(
+    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter(
       (e) => e.epitope === vis.config.epitope
     );
-    // Filter out the sites where the escape is undefined
-    vis.filteredMutEscapeSummary = vis.mutEscapeSummary.filter(
+    // Filter out the sites where the metric is undefined
+    vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
       (d) => d[vis.config.summary] !== null
     );
-    // Pick the site with the highest escape for the selected summary metric
-    vis.initSiteSelection = vis.mutEscapeSummary.filter(
+    // Pick the site with the highest metric for the selected summary metric
+    vis.initSiteSelection = vis.mutMetricSummary.filter(
       (d) =>
         d[vis.config.summary] ===
-        d3.max(vis.mutEscapeSummary, (d) => d[vis.config.summary])
+        d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
     )[0].site;
     // Initialize the heatmap data for the selected site
-    vis.mutEscapeHeatmap = vis.mutEscape.filter(
+    vis.mutMetricHeatmap = vis.mutMetric.filter(
       (e) =>
         e.site === vis.initSiteSelection && e.epitope === vis.config.epitope
     );
@@ -360,14 +360,14 @@ export class Chart {
     vis.xAccessorHeatmap = (d) => d.site;
     vis.yAccessorHeatmap = (d) => d.mutant;
     vis.colorAccessorHeatmap = (d) => {
-      return vis.config.floor && d.escape < 0 ? 0 : d.escape;
+      return vis.config.floor && d.metric < 0 ? 0 : d.metric;
     };
 
     // Update SCALES
     // Adjust the domain to add some padding to each scale
-    const xExtentFocus = d3.extent(vis.mutEscapeSummary, vis.xAccessorFocus);
+    const xExtentFocus = d3.extent(vis.mutMetricSummary, vis.xAccessorFocus);
     const xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
-    const yExtentFocus = d3.extent(vis.mutEscapeSummary, vis.yAccessorFocus);
+    const yExtentFocus = d3.extent(vis.mutMetricSummary, vis.yAccessorFocus);
     const yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
     vis.yScaleContext.domain([
       yExtentFocus[0],
@@ -386,7 +386,7 @@ export class Chart {
       yExtentFocus[1] + yRangeFocus * 0.05,
     ]);
     vis.xScaleHeatmap.domain([
-      d3.max(vis.mutEscapeHeatmap, vis.xAccessorHeatmap),
+      d3.max(vis.mutMetricHeatmap, vis.xAccessorHeatmap),
     ]);
     vis.yScaleHeatmap.domain(vis.alphabet);
     // Color is dynamic depending on whether the data is floored
@@ -395,20 +395,20 @@ export class Chart {
         .domain([
           -d3.max(
             d3
-              .extent(vis.originalMutEscape, vis.colorAccessorHeatmap)
+              .extent(vis.originalMutMetric, vis.colorAccessorHeatmap)
               .map(Math.abs)
           ),
           0,
           d3.max(
             d3
-              .extent(vis.originalMutEscape, vis.colorAccessorHeatmap)
+              .extent(vis.originalMutMetric, vis.colorAccessorHeatmap)
               .map(Math.abs)
           ),
         ])
         .range([vis.negativeColor, "white", vis.positiveColor]);
     } else {
       vis.colorScaleHeatmap
-        .domain([0, d3.max(vis.originalMutEscape, vis.colorAccessorHeatmap)])
+        .domain([0, d3.max(vis.originalMutMetric, vis.colorAccessorHeatmap)])
         .range(["white", vis.positiveColor]);
     }
     vis.legendScaleHeatmap
@@ -445,14 +445,14 @@ export class Chart {
     // Draw the CONTEXT plot
     vis.contextPlot
       .selectAll(".context-area")
-      .data(vis.mutEscapeSummary, (d) => d.site)
+      .data(vis.mutMetricSummary, (d) => d.site)
       .join("path")
       .attr("class", "context-area")
       .attr("clip-path", "url(#contextClipPath)")
       .attr("d", (d, i) =>
-        i < vis.mutEscapeSummary.length - 1 &&
-        d.site + 1 === vis.mutEscapeSummary[i + 1].site
-          ? vis.contextArea([d, vis.mutEscapeSummary[i + 1]])
+        i < vis.mutMetricSummary.length - 1 &&
+        d.site + 1 === vis.mutMetricSummary[i + 1].site
+          ? vis.contextArea([d, vis.mutMetricSummary[i + 1]])
           : null
       )
       .attr("fill", vis.positiveColor);
@@ -460,7 +460,7 @@ export class Chart {
     // Draw the FOCUS plot
     vis.focusPlot
       .selectAll(".focus-line")
-      .data(vis.mutEscapeSummary, (d) => d.site)
+      .data(vis.mutMetricSummary, (d) => d.site)
       .join("path")
       .attr("class", "focus-line")
       .attr("clip-path", "url(#focusClipPath)")
@@ -471,15 +471,15 @@ export class Chart {
       .attr("stroke-opacity", 1)
       .attr("stroke", vis.positiveColor)
       .attr("d", (d, i) =>
-        i < vis.mutEscapeSummary.length - 1 &&
-        d.site + 1 === vis.mutEscapeSummary[i + 1].site
-          ? vis.focusLine([d, vis.mutEscapeSummary[i + 1]])
+        i < vis.mutMetricSummary.length - 1 &&
+        d.site + 1 === vis.mutMetricSummary[i + 1].site
+          ? vis.focusLine([d, vis.mutMetricSummary[i + 1]])
           : null
       );
 
     vis.focusPlot
       .selectAll("circle")
-      .data(vis.filteredMutEscapeSummary, (d) => d.site)
+      .data(vis.filteredMutMetricSummary, (d) => d.site)
       .join(
         (enter) =>
           enter
@@ -537,7 +537,7 @@ export class Chart {
     // Draw the HEATMAP plot
     vis.heatmapPlot
       .selectAll(".mutant-rect")
-      .data(vis.mutEscapeHeatmap, (d) => d.mutation)
+      .data(vis.mutMetricHeatmap, (d) => d.mutation)
       .join(
         (enter) =>
           enter
@@ -566,7 +566,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.escape ? d.escape.toFixed(2) : "Filtered"}`)
+          .html(`Escape: ${d.metric ? d.metric.toFixed(2) : "Filtered"}`)
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
@@ -580,7 +580,7 @@ export class Chart {
       });
 
     // Add an 'x' for the wildtype residue
-    vis.wildtype = vis.mutEscapeHeatmap.map((d) => d.wildtype)[0];
+    vis.wildtype = vis.mutMetricHeatmap.map((d) => d.wildtype)[0];
     vis.heatmapPlot
       .selectAll(".wildtype-text")
       .data([vis.wildtype], (d) => d)
@@ -674,9 +674,9 @@ export class Chart {
     vis.focusPlot
       .selectAll(".focus-line")
       .attr("d", (d, i) =>
-        i < vis.mutEscapeSummary.length - 1 &&
-        d.site + 1 === vis.mutEscapeSummary[i + 1].site
-          ? vis.focusLine([d, vis.mutEscapeSummary[i + 1]])
+        i < vis.mutMetricSummary.length - 1 &&
+        d.site + 1 === vis.mutMetricSummary[i + 1].site
+          ? vis.focusLine([d, vis.mutMetricSummary[i + 1]])
           : null
       );
     vis.focusPlot
@@ -761,7 +761,7 @@ export class Chart {
       .attr("stroke-width", 4);
 
     // Initialize the heatmap data for the selected site
-    vis.mutEscapeHeatmap = vis.mutEscape.filter(
+    vis.mutMetricHeatmap = vis.mutMetric.filter(
       (e) => e.site === site && e.epitope === epitope
     );
 
@@ -774,7 +774,7 @@ export class Chart {
     // Update the heatmap to be this site
     vis.heatmapPlot
       .selectAll(".mutant-rect")
-      .data(vis.mutEscapeHeatmap, (d) => d.mutation)
+      .data(vis.mutMetricHeatmap, (d) => d.mutation)
       .join(
         (enter) =>
           enter
@@ -803,7 +803,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.escape ? d.escape.toFixed(2) : "Filtered"}`)
+          .html(`Escape: ${d.metric ? d.metric.toFixed(2) : "Filtered"}`)
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })

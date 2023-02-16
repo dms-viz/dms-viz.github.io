@@ -1,6 +1,6 @@
 import * as NGL from "ngl";
 import * as d3 from "d3";
-import { summarizeEscapeData, invertColor } from "./utils.js";
+import { summarizeMetricData, invertColor } from "./utils.js";
 
 export class Protein {
   /**
@@ -175,8 +175,8 @@ export class Protein {
     let protein = this;
 
     // Process DATA
-    protein.mutEscape = protein.data[protein.config.model].mut_escape_df;
-    protein.mutEscapeSummary = summarizeEscapeData(protein.mutEscape).filter(
+    protein.mutMetric = protein.data[protein.config.model].mut_metric_df;
+    protein.mutMetricSummary = summarizeMetricData(protein.mutMetric).filter(
       (e) => e.epitope === protein.config.epitope
     );
 
@@ -191,7 +191,7 @@ export class Protein {
         : d[protein.config.summary];
     };
     protein.metricExtent = d3
-      .extent(protein.mutEscapeSummary, protein.colorAccessor)
+      .extent(protein.mutMetricSummary, protein.colorAccessor)
       .map(Math.abs);
     // Make the color scale
     if (!protein.config.floor) {
@@ -206,12 +206,12 @@ export class Protein {
     } else {
       protein.colorScale = d3
         .scaleLinear()
-        .domain([0, d3.max(protein.mutEscapeSummary, protein.colorAccessor)])
+        .domain([0, d3.max(protein.mutMetricSummary, protein.colorAccessor)])
         .range(["white", protein.positiveColor]);
     }
     // Use the scale function to map data to a color
     protein.colorMap = new Map(
-      protein.mutEscapeSummary.map((d) => {
+      protein.mutMetricSummary.map((d) => {
         return [
           parseInt(d.site_protein),
           protein.colorScale(d[protein.config.summary]),
@@ -223,7 +223,7 @@ export class Protein {
     protein.schemeId = NGL.ColormakerRegistry.addScheme(function () {
       this.atomColor = (atom) => {
         if (protein.colorMap.has(atom.resno)) {
-          // Color by array of escape summary - must be hexbase integer
+          // Color by array of metric summary - must be hexbase integer
           return parseInt(
             d3.color(protein.colorMap.get(atom.resno)).formatHex().slice(1),
             16
