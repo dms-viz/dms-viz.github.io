@@ -30,6 +30,7 @@ export class Tool {
     tool.summary = "sum";
     tool.floor = true;
     tool.pdb = tool.data[tool.model].pdb;
+    tool.metric = tool.data[tool.model].metric_col;
 
     // Columns to filter on
     tool.filterCols = tool.data[tool.model].filter_cols;
@@ -58,19 +59,12 @@ export class Tool {
     ]);
 
     // Add the sliders for the filters
-    tool.filterCols.forEach((col) => {
-      // function to split the column name into words and capitalize the first letter of each word
-      const splitCol = (col) =>
-        col
-          .split("_")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-
+    Object.keys(tool.filterCols).forEach((col) => {
       // Add the html for each slider
       document.getElementById("filters").innerHTML += `
-        <label for="${col}" style="display: block">${splitCol(col)}</label>
+        <label for="${col}" style="display: block">${tool.filterCols[col]}</label>
         <input id="${col}" type="range" />
-        <span id="${col}-output" class="${col} output"></span>
+        <span id="${col}-output" class="output"></span>
       `;
 
       // Get the min and max values for the column
@@ -104,6 +98,7 @@ export class Tool {
         epitope: tool.epitope,
         summary: tool.summary,
         floor: tool.floor,
+        metric: tool.metric,
         parentElement: "#chart",
       },
       tool.data
@@ -249,6 +244,8 @@ export class Tool {
       );
       // Get the map for reference sites to sequential sites
       const siteMap = tool.data[selection].sitemap;
+      // Get the column name of the mutation-level metric
+      const metric = tool.data[selection].metric_col;
       // Map the reference sites to sequential and protein sites
       tool.data[selection].mut_metric_df = tool.data[
         selection
@@ -259,7 +256,7 @@ export class Tool {
           site_reference: e.reference_site,
           site_protein: siteMap[e.reference_site].protein_site,
           site_chain: siteMap[e.reference_site].chains,
-          metric: e.escape_mean,
+          metric: e[metric],
           epitope: e.epitope.toString(),
         };
       });

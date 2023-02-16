@@ -15,6 +15,7 @@ export class Chart {
       epitope: _config.epitope,
       summary: _config.summary,
       floor: _config.floor,
+      metric: _config.metric,
       parentElement: _config.parentElement,
       width: 1080,
       height: 400,
@@ -231,7 +232,7 @@ export class Chart {
         `${
           vis.config.summary.charAt(0).toUpperCase() +
           vis.config.summary.slice(1)
-        } of Escape`
+        } of ${vis.config.metric}`
       )
       .attr("transform", "rotate(-90)")
       .attr("x", -(vis.bounds.focus.height / 2))
@@ -501,9 +502,9 @@ export class Chart {
         vis.tooltip
           .style("opacity", 1)
           .html(
-            `Site: ${d.site_reference}<br>Escape ${vis.config.summary}: ${d[
+            `Site: ${d.site_reference}<br>${vis.config.metric} ${
               vis.config.summary
-            ].toFixed(2)}<br>Wildtype: ${d.wildtype}`
+            }: ${d[vis.config.summary].toFixed(2)}<br>Wildtype: ${d.wildtype}`
           )
           .style("border-color", vis.positiveColor);
       })
@@ -566,7 +567,11 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.metric ? d.metric.toFixed(2) : "Filtered"}`)
+          .html(
+            `${vis.config.metric}: ${
+              d.metric ? d.metric.toFixed(2) : "Filtered"
+            }`
+          )
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
@@ -621,7 +626,7 @@ export class Chart {
         `${
           vis.config.summary.charAt(0).toUpperCase() +
           vis.config.summary.slice(1)
-        } of Escape`
+        } of ${vis.config.metric}`
       );
 
     // Peripherals for the HEATMAP plot
@@ -803,7 +808,11 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(`Escape: ${d.metric ? d.metric.toFixed(2) : "Filtered"}`)
+          .html(
+            `${vis.config.metric}: ${
+              d.metric ? d.metric.toFixed(2) : "Filtered"
+            }`
+          )
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })

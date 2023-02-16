@@ -74,7 +74,7 @@ d3.select("#showGlycans").on("change", function () {
 });
 
 // Add event listeners for the range filters
-State.filterCols.forEach((col) => {
+Object.keys(State.filterCols).forEach((col) => {
   const rangeInput = document.getElementById(col);
   rangeInput.addEventListener("input", function () {
     // Filter the chart data based on the range input
