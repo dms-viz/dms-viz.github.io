@@ -18,6 +18,7 @@ d3.select("#json-file").on("change", function () {
     alert("Please select a JSON file to upload.");
     return;
   }
+
   // Get the selected file
   const file = input.files[0];
 
@@ -72,17 +73,6 @@ d3.select("#backgroundColor").on("change", function () {
 d3.select("#showGlycans").on("change", function () {
   State.updateProtein(this);
 });
-
-// Add event listeners for the range filters
-if (State.filterCols) {
-  Object.keys(State.filterCols).forEach((col) => {
-    const rangeInput = document.getElementById(col);
-    rangeInput.addEventListener("input", function () {
-      // Filter the chart data based on the range input
-      State.filterData(this);
-    });
-  });
-}
 
 // Set up the event listeners for the download buttons
 d3.select("#downloadProtein").on("click", function () {

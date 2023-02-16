@@ -18,6 +18,9 @@ export class Tool {
   initTool() {
     let tool = this;
 
+    // Grab the filters div by ID and remove the inner HTML
+    d3.select("#filters").html("");
+
     // Format the JSON data
     tool._formatData();
 
@@ -88,6 +91,11 @@ export class Tool {
         document.getElementById(`${col}-output`).textContent = d3.format(".2f")(
           colRange[0]
         );
+        // Add an event listener to the slider
+        document.getElementById(col).addEventListener("input", function () {
+          // Filter the chart data based on the range input
+          tool.filterData(this);
+        });
       });
     }
 
