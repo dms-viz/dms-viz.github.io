@@ -38,6 +38,9 @@ export class Tool {
     // Columns to filter on
     tool.filterCols = tool.data[tool.experiment].filter_cols;
 
+    // Columns to use a tooltips
+    tool.tooltipCols = tool.data[tool.experiment].tooltip_cols;
+
     // Set up the chart selection menus
     tool._updateSelection(d3.select("#experiment"), tool.experiments);
     tool._updateSelection(
@@ -91,7 +94,12 @@ export class Tool {
         document.getElementById(`${col}-output`).textContent = d3.format(".2f")(
           colRange[0]
         );
-        // Add an event listener to the slider
+      });
+    }
+
+    // Add an event listener to the sliders
+    if (tool.filterCols) {
+      Object.keys(tool.filterCols).forEach((col) => {
         document.getElementById(col).addEventListener("input", function () {
           // Filter the chart data based on the range input
           tool.filterData(this);
@@ -109,6 +117,7 @@ export class Tool {
         summary: tool.summary,
         floor: tool.floor,
         metric: tool.metric,
+        tooltips: tool.tooltipCols,
         parentElement: "#chart",
       },
       tool.data

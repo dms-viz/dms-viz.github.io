@@ -16,6 +16,7 @@ export class Chart {
       summary: _config.summary,
       floor: _config.floor,
       metric: _config.metric,
+      tooltips: _config.tooltips,
       parentElement: _config.parentElement,
       width: 1080,
       height: 400,
@@ -421,6 +422,26 @@ export class Chart {
         )
       );
 
+    // define a function to make the tooltip html
+    vis.tooltipContent = (d) => {
+      // default tooltip html
+      const defaultTooltip = `${vis.config.metric}: ${
+        d.metric !== null ? d.metric.toFixed(2) : "Filtered"
+      }</br>`;
+      // if the tooltips exist, add them to the html
+      if (vis.config.tooltips) {
+        const lines = Object.entries(vis.config.tooltips).map(
+          ([column, name]) =>
+            `${name}: ${
+              typeof d[column] === "number" ? d[column].toFixed(2) : d[column]
+            }</br>`
+        );
+        return defaultTooltip + lines.join("");
+      } else {
+        return defaultTooltip;
+      }
+    };
+
     // make the path GENERATORS
     vis.contextArea = d3
       .area()
@@ -567,11 +588,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(
-            `${vis.config.metric}: ${
-              d.metric ? d.metric.toFixed(2) : "Filtered"
-            }`
-          )
+          .html(vis.tooltipContent(d))
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
@@ -808,11 +825,7 @@ export class Chart {
       .on("mouseover", (evt, d) => {
         vis.tooltip
           .style("opacity", 1)
-          .html(
-            `${vis.config.metric}: ${
-              d.metric ? d.metric.toFixed(2) : "Filtered"
-            }`
-          )
+          .html(vis.tooltipContent(d))
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
