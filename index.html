@@ -11,8 +11,8 @@
       rel="stylesheet"
     />
     
-    <script type="module" crossorigin src="/assets/index.804508ea.js"></script>
-    <link rel="stylesheet" href="/assets/index.a37e828b.css">
+    <script type="module" crossorigin src="/assets/index.29c20620.js"></script>
+    <link rel="stylesheet" href="/assets/index.2e29bd6d.css">
   </head>
   <!-- Body Contents -->
   <body>
@@ -38,14 +38,42 @@
           <span class="close-button">&times;</span>
           <h3>Instructions</h3>
           <p>
-            To use this visualization tool, with the menu below, select an
-            antibody, epitope, and how escape at each site should be summarized.
-            Drag your mouse in the context plot just below the menu to zoom into
-            a region of the focus plot. To see how individual mutations at a
-            site contribute to escape, click on a point. To visualize sites on a
-            protein, drag to select a group of points To clear your selections,
-            double click on the plot. You can configure the protein options with
-            the collapsible menu below the plot.
+            <strong class="logo">dms-viz</strong> is an interactive tool
+            designed to visualize mutation-level data on an associated protein
+            structure. To use the tool, <strong>click</strong> on the sidebar to
+            the left and upload the data and protein structure that you want to
+            visualize. For details on how to format the input data and other
+            tool-related documentation,
+            <strong
+              >click
+              <a
+                href="https://github.com/dms-viz/dms-viz.github.io"
+                style="text-decoration: none"
+                >here</a
+              ></strong
+            >.
+          </p>
+          <p>
+            To configure the visualization, you can open the menu to the left to
+            choose various aspects of the view including colors, summary
+            statistics, filters, and more. You can also switch between
+            experiments present in the same file.
+          </p>
+          <p>
+            To use the visualization, you can zoom in and out of regions of your
+            data by <strong>brushing</strong> (<strong>click and drag</strong>)
+            over the <em>area</em> plot. You can select sites to see in the
+            <em>heatmap</em> by clicking on points in the
+            <em>line/point</em> plot. You can <strong>mouseover</strong> sites
+            on the <em>line/point</em> and mutations on the <em>heatmap</em> to
+            see details in a pop-up tooltip. Finally, you can select which sites
+            to highlight on the protein structure by
+            <strong>brushing</strong> (<strong>click and drag</strong>) over
+            points in the <em>line/point plot</em>. You can reorient and zoom
+            into the protein structure by
+            <strong>clicking and dragging</strong> it around the window. You can
+            also reset the protein structure to its original orientation by
+            pressing the <kbd>R</kbd> button on your keyboard.
           </p>
         </div>
       </div>
@@ -79,16 +107,16 @@
           </button>
           <div class="accordion-content">
             <div class="accordion-option">
-              <label for="Model">Model</label>
-              <select name="Model" id="model"></select>
+              <label for="Experiment">Experiment</label>
+              <select name="Experiment" id="experiment"></select>
             </div>
             <div class="accordion-option">
               <label for="Epitope">Epitope</label>
               <select name="Epitope" id="epitope"></select>
             </div>
             <div class="accordion-option">
-              <label for="Metric">Metric</label>
-              <select name="Metric" id="metric"></select>
+              <label for="Summary">Summary Metric</label>
+              <select name="Summary" id="summary"></select>
             </div>
             <div class="accordion-option">
               <label for="Floor"
@@ -151,15 +179,7 @@
           </button>
           <div class="accordion-content">
             <div class="accordion-option">
-              <!-- Range slider -->
-              <label for="times_seen" style="display: block">Times Seen</label>
-              <input id="times_seen" type="range" />
-              <span id="times_seen-output" class="time_seen output"></span>
-              <label for="func_effect" style="display: block"
-                >Functional Effect</label
-              >
-              <input id="func_effect" type="range" />
-              <span id="func_effect-output" class="func_effect output"></span>
+              <div id="filters"></div>
             </div>
           </div>
         </div>
