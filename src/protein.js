@@ -141,7 +141,11 @@ export class Protein {
       if (pickingProxy && pickingProxy.atom) {
         let atom = pickingProxy.atom;
         // Tooltip content
-        tooltip.innerHTML = `Site: ${atom.resno} </br > Residue: ${atom.resname} </br > Chain: ${atom.chainname}`;
+        tooltip.innerHTML = `Site: ${atom.resno} </br > Residue: ${
+          atom.resname
+        }${protein._getOneLetterCode(atom.resname)} </br > Chain: ${
+          atom.chainname
+        }`;
         tooltip.style.display = "block";
       } else {
         tooltip.style.display = "none";
@@ -298,5 +302,36 @@ export class Protein {
     } else {
       protein.stage.getRepresentationsByName("currentSelection").dispose();
     }
+  }
+  /**
+   * Convert the three letter code to a one letter code
+   * @param {String}
+   */
+  _getOneLetterCode(threeLetterCode) {
+    const aminoAcidMap = {
+      ALA: "A",
+      ARG: "R",
+      ASN: "N",
+      ASP: "D",
+      CYS: "C",
+      GLU: "E",
+      GLN: "Q",
+      GLY: "G",
+      HIS: "H",
+      ILE: "I",
+      LEU: "L",
+      LYS: "K",
+      MET: "M",
+      PHE: "F",
+      PRO: "P",
+      SER: "S",
+      THR: "T",
+      TRP: "W",
+      TYR: "Y",
+      VAL: "V",
+      SEC: "U",
+      PYL: "O",
+    };
+    return ` (${aminoAcidMap[threeLetterCode.toUpperCase()]})` || "";
   }
 }
