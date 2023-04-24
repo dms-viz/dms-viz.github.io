@@ -19,11 +19,11 @@ export class Chart {
       tooltips: _config.tooltips,
       parentElement: _config.parentElement,
       width: 1080,
-      height: 400,
+      height: 300,
       scaling: {
         top: 0.025,
         left: 0.06,
-        bottom: 0.12,
+        bottom: 0.15,
         right: 0.06,
         innerTop: 0.05,
         innerRight: 0.08,
@@ -617,7 +617,7 @@ export class Chart {
       .attr("y", (d) => vis.yScaleHeatmap(d))
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
-      .attr("font-size", "1.25em")
+      .attr("font-size", "1em")
       .attr("font-weight", "bold")
       .text("x");
 
@@ -852,7 +852,7 @@ export class Chart {
       .attr("y", (d) => vis.yScaleHeatmap(d))
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
-      .attr("font-size", "1.25em")
+      .attr("font-size", "1em")
       .attr("font-weight", "bold")
       .text("x");
   }

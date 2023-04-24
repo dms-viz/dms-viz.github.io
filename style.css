@@ -340,6 +340,12 @@ kbd {
   font-size: .9rem;
 }
 
+.heatmap .y-axis  text{
+  font-size: .8rem;
+  text-anchor: middle;
+  transform: translate(-0.4em, 0em);
+}
+
 .axis-label {
   font-size: 1.2rem;
   font-weight: bold;
