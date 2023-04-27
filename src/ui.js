@@ -91,3 +91,12 @@ window.addEventListener("load", () => {
     toggleSidebar();
   }
 });
+
+// Toggle the instructions modal trigger button to highlight/unhighlight
+document.addEventListener("click", function () {
+  const message = document.getElementById("help-message");
+  const help = document.querySelector(".help");
+  trigger.classList.remove("glow");
+  help.classList.remove("active");
+  message.remove();
+});

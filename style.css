@@ -55,19 +55,34 @@ nav a {
 }
 
 nav .help {
-  color:  rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
 
-nav .help:hover {
-  color: rgba(0, 0, 0, 0.75)
+nav .help:hover,
+nav .help.active {
+  color: rgba(0, 0, 0, 0.75);
 }
 
 nav .trigger {
+  display: flex;
+  align-items: center;
   border: none;
   outline:none;
   background: none;
   font-size: 1.25em;
+}
+
+.glow {
+  position: relative;
+  box-shadow: 0 0 8px 8px rgba(255, 255, 0, 0.5);
+  border-radius: 30%;
+}
+
+#help-message {
+  margin-left: 5px;
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.75)
 }
 
 nav .sidebar-toggle {
@@ -254,6 +269,7 @@ kbd {
 }
 
 .main {
+  margin-top: 3em;
   padding: 0 3em 0 calc(var(--nav-width) + 3em);
   transition: 0.5s;
 }
