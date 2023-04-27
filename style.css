@@ -311,7 +311,8 @@ kbd {
   }
 }
 
-.tooltip {
+.heatmap-tooltip,
+.focus-tooltip {
   padding: 8px 12px;
   color: black;
   border-radius: 6px;
@@ -326,6 +327,10 @@ kbd {
   background: rgba(250,240,255,0.2);
   backdrop-filter: blur(7px);
   z-index: var(--z-fixed);
+}
+
+.heatmap-tooltip {
+  transform: translate(-50%, 25%) !important;
 }
 
 .protein-tooltip {

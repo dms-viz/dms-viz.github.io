@@ -170,11 +170,17 @@ export class Chart {
       .attr("height", `${vis.bounds.heatmap.height / 2}px`)
       .style("fill", `url(#linear-gradient)`);
 
-    // Define the TOOLTIP
-    vis.tooltip = d3
+    // Define the TOOLTIPs
+    vis.focusTooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "tooltip")
+      .attr("class", "focus-tooltip")
+      .style("position", "absolute")
+      .style("opacity", 0);
+    vis.heatmapTooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "heatmap-tooltip")
       .style("position", "absolute")
       .style("opacity", 0);
 
@@ -520,7 +526,7 @@ export class Chart {
       .attr("stroke", vis.positiveColor)
       .attr("stroke-width", 2)
       .on("mouseover", (evt, d) => {
-        vis.tooltip
+        vis.focusTooltip
           .style("opacity", 1)
           .html(
             `Site: ${d.site_reference}<br>${vis.config.metric} ${
@@ -530,12 +536,12 @@ export class Chart {
           .style("border-color", vis.positiveColor);
       })
       .on("mousemove", (evt) => {
-        vis.tooltip
+        vis.focusTooltip
           .style("top", evt.pageY - 10 + "px")
           .style("left", evt.pageX + 10 + "px");
       })
       .on("mouseout", () => {
-        vis.tooltip.style("opacity", 0);
+        vis.focusTooltip.style("opacity", 0);
       })
       .on("click", function (evt, d) {
         vis.updateHeatmap(d);
@@ -586,19 +592,19 @@ export class Chart {
       .attr("width", vis.xScaleHeatmap.bandwidth())
       .attr("height", vis.yScaleHeatmap.bandwidth())
       .on("mouseover", (evt, d) => {
-        vis.tooltip
+        vis.heatmapTooltip
           .style("opacity", 1)
           .html(vis.tooltipContent(d))
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
       .on("mousemove", (evt) => {
-        vis.tooltip
+        vis.heatmapTooltip
           .style("top", evt.pageY - 10 + "px")
           .style("left", evt.pageX + 10 + "px");
       })
       .on("mouseout", () => {
-        vis.tooltip.style("opacity", 0);
+        vis.heatmapTooltip.style("opacity", 0);
       });
 
     // Add an 'x' for the wildtype residue
@@ -823,19 +829,19 @@ export class Chart {
       .attr("width", vis.xScaleHeatmap.bandwidth())
       .attr("height", vis.yScaleHeatmap.bandwidth())
       .on("mouseover", (evt, d) => {
-        vis.tooltip
+        vis.heatmapTooltip
           .style("opacity", 1)
           .html(vis.tooltipContent(d))
           .style("border-color", vis.positiveColor)
           .style("font-size", "1em");
       })
       .on("mousemove", (evt) => {
-        vis.tooltip
+        vis.heatmapTooltip
           .style("top", evt.pageY - 10 + "px")
           .style("left", evt.pageX + 10 + "px");
       })
       .on("mouseout", () => {
-        vis.tooltip.style("opacity", 0);
+        vis.heatmapTooltip.style("opacity", 0);
       });
 
     vis.heatmapPlot
