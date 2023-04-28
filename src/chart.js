@@ -297,7 +297,13 @@ export class Chart {
         [vis.bounds.focus.width, vis.bounds.focus.height + 5], // There needs to be y-padding if you floor the values
       ])
       .on("end", function (event) {
-        if (event.selection) vis.brushedPoints(event.selection);
+        if (event.selection) {
+          if (event.sourceEvent.altKey) {
+            vis.deselectSites(event.selection);
+          } else {
+            vis.brushedPoints(event.selection);
+          }
+        }
       })
       .keyModifiers(false);
 
@@ -719,11 +725,14 @@ export class Chart {
   brushedPoints(selection) {
     let vis = this;
 
+    // Clear the brush
+    vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
+
     if (selection) {
       // Destructure the selection bounds
       const [[x0, y0], [x1, y1]] = selection;
 
-      // Save the `value` as the data attached to each node
+      // Class the selected points
       vis.focusPlot
         .selectAll("circle")
         .filter(
@@ -736,9 +745,6 @@ export class Chart {
         .classed("selected", true)
         .attr("fill", vis.positiveColor);
 
-      // Clear the brush
-      vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
-
       // Dispatch an event with the selected sites
       this.dispatch.call(
         "updateSites",
@@ -750,15 +756,42 @@ export class Chart {
   /**
    * Deselect all points in the focus plot
    */
-  deselectSites() {
+  deselectSites(selection = null) {
     let vis = this;
 
-    vis.focusPlot
-      .selectAll(".selected")
-      .classed("selected", false)
-      .attr("fill", "white");
+    if (selection) {
+      // Clear the brush
+      vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
 
-    this.dispatch.call("updateSites", this, []);
+      // Destructure the selection bounds
+      const [[x0, y0], [x1, y1]] = selection;
+
+      // Remove the 'selected' class from points in the brush
+      vis.focusPlot
+        .selectAll("circle")
+        .filter(
+          (d) =>
+            x0 <= vis.xScaleFocus(vis.xAccessorFocus(d)) &&
+            vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
+            y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
+            vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+        )
+        .classed("selected", false)
+        .attr("fill", "white");
+
+      this.dispatch.call(
+        "updateSites",
+        this,
+        vis.focusPlot.selectAll(".selected").data()
+      );
+    } else {
+      vis.focusPlot
+        .selectAll(".selected")
+        .classed("selected", false)
+        .attr("fill", "white");
+
+      this.dispatch.call("updateSites", this, []);
+    }
   }
   /**
    * React to click events on focus points
