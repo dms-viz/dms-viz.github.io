@@ -93,10 +93,14 @@ window.addEventListener("load", () => {
 });
 
 // Toggle the instructions modal trigger button to highlight/unhighlight
-document.addEventListener("click", function () {
+function highlightHelp() {
   const message = document.getElementById("help-message");
   const help = document.querySelector(".help");
   trigger.classList.remove("glow");
   help.classList.remove("active");
   message.remove();
-});
+
+  // Remove the event listener after the first click
+  document.removeEventListener("click", highlightHelp);
+}
+document.addEventListener("click", highlightHelp);

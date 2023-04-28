@@ -130,13 +130,13 @@ nav .sidebar-toggle:hover {
 }
 
 kbd {
-  border: 2px solid; 
+  border: 1px solid; 
   box-shadow: 2px 2px; 
-  font-size: .8em; 
+  font-size: 1.2em; 
   line-height: .8em; 
   display: inline-block;
   font-weight: 600;
-  letter-spacing: .05em; 
+  letter-spacing: .1em; 
   padding: 3px 5px;
   white-space: nowrap;
 }
