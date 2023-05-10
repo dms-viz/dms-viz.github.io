@@ -326,9 +326,7 @@ export class Chart {
       return newRow;
     });
     // Summarize and filter the experiments based on the selections
-    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter(
-      (e) => e.epitope === vis.config.epitope
-    );
+    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric);
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
       (d) => d[vis.config.summary] !== null
@@ -489,7 +487,10 @@ export class Chart {
           ? vis.contextArea([d, vis.mutMetricSummary[i + 1]])
           : null
       )
-      .attr("fill", vis.positiveColor);
+      .attr(
+        "fill",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      );
 
     // Draw the FOCUS plot
     vis.focusPlot
@@ -503,7 +504,10 @@ export class Chart {
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
-      .attr("stroke", vis.positiveColor)
+      .attr(
+        "stroke",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
       .attr("d", (d, i) =>
         i < vis.mutMetricSummary.length - 1 &&
         d.site + 1 === vis.mutMetricSummary[i + 1].site
@@ -529,7 +533,10 @@ export class Chart {
       .attr("r", 5)
       .attr("clip-path", "url(#focusClipPath)")
       .attr("fill", "white")
-      .attr("stroke", vis.positiveColor)
+      .attr(
+        "stroke",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
       .attr("stroke-width", 2)
       .on("mouseover", (evt, d) => {
         vis.focusTooltip
@@ -539,7 +546,10 @@ export class Chart {
               vis.config.summary
             }: ${d[vis.config.summary].toFixed(2)}<br>Wildtype: ${d.wildtype}`
           )
-          .style("border-color", vis.positiveColor);
+          .style(
+            "border-color",
+            vis.data[vis.config.experiment].epitope_colors[d.epitope]
+          );
       })
       .on("mousemove", (evt) => {
         vis.focusTooltip
@@ -554,7 +564,12 @@ export class Chart {
       });
 
     // Color in the selected points
-    vis.focusPlot.selectAll(".selected").attr("fill", vis.positiveColor);
+    vis.focusPlot
+      .selectAll(".selected")
+      .attr(
+        "fill",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      );
 
     // Color in the heatmap point
     vis.focusPlot
@@ -743,7 +758,10 @@ export class Chart {
             vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
         )
         .classed("selected", true)
-        .attr("fill", vis.positiveColor);
+        .attr(
+          "fill",
+          (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        );
 
       // Dispatch an event with the selected sites
       this.dispatch.call(
@@ -809,7 +827,10 @@ export class Chart {
       .selectAll(".heatmap-site")
       .attr("r", 5)
       .attr("stroke-width", 2)
-      .attr("stroke", vis.positiveColor)
+      .attr(
+        "stroke",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
       .classed("heatmap-site", false);
 
     // Highlight the selected site in the focus plot

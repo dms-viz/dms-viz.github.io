@@ -45,7 +45,9 @@ export class Tool {
     tool._updateSelection(d3.select("#experiment"), tool.experiments);
     tool._updateSelection(
       d3.select("#epitope"),
-      tool.data[tool.experiment].epitopes
+      tool.data[tool.experiment].epitopes.length > 1
+        ? [...tool.data[tool.experiment].epitopes, "All"]
+        : tool.data[tool.experiment].epitopes
     );
     tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
     // Set up the protein selection menus
