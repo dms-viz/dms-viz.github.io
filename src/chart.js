@@ -129,12 +129,14 @@ export class Chart {
         vis.deselectSites();
       });
 
+    // Hide points outside of the focus area with some padding on top
     vis.focusPlot
       .append("clipPath")
       .attr("id", "focusClipPath")
       .append("rect")
+      .attr("transform", "translate(0," + -5 + ")")
       .attr("width", vis.bounds.focus.width)
-      .attr("height", vis.bounds.focus.height);
+      .attr("height", vis.bounds.focus.height + 5);
 
     // Define the elements of the HEATMAP
     vis.heatmapPlot = vis.boundedArea
