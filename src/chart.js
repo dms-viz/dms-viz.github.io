@@ -820,6 +820,8 @@ export class Chart {
     // Get the site information from the datum
     const site = datum.site;
     const epitope = datum.epitope;
+    vis.positiveColor = vis.data[vis.config.experiment].epitope_colors[epitope];
+    vis.negativeColor = invertColor(vis.positiveColor);
     vis.wildtype = datum.wildtype;
 
     // Remove the previously selected site from the focus plot
@@ -849,6 +851,40 @@ export class Chart {
 
     // Update the scale based on the site
     vis.xScaleHeatmap.domain([site]);
+
+    // Update the color scale based on the epitope
+    if (!vis.config.floor) {
+      vis.colorScaleHeatmap.range([
+        vis.negativeColor,
+        "white",
+        vis.positiveColor,
+      ]);
+    } else {
+      vis.colorScaleHeatmap.range(["white", vis.positiveColor]);
+    }
+
+    // Update the legend color
+    vis.legendLinearGradient
+      .selectAll("stop")
+      .data(vis.colorScaleHeatmap.range())
+      .join(
+        (enter) =>
+          enter
+            .append("stop")
+            .attr(
+              "offset",
+              (d, i) => i / (vis.colorScaleHeatmap.range().length - 1)
+            )
+            .attr("stop-color", (d) => d),
+        (update) =>
+          update
+            .attr(
+              "offset",
+              (d, i) => i / (vis.colorScaleHeatmap.range().length - 1)
+            )
+            .attr("stop-color", (d) => d),
+        (exit) => exit.remove()
+      );
 
     // Re-draw the x-axis based on the updated scale
     vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
