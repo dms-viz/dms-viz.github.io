@@ -28,7 +28,6 @@ export class Protein {
       showGlycans: false,
     };
     this.data = _data;
-    this.dispatch = d3.dispatch("proteinLoaded");
 
     // Initialize the stage object for the parent element
     this.stage = new NGL.Stage(this.config.parentElement, {
