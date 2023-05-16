@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
+import { Legend } from "./legend.js";
 
 // Write a class to handle the state of the tool
 export class Tool {
@@ -141,6 +142,18 @@ export class Tool {
     );
 
     tool.proteinLoaded = tool.protein.dispatch;
+
+    // Set up the legend if there are more than one epitope
+    if (tool.data[tool.experiment].epitopes.length > 1) {
+      tool.legend = new Legend(
+        {
+          parentElement: "#legend",
+          experiment: tool.experiment,
+          proteinEpitope: tool.epitope,
+        },
+        tool.data
+      );
+    }
   }
   /**
    * Handle updates to the experiment selection

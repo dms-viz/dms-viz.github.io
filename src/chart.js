@@ -19,11 +19,11 @@ export class Chart {
       tooltips: _config.tooltips,
       parentElement: _config.parentElement,
       width: 1080,
-      height: 300,
+      height: 350,
       scaling: {
         top: 0.025,
         left: 0.06,
-        bottom: 0.15,
+        bottom: 0.2,
         right: 0.06,
         innerTop: 0.05,
         innerRight: 0.08,
@@ -137,6 +137,15 @@ export class Chart {
       .attr("transform", "translate(0," + -5 + ")")
       .attr("width", vis.bounds.focus.width)
       .attr("height", vis.bounds.focus.height + 5);
+
+    // Define the elements of the FOCUS LEGEND
+    vis.focusLegend = vis.focusPlot
+      .append("g")
+      .attr("class", "legend")
+      .attr(
+        "transform",
+        `translate(0,${vis.bounds.focus.height + vis.margin.bottom})`
+      );
 
     // Define the elements of the HEATMAP
     vis.heatmapPlot = vis.boundedArea

@@ -259,6 +259,10 @@ kbd {
   font-size: 1.75rem;
 }
 
+.legend {
+  padding-top: .2em;
+}
+
 .sidebar--collapsed {
   width: var(--nav-icon-width);
   overflow-x: hidden;
