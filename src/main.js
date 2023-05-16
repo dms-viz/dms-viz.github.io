@@ -44,8 +44,8 @@ d3.select("#json-file").on("change", function () {
 d3.select("#experiment").on("change", function () {
   State.updateExperiment(this);
 });
-d3.select("#epitope").on("change", function () {
-  State.updateData(this);
+window.addEventListener("proteinEpitopeSelected", function (event) {
+  State.updateEpitope(event.detail);
 });
 d3.select("#summary").on("change", function () {
   State.updateData(this);

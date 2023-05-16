@@ -44,12 +44,6 @@ export class Tool {
 
     // Set up the chart selection menus
     tool._updateSelection(d3.select("#experiment"), tool.experiments);
-    tool._updateSelection(
-      d3.select("#epitope"),
-      tool.data[tool.experiment].epitopes.length > 1
-        ? [...tool.data[tool.experiment].epitopes, "All"]
-        : tool.data[tool.experiment].epitopes
-    );
     tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
     // Set up the protein selection menus
     tool._updateSelection(d3.select("#proteinRepresentation"), [
@@ -141,8 +135,6 @@ export class Tool {
       tool.data
     );
 
-    tool.proteinLoaded = tool.protein.dispatch;
-
     // Set up the legend if there are more than one epitope
     if (tool.data[tool.experiment].epitopes.length > 1) {
       tool.legend = new Legend(
@@ -171,12 +163,6 @@ export class Tool {
     // Update the pdb structure since this is also experiment specific
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
-    // Update the epitope selection menu
-    tool._updateSelection(
-      d3.select("#epitope"),
-      tool.data[tool.experiment].epitopes
-    );
-
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
     tool.chart.updateVis();
@@ -205,6 +191,17 @@ export class Tool {
 
     // Update the chart and protein
     tool.chart.updateVis();
+    tool.protein.makeColorScheme();
+  }
+  updateEpitope(epitope) {
+    let tool = this;
+
+    // Update the config
+    tool["epitope"] = epitope;
+    tool.chart.config["epitope"] = epitope;
+    tool.protein.config["epitope"] = epitope;
+
+    // Update the chart and protein
     tool.protein.makeColorScheme();
   }
   /**

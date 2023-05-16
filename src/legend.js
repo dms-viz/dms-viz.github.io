@@ -153,8 +153,6 @@ export class Legend {
   selectProteinEpitope(event, datum) {
     let vis = this;
 
-    console.log(datum);
-
     // First, hide all other boxes
     vis.legend
       .selectAll(".epitope-box")
@@ -172,6 +170,12 @@ export class Legend {
 
     // Update the selected epitope
     vis.proteinEpitope = datum;
+
+    // Dispatch an event to notify about the selected epitope
+    const proteinEpitopeEvent = new CustomEvent("proteinEpitopeSelected", {
+      detail: vis.proteinEpitope,
+    });
+    window.dispatchEvent(proteinEpitopeEvent);
   }
   // selectChartEpitopes(datum) {
   //   let vis = this;
