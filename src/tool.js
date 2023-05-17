@@ -30,10 +30,10 @@ export class Tool {
 
     // Set the default selections
     tool.experiment = tool.experiments[0];
-    tool.epitopes = tool.data[tool.experiment].epitopes.map((d) =>
-      d.toString()
+    tool.epitopes = tool.data[tool.experiment].epitopes.map(
+      (d) => d.toString() // TODO: Why is this necessary?
     );
-    tool.epitope = tool.data[tool.experiment].epitopes[0].toString();
+    tool.epitope = tool.epitopes[0];
     tool.summary = "sum";
     tool.floor = true;
     tool.pdb = tool.data[tool.experiment].pdb;
@@ -48,6 +48,14 @@ export class Tool {
     // Set up the chart selection menus
     tool._updateSelection(d3.select("#experiment"), tool.experiments);
     tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
+    tool.legend = new Legend(
+      {
+        parentElement: "#legend",
+        experiment: tool.experiment,
+        epitope: tool.epitope,
+      },
+      tool.data
+    );
     // Set up the protein selection menus
     tool._updateSelection(d3.select("#proteinRepresentation"), [
       "cartoon",
@@ -137,38 +145,31 @@ export class Tool {
       },
       tool.data
     );
-
-    // Set up the legend if there are more than one epitope
-    if (tool.epitopes.length > 1) {
-      tool.legend = new Legend(
-        {
-          parentElement: "#legend",
-          experiment: tool.experiment,
-          proteinEpitope: tool.epitope,
-        },
-        tool.data
-      );
-    }
   }
   /**
    * Handle updates to the experiment selection
    */
   updateExperiment(node) {
     let tool = this;
-    // Update the experiment selection in the chart and protein
+    // Update the experiment selection in the chart, protein, and legend
     tool.experiment = d3.select(node).property("value");
     tool.chart.config.experiment = tool.experiment;
     tool.protein.config.experiment = tool.experiment;
+    tool.legend.config.experiment = tool.experiment;
     // Update the epitope selection because experiments have different epitopes
-    tool.epitope = tool.data[tool.experiment].epitopes[0];
+    tool.epitopes = tool.data[tool.experiment].epitopes;
+    tool.epitope = tool.epitopes[0];
     tool.chart.config.epitope = tool.epitope;
+    tool.chart.config.epitopes = tool.epitopes;
     tool.protein.config.epitope = tool.epitope;
+    tool.legend.config.epitope = tool.epitope;
     // Update the pdb structure since this is also experiment specific
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
     tool.chart.updateVis();
+    tool.legend.updateVis();
 
     // Set a timeout to make sure the chart has been updated
     // This prevents the odd loading issue with the protein on Chrome

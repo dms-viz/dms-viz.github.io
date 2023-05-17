@@ -12,13 +12,13 @@ export class Legend {
     this.config = {
       parentElement: _config.parentElement,
       experiment: _config.experiment,
+      epitope: _config.epitope,
       name: _config.name || "epitope",
     };
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
     // Selected epitopes
-    this.proteinEpitope = _config.proteinEpitope;
-    this.plotEpitopes = Object.keys(_data[_config.experiment].epitope_colors);
+    this.chartEpitopes = [];
     // Initialize the visualization
     this.initVis();
   }
@@ -60,6 +60,9 @@ export class Legend {
     // Get the available epitopes and colors
     vis.epitopes = Object.keys(vis.data[vis.config.experiment].epitope_colors);
 
+    // Add all of the avalible epitopes to the chartEpitopes
+    vis.chartEpitopes = vis.epitopes;
+
     // Epitope colors
     vis.epitopeColors = vis.data[vis.config.experiment].epitope_colors;
 
@@ -78,104 +81,114 @@ export class Legend {
 
     // Add a highlight-box for each epitope and set the visibility to hidden
     vis.legend
-      .selectAll("epitope-boxes")
-      .data(vis.epitopes)
-      .enter()
-      .append("rect")
-      .attr("class", "epitope-box")
-      .attr("x", vis.margin.left - vis.margin.point / 2)
-      .attr("y", function (d, i) {
-        return vis.margin.top - 10 + i * vis.margin.point;
-      })
-      .attr("width", vis.background.node().getBBox().width - 20)
-      .attr("height", 20)
-      .style("opacity", 0)
-      .attr("ry", 4)
-      .style("fill", function (d) {
-        return vis.epitopeColors[d];
-      })
-      .on("click", function (event, datum) {
-        // Check if the alt key is pressed and whether the epitope in the chart selection
-        if (event.altKey && vis.plotEpitopes.includes(datum)) {
-          vis.deselectChartEpitopes(datum);
-        } else if (event.altKey && !vis.plotEpitopes.includes(datum)) {
-          vis.selectChartEpitopes(datum);
-        } else {
-          vis.selectProteinEpitope(datum);
-        }
-      });
+      .selectAll(".epitope-box")
+      .data(vis.epitopes, (d) => d)
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "epitope-box")
+            .attr("x", vis.margin.left - vis.margin.point / 2)
+            .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
+            .attr("width", vis.background.node().getBBox().width - 20)
+            .attr("height", 20)
+            .style("opacity", 0)
+            .attr("ry", 4)
+            .style("fill", (d) => vis.epitopeColors[d])
+            .on("click", (event, datum) => {
+              if (event.altKey && vis.chartEpitopes.includes(datum)) {
+                vis.deselectChartEpitopes(datum);
+              } else if (event.altKey && !vis.chartEpitopes.includes(datum)) {
+                vis.selectChartEpitopes(datum);
+              } else {
+                vis.selectProteinEpitope(datum);
+              }
+            }),
+        (update) =>
+          update
+            // Attributes that need to be updated go here
+            .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
+            .style("fill", (d) => vis.epitopeColors[d]),
+        (exit) => exit.remove()
+      );
 
     // Highlight the selected epitope by default
     vis.legend
       .selectAll(".epitope-box")
       .filter(function (d) {
-        return d == vis.proteinEpitope;
+        return d == vis.config.epitope;
       })
       .style("opacity", ".25")
       .classed("selected-epitope", true);
 
     // Add one dot in the legend for each name.
     vis.legend
-      .selectAll("epitope-circles")
-      .data(vis.epitopes)
-      .enter()
-      .append("circle")
-      .attr("class", "epitope-circle")
-      .attr("cx", vis.margin.left)
-      .attr("cy", function (d, i) {
-        return vis.margin.top + i * vis.margin.point;
-      })
-      .attr("r", 7)
-      .style("fill", function (d) {
-        return vis.epitopeColors[d];
-      })
-      .on("click", function (event, datum) {
-        // Check if the alt key is pressed and whether the epitope in the chart selection
-        if (event.altKey && vis.plotEpitopes.includes(datum)) {
-          vis.deselectChartEpitopes(datum);
-        } else if (event.altKey && !vis.plotEpitopes.includes(datum)) {
-          vis.selectChartEpitopes(datum);
-        } else {
-          vis.selectProteinEpitope(datum);
-        }
-      });
+      .selectAll(".epitope-circle")
+      .data(vis.epitopes, (d) => d)
+      .join(
+        (enter) =>
+          enter
+            .append("circle")
+            .attr("class", "epitope-circle")
+            .attr("cx", vis.margin.left)
+            .attr("cy", (d, i) => vis.margin.top + i * vis.margin.point)
+            .attr("r", 7)
+            .style("fill", (d) => vis.epitopeColors[d])
+            .on("click", (event, datum) => {
+              if (event.altKey && vis.chartEpitopes.includes(datum)) {
+                vis.deselectChartEpitopes(datum);
+              } else if (event.altKey && !vis.chartEpitopes.includes(datum)) {
+                vis.selectChartEpitopes(datum);
+              } else {
+                vis.selectProteinEpitope(datum);
+              }
+            }),
+        (update) =>
+          update
+            .attr("cy", (d, i) => vis.margin.top + i * vis.margin.point)
+            .style("fill", (d) => vis.epitopeColors[d]),
+        (exit) => exit.remove()
+      );
 
     // Add one dot in the legend for each name.
+    console.log(vis.epitopes);
     vis.legend
-      .selectAll("eptiope-labels")
-      .data(vis.epitopes)
-      .enter()
-      .append("text")
-      .attr("class", "epitope-label")
-      .attr("x", vis.margin.left * 2)
-      .attr("y", function (d, i) {
-        return vis.margin.top + i * vis.margin.point;
-      })
-      .text(function (d) {
-        return `${vis.config.name} ${d}`;
-      })
-      .style("fill", function (d) {
-        return vis.epitopeColors[d];
-      })
-      .attr("text-anchor", "left")
-      .style("alignment-baseline", "middle")
-      .style("user-select", "none")
-      .on("click", function (event, datum) {
-        // Check if the alt key is pressed and whether the epitope in the chart selection
-        if (event.altKey && vis.plotEpitopes.includes(datum)) {
-          vis.deselectChartEpitopes(datum);
-        } else if (event.altKey && !vis.plotEpitopes.includes(datum)) {
-          vis.selectChartEpitopes(datum);
-        } else {
-          vis.selectProteinEpitope(datum);
-        }
-      });
+      .selectAll(".epitope-label")
+      .data(vis.epitopes, (d) => d)
+      .join(
+        (enter) =>
+          enter
+            .append("text")
+            .attr("class", "epitope-label")
+            .attr("x", vis.margin.left * 2)
+            .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
+            .text((d) => `${vis.config.name} ${d}`)
+            .style("fill", (d) => vis.epitopeColors[d])
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle")
+            .style("user-select", "none")
+            .on("click", (event, datum) => {
+              if (event.altKey && vis.chartEpitopes.includes(datum)) {
+                vis.deselectChartEpitopes(datum);
+              } else if (event.altKey && !vis.chartEpitopes.includes(datum)) {
+                vis.selectChartEpitopes(datum);
+              } else {
+                vis.selectProteinEpitope(datum);
+              }
+            }),
+        (update) =>
+          update
+            .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
+            .text((d) => `${vis.config.name} ${d}`)
+            .style("fill", (d) => vis.epitopeColors[d]),
+        (exit) => exit.remove()
+      );
   }
   selectProteinEpitope(datum) {
     let vis = this;
 
     // If the selected epitope isn't in the chart selection, don't do anything
-    if (!vis.plotEpitopes.includes(datum)) {
+    if (!vis.chartEpitopes.includes(datum)) {
       return;
     }
 
@@ -195,11 +208,11 @@ export class Legend {
       .classed("selected-epitope", true);
 
     // Update the selected epitope
-    vis.proteinEpitope = datum;
+    vis.config.epitope = datum;
 
     // Dispatch an event to notify about the selected epitope
     const proteinEpitopeEvent = new CustomEvent("proteinEpitopeSelected", {
-      detail: vis.proteinEpitope,
+      detail: vis.config.epitope,
     });
     window.dispatchEvent(proteinEpitopeEvent);
   }
@@ -223,11 +236,11 @@ export class Legend {
       .style("opacity", "1");
 
     // Add this epitope to the selected epitopes
-    vis.plotEpitopes.push(datum);
+    vis.chartEpitopes.push(datum);
 
     // Dispatch an event to notify about the plot epitopes
     const chartEpitopeEvent = new CustomEvent("chartEpitopesSelected", {
-      detail: vis.plotEpitopes,
+      detail: vis.chartEpitopes,
     });
     window.dispatchEvent(chartEpitopeEvent);
   }
@@ -235,18 +248,18 @@ export class Legend {
     let vis = this;
 
     // If this is the last epitope, don't deselect it
-    if (vis.plotEpitopes.length == 1) {
+    if (vis.chartEpitopes.length == 1) {
       return;
     }
 
     // Remove this epitope from the selected epitopes
-    vis.plotEpitopes = vis.plotEpitopes.filter(function (d) {
+    vis.chartEpitopes = vis.chartEpitopes.filter(function (d) {
       return d != datum;
     });
 
     // If this epitope is highlighted, remove the highlight and move it to the next epitope in the list
-    if (vis.proteinEpitope == datum) {
-      vis.selectProteinEpitope(vis.plotEpitopes[0]);
+    if (vis.config.epitope == datum) {
+      vis.selectProteinEpitope(vis.chartEpitopes[0]);
     }
 
     // Add opacity to the text labels and points
@@ -266,7 +279,7 @@ export class Legend {
 
     // Dispatch an event to notify about the plot epitopes
     const chartEpitopeEvent = new CustomEvent("chartEpitopesSelected", {
-      detail: vis.plotEpitopes,
+      detail: vis.chartEpitopes,
     });
     window.dispatchEvent(chartEpitopeEvent);
   }

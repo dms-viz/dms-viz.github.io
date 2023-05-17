@@ -44,13 +44,14 @@ d3.select("#json-file").on("change", function () {
 d3.select("#experiment").on("change", function () {
   State.updateExperiment(this);
 });
+// TODO: Improve the organization of these two event listeners
 window.addEventListener("proteinEpitopeSelected", function (event) {
   State.updateEpitope(event.detail);
 });
 window.addEventListener("chartEpitopesSelected", function (event) {
   State.updateEpitopes(event.detail);
-  // State.chart.deselectSites();
 });
+//
 d3.select("#summary").on("change", function () {
   State.updateData(this);
 });
