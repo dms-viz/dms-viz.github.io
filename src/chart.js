@@ -12,7 +12,7 @@ export class Chart {
     this.config = _config;
     this.config = {
       experiment: _config.experiment,
-      epitope: _config.epitope,
+      epitopes: _config.epitopes,
       summary: _config.summary,
       floor: _config.floor,
       metric: _config.metric,
@@ -34,6 +34,7 @@ export class Chart {
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
     this.dispatch = d3.dispatch("updateSites");
+    this.selection = [];
 
     this.initVis();
   }
@@ -336,8 +337,10 @@ export class Chart {
       }
       return newRow;
     });
-    // Summarize and filter the experiments based on the selections
-    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric);
+    // Summarize and filter the experiments based on the selections and epitopes
+    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
+      vis.config.epitopes.includes(d.epitope)
+    );
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
       (d) => d[vis.config.summary] !== null
@@ -348,14 +351,21 @@ export class Chart {
         d[vis.config.summary] ===
         d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
     )[0].site;
+    vis.initEpitopeSelection = vis.mutMetricSummary.filter(
+      (d) =>
+        d[vis.config.summary] ===
+        d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
+    )[0].epitope;
+
     // Initialize the heatmap data for the selected site
     vis.mutMetricHeatmap = vis.mutMetric.filter(
       (e) =>
-        e.site === vis.initSiteSelection && e.epitope === vis.config.epitope
+        e.site === vis.initSiteSelection &&
+        e.epitope === vis.initEpitopeSelection
     );
     // Make the color scheme for the plots
     vis.positiveColor =
-      vis.data[vis.config.experiment].epitope_colors[vis.config.epitope];
+      vis.data[vis.config.experiment].epitope_colors[vis.initEpitopeSelection];
     vis.negativeColor = invertColor(vis.positiveColor);
     // Get the amino acid alphabet for the experiment
     vis.alphabet = vis.data[vis.config.experiment].alphabet;
@@ -576,18 +586,21 @@ export class Chart {
 
     // Color in the selected points
     vis.focusPlot
-      .selectAll(".selected")
+      .selectAll("circle")
+      .filter((d) => vis.selection.map((d) => d.site).includes(d.site))
       .attr(
         "fill",
         (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
-      );
+      )
+      .classed("selected", true);
 
     // Color in the heatmap point
     vis.focusPlot
       .selectAll("circle")
       .filter(
         (d) =>
-          d.site === vis.initSiteSelection && d.epitope === vis.config.epitope
+          d.site === vis.initSiteSelection &&
+          d.epitope === vis.initEpitopeSelection
       )
       .classed("heatmap-site", true)
       .attr("r", 8)
@@ -758,8 +771,8 @@ export class Chart {
       // Destructure the selection bounds
       const [[x0, y0], [x1, y1]] = selection;
 
-      // Class the selected points
-      vis.focusPlot
+      // Get the selected points
+      let selectedPoints = vis.focusPlot
         .selectAll("circle")
         .filter(
           (d) =>
@@ -767,6 +780,16 @@ export class Chart {
             vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
             y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
             vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+        );
+
+      // Color in all sites that were selected
+      vis.focusPlot
+        .selectAll("circle")
+        .filter((d) =>
+          selectedPoints
+            .data()
+            .map((d) => d.site)
+            .includes(d.site)
         )
         .classed("selected", true)
         .attr(
@@ -774,12 +797,11 @@ export class Chart {
           (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
         );
 
+      // Add the selected points to the selection
+      vis.selection.push(...selectedPoints.data());
+
       // Dispatch an event with the selected sites
-      this.dispatch.call(
-        "updateSites",
-        this,
-        vis.focusPlot.selectAll(".selected").data()
-      );
+      this.dispatch.call("updateSites", this, vis.selection);
     }
   }
   /**
@@ -795,8 +817,8 @@ export class Chart {
       // Destructure the selection bounds
       const [[x0, y0], [x1, y1]] = selection;
 
-      // Remove the 'selected' class from points in the brush
-      vis.focusPlot
+      // Get the deselected points
+      let deselectedPoints = vis.focusPlot
         .selectAll("circle")
         .filter(
           (d) =>
@@ -804,22 +826,36 @@ export class Chart {
             vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
             y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
             vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+        );
+
+      // Remove the 'selected' class from points in the brush
+      vis.focusPlot
+        .selectAll("circle")
+        .filter((d) =>
+          deselectedPoints
+            .data()
+            .map((d) => d.site)
+            .includes(d.site)
         )
         .classed("selected", false)
         .attr("fill", "white");
 
-      this.dispatch.call(
-        "updateSites",
-        this,
-        vis.focusPlot.selectAll(".selected").data()
-      );
+      // Update the selection with the selected points removed
+      vis.selection = vis.selection.filter((d) => {
+        let deslectedSites = deselectedPoints.data().map((d) => d.site);
+        return !deslectedSites.includes(d.site);
+      });
+
+      this.dispatch.call("updateSites", this, vis.selection);
     } else {
       vis.focusPlot
         .selectAll(".selected")
         .classed("selected", false)
         .attr("fill", "white");
 
-      this.dispatch.call("updateSites", this, []);
+      vis.selection = [];
+
+      this.dispatch.call("updateSites", this, vis.selection);
     }
   }
   /**

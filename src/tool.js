@@ -30,6 +30,9 @@ export class Tool {
 
     // Set the default selections
     tool.experiment = tool.experiments[0];
+    tool.epitopes = tool.data[tool.experiment].epitopes.map((d) =>
+      d.toString()
+    );
     tool.epitope = tool.data[tool.experiment].epitopes[0].toString();
     tool.summary = "sum";
     tool.floor = true;
@@ -110,7 +113,7 @@ export class Tool {
     tool.chart = new Chart(
       {
         experiment: tool.experiment,
-        epitope: tool.epitope,
+        epitopes: tool.epitopes,
         summary: tool.summary,
         floor: tool.floor,
         metric: tool.metric,
@@ -136,7 +139,7 @@ export class Tool {
     );
 
     // Set up the legend if there are more than one epitope
-    if (tool.data[tool.experiment].epitopes.length > 1) {
+    if (tool.epitopes.length > 1) {
       tool.legend = new Legend(
         {
           parentElement: "#legend",
@@ -198,11 +201,20 @@ export class Tool {
 
     // Update the config
     tool["epitope"] = epitope;
-    tool.chart.config["epitope"] = epitope;
     tool.protein.config["epitope"] = epitope;
 
     // Update the chart and protein
     tool.protein.makeColorScheme();
+  }
+  updateEpitopes(epitopes) {
+    let tool = this;
+
+    // Update the config
+    tool["epitopes"] = epitopes;
+    tool.chart.config["epitopes"] = epitopes;
+
+    // Update the chart and protein
+    tool.chart.updateVis();
   }
   /**
    * Filter the data based on the range of times seen
