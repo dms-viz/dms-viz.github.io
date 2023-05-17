@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
+import { Legend } from "./legend.js";
 
 // Write a class to handle the state of the tool
 export class Tool {
@@ -29,7 +30,10 @@ export class Tool {
 
     // Set the default selections
     tool.experiment = tool.experiments[0];
-    tool.epitope = tool.data[tool.experiment].epitopes[0].toString();
+    tool.epitopes = tool.data[tool.experiment].epitopes.map(
+      (d) => d.toString() // TODO: Why is this necessary?
+    );
+    tool.epitope = tool.epitopes[0];
     tool.summary = "sum";
     tool.floor = true;
     tool.pdb = tool.data[tool.experiment].pdb;
@@ -43,11 +47,15 @@ export class Tool {
 
     // Set up the chart selection menus
     tool._updateSelection(d3.select("#experiment"), tool.experiments);
-    tool._updateSelection(
-      d3.select("#epitope"),
-      tool.data[tool.experiment].epitopes
-    );
     tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
+    tool.legend = new Legend(
+      {
+        parentElement: "#legend",
+        experiment: tool.experiment,
+        epitope: tool.epitope,
+      },
+      tool.data
+    );
     // Set up the protein selection menus
     tool._updateSelection(d3.select("#proteinRepresentation"), [
       "cartoon",
@@ -113,7 +121,7 @@ export class Tool {
     tool.chart = new Chart(
       {
         experiment: tool.experiment,
-        epitope: tool.epitope,
+        epitopes: tool.epitopes,
         summary: tool.summary,
         floor: tool.floor,
         metric: tool.metric,
@@ -137,34 +145,31 @@ export class Tool {
       },
       tool.data
     );
-
-    tool.proteinLoaded = tool.protein.dispatch;
   }
   /**
    * Handle updates to the experiment selection
    */
   updateExperiment(node) {
     let tool = this;
-    // Update the experiment selection in the chart and protein
+    // Update the experiment selection in the chart, protein, and legend
     tool.experiment = d3.select(node).property("value");
     tool.chart.config.experiment = tool.experiment;
     tool.protein.config.experiment = tool.experiment;
+    tool.legend.config.experiment = tool.experiment;
     // Update the epitope selection because experiments have different epitopes
-    tool.epitope = tool.data[tool.experiment].epitopes[0];
+    tool.epitopes = tool.data[tool.experiment].epitopes;
+    tool.epitope = tool.epitopes[0];
     tool.chart.config.epitope = tool.epitope;
+    tool.chart.config.epitopes = tool.epitopes;
     tool.protein.config.epitope = tool.epitope;
+    tool.legend.config.epitope = tool.epitope;
     // Update the pdb structure since this is also experiment specific
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
-    // Update the epitope selection menu
-    tool._updateSelection(
-      d3.select("#epitope"),
-      tool.data[tool.experiment].epitopes
-    );
-
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
     tool.chart.updateVis();
+    tool.legend.updateVis();
 
     // Set a timeout to make sure the chart has been updated
     // This prevents the odd loading issue with the protein on Chrome
@@ -191,6 +196,26 @@ export class Tool {
     // Update the chart and protein
     tool.chart.updateVis();
     tool.protein.makeColorScheme();
+  }
+  updateEpitope(epitope) {
+    let tool = this;
+
+    // Update the config
+    tool["epitope"] = epitope;
+    tool.protein.config["epitope"] = epitope;
+
+    // Update the chart and protein
+    tool.protein.makeColorScheme();
+  }
+  updateEpitopes(epitopes) {
+    let tool = this;
+
+    // Update the config
+    tool["epitopes"] = epitopes;
+    tool.chart.config["epitopes"] = epitopes;
+
+    // Update the chart and protein
+    tool.chart.updateVis();
   }
   /**
    * Filter the data based on the range of times seen

@@ -12,7 +12,7 @@ export class Chart {
     this.config = _config;
     this.config = {
       experiment: _config.experiment,
-      epitope: _config.epitope,
+      epitopes: _config.epitopes,
       summary: _config.summary,
       floor: _config.floor,
       metric: _config.metric,
@@ -34,6 +34,7 @@ export class Chart {
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
     this.dispatch = d3.dispatch("updateSites");
+    this.selection = [];
 
     this.initVis();
   }
@@ -129,12 +130,23 @@ export class Chart {
         vis.deselectSites();
       });
 
+    // Hide points outside of the focus area with some padding on top
     vis.focusPlot
       .append("clipPath")
       .attr("id", "focusClipPath")
       .append("rect")
+      .attr("transform", "translate(0," + -5 + ")")
       .attr("width", vis.bounds.focus.width)
-      .attr("height", vis.bounds.focus.height);
+      .attr("height", vis.bounds.focus.height + 5);
+
+    // Define the elements of the FOCUS LEGEND
+    vis.focusLegend = vis.focusPlot
+      .append("g")
+      .attr("class", "legend")
+      .attr(
+        "transform",
+        `translate(0,${vis.bounds.focus.height + vis.margin.bottom})`
+      );
 
     // Define the elements of the HEATMAP
     vis.heatmapPlot = vis.boundedArea
@@ -325,9 +337,9 @@ export class Chart {
       }
       return newRow;
     });
-    // Summarize and filter the experiments based on the selections
-    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter(
-      (e) => e.epitope === vis.config.epitope
+    // Summarize and filter the experiments based on the selections and epitopes
+    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
+      vis.config.epitopes.includes(d.epitope)
     );
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
@@ -339,14 +351,21 @@ export class Chart {
         d[vis.config.summary] ===
         d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
     )[0].site;
+    vis.initEpitopeSelection = vis.mutMetricSummary.filter(
+      (d) =>
+        d[vis.config.summary] ===
+        d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
+    )[0].epitope;
+
     // Initialize the heatmap data for the selected site
     vis.mutMetricHeatmap = vis.mutMetric.filter(
       (e) =>
-        e.site === vis.initSiteSelection && e.epitope === vis.config.epitope
+        e.site === vis.initSiteSelection &&
+        e.epitope === vis.initEpitopeSelection
     );
     // Make the color scheme for the plots
     vis.positiveColor =
-      vis.data[vis.config.experiment].epitope_colors[vis.config.epitope];
+      vis.data[vis.config.experiment].epitope_colors[vis.initEpitopeSelection];
     vis.negativeColor = invertColor(vis.positiveColor);
     // Get the amino acid alphabet for the experiment
     vis.alphabet = vis.data[vis.config.experiment].alphabet;
@@ -489,7 +508,10 @@ export class Chart {
           ? vis.contextArea([d, vis.mutMetricSummary[i + 1]])
           : null
       )
-      .attr("fill", vis.positiveColor);
+      .attr(
+        "fill",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      );
 
     // Draw the FOCUS plot
     vis.focusPlot
@@ -503,7 +525,10 @@ export class Chart {
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
-      .attr("stroke", vis.positiveColor)
+      .attr(
+        "stroke",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
       .attr("d", (d, i) =>
         i < vis.mutMetricSummary.length - 1 &&
         d.site + 1 === vis.mutMetricSummary[i + 1].site
@@ -529,7 +554,10 @@ export class Chart {
       .attr("r", 5)
       .attr("clip-path", "url(#focusClipPath)")
       .attr("fill", "white")
-      .attr("stroke", vis.positiveColor)
+      .attr(
+        "stroke",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
       .attr("stroke-width", 2)
       .on("mouseover", (evt, d) => {
         vis.focusTooltip
@@ -539,7 +567,10 @@ export class Chart {
               vis.config.summary
             }: ${d[vis.config.summary].toFixed(2)}<br>Wildtype: ${d.wildtype}`
           )
-          .style("border-color", vis.positiveColor);
+          .style(
+            "border-color",
+            vis.data[vis.config.experiment].epitope_colors[d.epitope]
+          );
       })
       .on("mousemove", (evt) => {
         vis.focusTooltip
@@ -554,14 +585,22 @@ export class Chart {
       });
 
     // Color in the selected points
-    vis.focusPlot.selectAll(".selected").attr("fill", vis.positiveColor);
+    vis.focusPlot
+      .selectAll("circle")
+      .filter((d) => vis.selection.map((d) => d.site).includes(d.site))
+      .attr(
+        "fill",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
+      .classed("selected", true);
 
     // Color in the heatmap point
     vis.focusPlot
       .selectAll("circle")
       .filter(
         (d) =>
-          d.site === vis.initSiteSelection && d.epitope === vis.config.epitope
+          d.site === vis.initSiteSelection &&
+          d.epitope === vis.initEpitopeSelection
       )
       .classed("heatmap-site", true)
       .attr("r", 8)
@@ -732,8 +771,8 @@ export class Chart {
       // Destructure the selection bounds
       const [[x0, y0], [x1, y1]] = selection;
 
-      // Class the selected points
-      vis.focusPlot
+      // Get the selected points
+      let selectedPoints = vis.focusPlot
         .selectAll("circle")
         .filter(
           (d) =>
@@ -741,16 +780,28 @@ export class Chart {
             vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
             y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
             vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+        );
+
+      // Color in all sites that were selected
+      vis.focusPlot
+        .selectAll("circle")
+        .filter((d) =>
+          selectedPoints
+            .data()
+            .map((d) => d.site)
+            .includes(d.site)
         )
         .classed("selected", true)
-        .attr("fill", vis.positiveColor);
+        .attr(
+          "fill",
+          (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        );
+
+      // Add the selected points to the selection
+      vis.selection.push(...selectedPoints.data());
 
       // Dispatch an event with the selected sites
-      this.dispatch.call(
-        "updateSites",
-        this,
-        vis.focusPlot.selectAll(".selected").data()
-      );
+      this.dispatch.call("updateSites", this, vis.selection);
     }
   }
   /**
@@ -766,8 +817,8 @@ export class Chart {
       // Destructure the selection bounds
       const [[x0, y0], [x1, y1]] = selection;
 
-      // Remove the 'selected' class from points in the brush
-      vis.focusPlot
+      // Get the deselected points
+      let deselectedPoints = vis.focusPlot
         .selectAll("circle")
         .filter(
           (d) =>
@@ -775,22 +826,36 @@ export class Chart {
             vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
             y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
             vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+        );
+
+      // Remove the 'selected' class from points in the brush
+      vis.focusPlot
+        .selectAll("circle")
+        .filter((d) =>
+          deselectedPoints
+            .data()
+            .map((d) => d.site)
+            .includes(d.site)
         )
         .classed("selected", false)
         .attr("fill", "white");
 
-      this.dispatch.call(
-        "updateSites",
-        this,
-        vis.focusPlot.selectAll(".selected").data()
-      );
+      // Update the selection with the selected points removed
+      vis.selection = vis.selection.filter((d) => {
+        let deslectedSites = deselectedPoints.data().map((d) => d.site);
+        return !deslectedSites.includes(d.site);
+      });
+
+      this.dispatch.call("updateSites", this, vis.selection);
     } else {
       vis.focusPlot
         .selectAll(".selected")
         .classed("selected", false)
         .attr("fill", "white");
 
-      this.dispatch.call("updateSites", this, []);
+      vis.selection = [];
+
+      this.dispatch.call("updateSites", this, vis.selection);
     }
   }
   /**
@@ -802,6 +867,8 @@ export class Chart {
     // Get the site information from the datum
     const site = datum.site;
     const epitope = datum.epitope;
+    vis.positiveColor = vis.data[vis.config.experiment].epitope_colors[epitope];
+    vis.negativeColor = invertColor(vis.positiveColor);
     vis.wildtype = datum.wildtype;
 
     // Remove the previously selected site from the focus plot
@@ -809,7 +876,10 @@ export class Chart {
       .selectAll(".heatmap-site")
       .attr("r", 5)
       .attr("stroke-width", 2)
-      .attr("stroke", vis.positiveColor)
+      .attr(
+        "stroke",
+        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+      )
       .classed("heatmap-site", false);
 
     // Highlight the selected site in the focus plot
@@ -828,6 +898,40 @@ export class Chart {
 
     // Update the scale based on the site
     vis.xScaleHeatmap.domain([site]);
+
+    // Update the color scale based on the epitope
+    if (!vis.config.floor) {
+      vis.colorScaleHeatmap.range([
+        vis.negativeColor,
+        "white",
+        vis.positiveColor,
+      ]);
+    } else {
+      vis.colorScaleHeatmap.range(["white", vis.positiveColor]);
+    }
+
+    // Update the legend color
+    vis.legendLinearGradient
+      .selectAll("stop")
+      .data(vis.colorScaleHeatmap.range())
+      .join(
+        (enter) =>
+          enter
+            .append("stop")
+            .attr(
+              "offset",
+              (d, i) => i / (vis.colorScaleHeatmap.range().length - 1)
+            )
+            .attr("stop-color", (d) => d),
+        (update) =>
+          update
+            .attr(
+              "offset",
+              (d, i) => i / (vis.colorScaleHeatmap.range().length - 1)
+            )
+            .attr("stop-color", (d) => d),
+        (exit) => exit.remove()
+      );
 
     // Re-draw the x-axis based on the updated scale
     vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
