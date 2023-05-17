@@ -43,6 +43,12 @@ d3.select("#json-file").on("change", function () {
 // Set up the event listeners for the chart options
 d3.select("#experiment").on("change", function () {
   State.updateExperiment(this);
+  // Reize the accordion menu if necessary (i.e. legend size changes)
+  let btn = document.getElementById("chart-btn");
+  if (btn.classList.contains("is-open")) {
+    let content = btn.nextElementSibling;
+    content.style.maxHeight = content.scrollHeight + "px";
+  }
 });
 // TODO: Improve the organization of these two event listeners
 window.addEventListener("proteinEpitopeSelected", function (event) {

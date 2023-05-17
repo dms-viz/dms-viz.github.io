@@ -151,7 +151,6 @@ export class Legend {
       );
 
     // Add one dot in the legend for each name.
-    console.log(vis.epitopes);
     vis.legend
       .selectAll(".epitope-label")
       .data(vis.epitopes, (d) => d)
