@@ -19,11 +19,11 @@ export class Chart {
       tooltips: _config.tooltips,
       parentElement: _config.parentElement,
       width: 1080,
-      height: 350,
+      height: 300,
       scaling: {
         top: 0.025,
         left: 0.06,
-        bottom: 0.2,
+        bottom: 0.15,
         right: 0.06,
         innerTop: 0.05,
         innerRight: 0.08,
