@@ -11,8 +11,8 @@
       rel="stylesheet"
     />
     
-    <script type="module" crossorigin src="/assets/index.b2c89b3a.js"></script>
-    <link rel="stylesheet" href="/assets/index.0af555da.css">
+    <script type="module" crossorigin src="/assets/index.531b1ea4.js"></script>
+    <link rel="stylesheet" href="/assets/index.e0c71369.css">
   </head>
   <!-- Body Contents -->
   <body>
@@ -64,7 +64,7 @@
             To use the visualization, you can zoom in and out of regions of your
             data by <strong>brushing</strong> (<strong>click and drag</strong>)
             over the <em>area</em> plot. You can select sites to see in the
-            <em>heatmap</em> by clicking on points in the
+            <em>heatmap</em> by <strong>clicking</strong> on points in the
             <em>line/point</em> plot. You can <strong>mouseover</strong> sites
             on the <em>line/point</em> and mutations on the <em>heatmap</em> to
             see details in a pop-up tooltip. Finally, you can select which sites
@@ -73,8 +73,14 @@
             points in the <em>line/point plot</em>. To deselect sites, you can
             either <strong>double-click</strong> on the <em>line/point</em> plot
             or hold down the option key <kbd>⌥</kbd> and
-            <strong>brush</strong> over the sites that you want to deselect. You
-            can reorient and zoom into the protein structure by
+            <strong>brush</strong> over the sites that you want to deselect. If
+            there is more than one epitope in your data, an interactive legend
+            will appear in the <em>Chart Options</em>. You can select an epitope
+            to color the protein structure with by <strong>clicking</strong> on
+            an epitope in the legend. You can remove or add epitopes to the
+            <em>line/point</em> plot by holding down the option key
+            <kbd>⌥</kbd> while <strong>clicking</strong>. You can reorient and
+            zoom into the protein structure by
             <strong>clicking and dragging</strong> it around the window. You can
             also reset the protein structure to its original orientation by
             pressing the <kbd>R</kbd> button on your keyboard.
@@ -103,7 +109,7 @@
         </div>
         <!-- Chart Options -->
         <div class="submenu">
-          <button class="accordion">
+          <button class="accordion" , id="chart-btn">
             <div class="icon">
               <i class="bx bx-scatter-chart"></i>
             </div>
@@ -115,8 +121,8 @@
               <select name="Experiment" id="experiment"></select>
             </div>
             <div class="accordion-option">
-              <label for="Epitope">Epitope</label>
-              <select name="Epitope" id="epitope"></select>
+              <label>Epitope</label>
+              <div class="legend" id="legend"></div>
             </div>
             <div class="accordion-option">
               <label for="Summary">Summary Metric</label>
