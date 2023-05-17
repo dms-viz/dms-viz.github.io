@@ -102,5 +102,5 @@ d3.select("#downloadProtein").on("click", function () {
 // Set up the event listener to respond to window resizing
 window.addEventListener("resize", function () {
   State.chart.resize();
-  State.protein.stage.handleResize();
+  State.protein.resize();
 });

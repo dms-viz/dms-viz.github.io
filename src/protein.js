@@ -102,14 +102,9 @@ export class Protein {
           });
         }
 
-        // Set the zoom of the structure
+        // Set the rotation of the structure upright by 90 degrees
+        comp.setRotation([-Math.PI / 2, 0, 0]);
         protein.stage.autoView();
-        // Turn off the spinning animation
-        protein.stage.setSpin(false);
-        // Set the rotation of the structure
-        comp.setRotation([2, 0, 0]);
-        // Center and zoom the visualization to fit the protein structure
-        comp.autoView();
 
         // Protein structure
         protein.component = comp;
@@ -250,7 +245,7 @@ export class Protein {
    * @param {String}
    */
   _makeSiteString(site, chain) {
-    return `${chain != "polymer" ? ":" : ""}${chain} and ${site}`;
+    return `${chain != "polymer" ? ":" : ""}${chain} and ${site} and protein`;
   }
   /**
    * Select sites on the protein structure to color
@@ -279,6 +274,7 @@ export class Protein {
           .join(" or ");
         // Add the site string to the array of selected sites
         protein.selectedSitesStrings.push(siteStrings);
+        console.log(protein.selectedSitesStrings);
       }
     });
 
@@ -332,5 +328,10 @@ export class Protein {
       PYL: "O",
     };
     return ` (${aminoAcidMap[threeLetterCode.toUpperCase()]})` || "";
+  }
+  resize() {
+    let protein = this;
+    protein.stage.handleResize();
+    protein.stage.autoView();
   }
 }
