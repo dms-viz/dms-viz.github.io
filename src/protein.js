@@ -18,7 +18,6 @@ export class Protein {
       floor: _config.floor,
       pdbID: _config.pdbID,
       dispatch: _config.dispatch,
-      height: 500,
       stageColor: "#FFFFFF",
       proteinRepresentation: "cartoon",
       selectionRepresentation: "spacefill",
@@ -33,6 +32,9 @@ export class Protein {
     this.stage = new NGL.Stage(this.config.parentElement, {
       backgroundColor: this.config.stageColor,
     });
+
+    // Set the initial size of the stage
+    this.resize();
 
     // Load the protein structure
     this.load(this.config.pdbID);
@@ -331,7 +333,19 @@ export class Protein {
   }
   resize() {
     let protein = this;
+
+    // Get the height of the window, header, and chart
+    const windowHeight = window.innerHeight;
+    const headerHeight = document.querySelector(".header").offsetHeight;
+    const chartHeight = document.querySelector(".chart").offsetHeight;
+    // Margin below the protein viewport
+    const margins = 50;
+    // Calculate the remaining height
+    const proteinHeight = windowHeight - headerHeight - chartHeight - margins;
+    document.querySelector(".protein").style.height = `${proteinHeight}px`;
+    // Handle the resize event for the protein structure
     protein.stage.handleResize();
+    // Reset the Zoom
     protein.stage.autoView();
   }
 }

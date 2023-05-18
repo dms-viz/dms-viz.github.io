@@ -295,11 +295,10 @@ kbd {
 .protein {
   max-width: 1080px; 
   min-width: 750px;
+  min-height: 300px;
+  max-height: 600px;
 }
 
-#viewport {
-  height: 500px;
-}
 
 @media (max-width: 500px) {
   .chart {  
@@ -310,9 +309,6 @@ kbd {
     min-width: 300px;
   }
   
-  #viewport {
-    height: 400px;
-  }
 }
 
 .heatmap-tooltip,
