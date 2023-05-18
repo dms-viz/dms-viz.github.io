@@ -118,6 +118,8 @@ nav .sidebar-toggle:hover {
   background-color: white;
   padding: 1rem 1.5rem;
   width: 50%;
+  max-height: 75vh; 
+  overflow-y: auto;
   border-radius: 0.5rem;
   word-spacing: 0.3rem;
 }
@@ -144,11 +146,17 @@ kbd {
 .close-button {
   float: right;
   width: 1.5rem;
-  line-height: 1.5rem;
-  text-align: center;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  border-radius: 0.25rem;
-  background-color: lightgray;
+  border-radius: 0.5rem;
+  background-color: rgb(238, 238, 238);
+}
+
+.close-button i {
+  font-size: 1.25rem;
 }
 
 .close-button:hover {
