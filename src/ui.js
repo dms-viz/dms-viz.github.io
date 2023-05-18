@@ -101,6 +101,6 @@ function highlightHelp() {
   message.remove();
 
   // Remove the event listener after the first click
-  document.removeEventListener("click", highlightHelp);
+  document.removeEventListener("mousedown", highlightHelp);
 }
-document.addEventListener("click", highlightHelp);
+document.addEventListener("mousedown", highlightHelp);
