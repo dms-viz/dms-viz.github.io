@@ -99,9 +99,30 @@
             </div>
             <span class="title">Upload Data</span>
           </button>
-          <div class="accordion-content">
+          <div class="accordion-content" id="download-accordion">
             <div class="accordion-option">
+              <div class="download-toggle">
+                <button class="upload-method" id="local-file">Local</button>
+                <button id="remote-file">Remote</button>
+              </div>
+            </div>
+            <div class="accordion-option" id="local-file-input">
               <input type="file" id="json-file" accept=".json" />
+            </div>
+            <div
+              class="accordion-option"
+              id="remote-url-input"
+              style="display: none"
+            >
+              <input
+                type="url"
+                name="url"
+                id="url"
+                placeholder="https://example.com"
+                pattern="https://.*"
+                size="30"
+                required
+              />
             </div>
           </div>
         </div>

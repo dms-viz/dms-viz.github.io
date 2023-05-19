@@ -276,7 +276,6 @@ export class Protein {
           .join(" or ");
         // Add the site string to the array of selected sites
         protein.selectedSitesStrings.push(siteStrings);
-        console.log(protein.selectedSitesStrings);
       }
     });
 
