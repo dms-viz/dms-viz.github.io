@@ -24,7 +24,7 @@ fetchData().then((data) => {
   State = new Tool(data);
 
   // Set up the event listeners
-  setUpJsonFileUploadListener();
+  setUpJsonFileUploadListeners();
   setUpChartOptionListeners();
   setUpProteinOptionListeners();
   setUpDownloadButtonListeners();
@@ -32,10 +32,10 @@ fetchData().then((data) => {
 });
 
 // Set up the event listener for the JSON file upload
-function setUpJsonFileUploadListener() {
-  d3.select("#json-file").on("change", function () {
+function setUpJsonFileUploadListeners() {
+  d3.select("#local-json-file").on("change", function () {
     // Get the file input element
-    const input = document.getElementById("json-file");
+    const input = document.getElementById("local-json-file");
 
     // Check if a file was selected
     if (input.files.length === 0) {
@@ -62,6 +62,42 @@ function setUpJsonFileUploadListener() {
       State.initTool();
     };
     reader.readAsText(file);
+  });
+
+  d3.select("#url-json-file").on("keyup", async function (event) {
+    // If the key pressed was not 'Enter', return
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    // Check if a URL was provided
+    if (!this.value) {
+      alert("Please enter a URL.");
+      return;
+    }
+
+    // Fetch the data from the provided URL
+    const response = await fetch(this.value);
+    if (!response.ok) {
+      alert(
+        `There was an error fetching data from the URL. HTTP Status: ${response.status}`
+      );
+      return;
+    }
+
+    // Parse the response into a JSON object
+    const data = await response.json();
+
+    // Update the tool's state
+    State.data = data;
+    State.initTool();
+
+    // Update the URL to include the data URL
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("data", this.value);
+    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+
+    console.log("loaded data from URL");
   });
 }
 
