@@ -48,6 +48,7 @@ export class Tool {
     // Set up the chart selection menus
     tool._updateSelection(d3.select("#experiment"), tool.experiments);
     tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
+    document.getElementById("legend").innerHTML = "";
     tool.legend = new Legend(
       {
         parentElement: "#legend",
