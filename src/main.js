@@ -5,16 +5,29 @@ import * as NGL from "ngl";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
-// Fetch the data from the URL if available, or use the default data
+// Initiate the tool with URL-linked data if provided
 async function fetchData() {
   const urlParams = new URLSearchParams(window.location.search);
   const dataUrl = urlParams.get("data");
+
   if (dataUrl) {
-    const response = await fetch(dataUrl);
-    const data = await response.json();
-    return data;
+    try {
+      const response = await fetch(dataUrl);
+
+      if (!response.ok) {
+        alert(`HTTP error! status: ${response.status}`);
+        return exampleData; // return example data as fallback
+      } else {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {
+      alert(`Fetch operation failed: ${error.message}`);
+      return exampleData; // return example data as fallback
+    }
+  } else {
+    return exampleData; // no dataUrl parameter, return example data
   }
-  return exampleData;
 }
 
 // Initialize the tool and it's state
@@ -81,28 +94,37 @@ function setUpJsonFileUploadListeners() {
       return;
     }
 
-    // Fetch the data from the provided URL
-    const response = await fetch(this.value);
-    if (!response.ok) {
-      alert(
-        `There was an error fetching data from the URL. HTTP Status: ${response.status}`
-      );
+    // Check if the URL is valid
+    try {
+      new URL(this.value);
+    } catch (_) {
+      alert("Please enter a valid URL.");
       return;
     }
 
-    // Parse the response into a JSON object
-    const data = await response.json();
+    try {
+      const response = await fetch(this.value);
 
-    // Update the tool's state
-    State.data = data;
-    State.initTool();
+      if (!response.ok) {
+        alert(
+          `There was an error fetching data from the URL. HTTP Status: ${response.status}`
+        );
+        return;
+      }
 
-    // Update the URL to include the data URL
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("data", this.value);
-    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+      // Parse the response into a JSON object
+      const data = await response.json();
+      // Update the tool's state
+      State.data = data;
+      State.initTool();
 
-    console.log("loaded data from URL");
+      // Update the URL to include the data URL
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set("data", this.value);
+      window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+    } catch (error) {
+      alert(`Fetch operation failed: ${error.message}`);
+    }
   });
 }
 
