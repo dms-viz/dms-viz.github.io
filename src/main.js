@@ -62,6 +62,11 @@ function setUpJsonFileUploadListeners() {
       State.initTool();
     };
     reader.readAsText(file);
+
+    // Update the URL and remove the data URL
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete("data");
+    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
   });
 
   d3.select("#url-json-file").on("keyup", async function (event) {
