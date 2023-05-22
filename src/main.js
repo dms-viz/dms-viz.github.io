@@ -135,7 +135,6 @@ function setUpChartOptionListeners() {
 
 // Set up the event listeners for the protein options
 function setUpProteinOptionListeners() {
-  // Set up the event listeners for the protein options
   d3.select("#proteinRepresentation").on("change", function () {
     State.updateProtein(this);
   });

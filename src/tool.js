@@ -160,7 +160,6 @@ export class Tool {
     // Update the epitope selection because experiments have different epitopes
     tool.epitopes = tool.data[tool.experiment].epitopes;
     tool.epitope = tool.epitopes[0];
-    tool.chart.config.epitope = tool.epitope;
     tool.chart.config.epitopes = tool.epitopes;
     tool.protein.config.epitope = tool.epitope;
     tool.legend.config.epitope = tool.epitope;
