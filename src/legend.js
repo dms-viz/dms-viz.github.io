@@ -26,6 +26,9 @@ export class Legend {
   initVis() {
     let vis = this;
 
+    // Clear any existing legend
+    document.querySelector(this.config.parentElement).innerHTML = "";
+
     // Set up the margins
     vis.margin = {
       left: 20,

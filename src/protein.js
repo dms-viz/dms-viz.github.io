@@ -28,6 +28,9 @@ export class Protein {
     };
     this.data = _data;
 
+    // Clear any stage
+    document.getElementById(this.config.parentElement).innerHTML = "";
+
     // Initialize the stage object for the parent element
     this.stage = new NGL.Stage(this.config.parentElement, {
       backgroundColor: this.config.stageColor,

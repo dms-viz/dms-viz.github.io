@@ -131,7 +131,7 @@ function setUpJsonFileUploadListeners() {
 // Set up the event listeners for the chart options
 function setUpChartOptionListeners() {
   d3.select("#experiment").on("change", function () {
-    State.updateExperiment(this);
+    State.updateSelectedExperiment(this);
     // Reize the accordion menu if necessary (i.e. legend size changes)
     let btn = document.getElementById("chart-btn");
     if (btn.classList.contains("is-open")) {
@@ -139,41 +139,39 @@ function setUpChartOptionListeners() {
       content.style.maxHeight = content.scrollHeight + "px";
     }
   });
-  // TODO: Improve the organization of these two event listeners
   window.addEventListener("proteinEpitopeSelected", function (event) {
-    State.updateEpitope(event.detail);
+    State.updateProteinEpitope(event.detail);
   });
   window.addEventListener("chartEpitopesSelected", function (event) {
-    State.updateEpitopes(event.detail);
+    State.updateChartEpitopes(event.detail);
   });
-  //
   d3.select("#summary").on("change", function () {
-    State.updateData(this);
+    State.updateChartOptions(this);
   });
   d3.select("#floor").on("change", function () {
-    State.updateData(this);
+    State.updateChartOptions(this);
   });
 }
 
 // Set up the event listeners for the protein options
 function setUpProteinOptionListeners() {
   d3.select("#proteinRepresentation").on("change", function () {
-    State.updateProtein(this);
+    State.updateProteinOptions(this);
   });
   d3.select("#selectionRepresentation").on("change", function () {
-    State.updateProtein(this);
+    State.updateProteinOptions(this);
   });
   d3.select("#backgroundRepresentation").on("change", function () {
-    State.updateProtein(this);
+    State.updateProteinOptions(this);
   });
   d3.select("#proteinColor").on("change", function () {
-    State.updateProtein(this);
+    State.updateProteinOptions(this);
   });
   d3.select("#backgroundColor").on("change", function () {
-    State.updateProtein(this);
+    State.updateProteinOptions(this);
   });
   d3.select("#showGlycans").on("change", function () {
-    State.updateProtein(this);
+    State.updateProteinOptions(this);
   });
 }
 

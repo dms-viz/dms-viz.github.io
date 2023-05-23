@@ -44,6 +44,12 @@ export class Chart {
   initVis() {
     let vis = this;
 
+    // Clear any existing chart
+    document.querySelector(this.config.parentElement).innerHTML = "";
+
+    // Clear any existing tooltips
+    d3.selectAll(".tooltip").remove();
+
     // Initialize the MARGINS around the chart
     vis.margin = {
       top: vis.config.height * vis.config.scaling.top,
