@@ -13,7 +13,7 @@ export class Protein {
     this.config = {
       parentElement: _config.parentElement,
       experiment: _config.experiment,
-      epitope: _config.epitope,
+      proteinEpitope: _config.proteinEpitope,
       summary: _config.summary,
       floor: _config.floor,
       pdbID: _config.pdbID,
@@ -181,13 +181,13 @@ export class Protein {
     // Process DATA
     protein.mutMetric = protein.data[protein.config.experiment].mut_metric_df;
     protein.mutMetricSummary = summarizeMetricData(protein.mutMetric).filter(
-      (e) => e.epitope === protein.config.epitope
+      (e) => e.epitope === protein.config.proteinEpitope
     );
 
     // Make the COLOR SCALE
     protein.positiveColor =
       protein.data[protein.config.experiment].epitope_colors[
-        protein.config.epitope
+        protein.config.proteinEpitope
       ];
     protein.negativeColor = invertColor(protein.positiveColor);
     // Color is dynamic depending on whether the data is floored

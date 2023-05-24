@@ -12,13 +12,12 @@ export class Legend {
     this.config = {
       parentElement: _config.parentElement,
       experiment: _config.experiment,
-      epitope: _config.epitope,
+      proteinEpitope: _config.proteinEpitope,
+      chartEpitopes: _config.chartEpitopes,
       name: _config.name || "epitope",
     };
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
-    // Selected epitopes
-    this.chartEpitopes = [];
     // Initialize the visualization
     this.initVis();
   }
@@ -60,18 +59,17 @@ export class Legend {
   updateVis() {
     let vis = this;
 
-    // Get the available epitopes and colors
-    vis.epitopes = Object.keys(vis.data[vis.config.experiment].epitope_colors);
-
-    // Add all of the avalible epitopes to the chartEpitopes
-    vis.chartEpitopes = vis.epitopes;
+    // Get all epitopes as the data for the legend
+    vis.allEpitopes = Object.keys(
+      vis.data[vis.config.experiment].epitope_colors
+    );
 
     // Epitope colors
     vis.epitopeColors = vis.data[vis.config.experiment].epitope_colors;
 
     // Set the height based on the number of elements
     vis.config.height =
-      (vis.epitopes.length - 1) * vis.margin.point +
+      (vis.allEpitopes.length - 1) * vis.margin.point +
       vis.margin.top +
       vis.margin.bottom;
     vis.svg.attr("height", vis.config.height);
@@ -85,7 +83,7 @@ export class Legend {
     // Add a highlight-box for each epitope and set the visibility to hidden
     vis.legend
       .selectAll(".epitope-box")
-      .data(vis.epitopes, (d) => d)
+      .data(vis.allEpitopes, (d) => d)
       .join(
         (enter) =>
           enter
@@ -99,9 +97,12 @@ export class Legend {
             .attr("ry", 4)
             .style("fill", (d) => vis.epitopeColors[d])
             .on("click", (event, datum) => {
-              if (event.altKey && vis.chartEpitopes.includes(datum)) {
+              if (event.altKey && vis.config.chartEpitopes.includes(datum)) {
                 vis.deselectChartEpitopes(datum);
-              } else if (event.altKey && !vis.chartEpitopes.includes(datum)) {
+              } else if (
+                event.altKey &&
+                !vis.config.chartEpitopes.includes(datum)
+              ) {
                 vis.selectChartEpitopes(datum);
               } else {
                 vis.selectProteinEpitope(datum);
@@ -116,18 +117,12 @@ export class Legend {
       );
 
     // Highlight the selected epitope by default
-    vis.legend
-      .selectAll(".epitope-box")
-      .filter(function (d) {
-        return d == vis.config.epitope;
-      })
-      .style("opacity", ".25")
-      .classed("selected-epitope", true);
+    vis.selectProteinEpitope(vis.config.proteinEpitope);
 
     // Add one dot in the legend for each name.
     vis.legend
       .selectAll(".epitope-circle")
-      .data(vis.epitopes, (d) => d)
+      .data(vis.allEpitopes, (d) => d)
       .join(
         (enter) =>
           enter
@@ -137,10 +132,16 @@ export class Legend {
             .attr("cy", (d, i) => vis.margin.top + i * vis.margin.point)
             .attr("r", 7)
             .style("fill", (d) => vis.epitopeColors[d])
+            .style("opacity", (d) =>
+              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+            )
             .on("click", (event, datum) => {
-              if (event.altKey && vis.chartEpitopes.includes(datum)) {
+              if (event.altKey && vis.config.chartEpitopes.includes(datum)) {
                 vis.deselectChartEpitopes(datum);
-              } else if (event.altKey && !vis.chartEpitopes.includes(datum)) {
+              } else if (
+                event.altKey &&
+                !vis.config.chartEpitopes.includes(datum)
+              ) {
                 vis.selectChartEpitopes(datum);
               } else {
                 vis.selectProteinEpitope(datum);
@@ -149,14 +150,17 @@ export class Legend {
         (update) =>
           update
             .attr("cy", (d, i) => vis.margin.top + i * vis.margin.point)
-            .style("fill", (d) => vis.epitopeColors[d]),
+            .style("fill", (d) => vis.epitopeColors[d])
+            .style("opacity", (d) =>
+              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+            ),
         (exit) => exit.remove()
       );
 
     // Add one dot in the legend for each name.
     vis.legend
       .selectAll(".epitope-label")
-      .data(vis.epitopes, (d) => d)
+      .data(vis.allEpitopes, (d) => d)
       .join(
         (enter) =>
           enter
@@ -166,13 +170,19 @@ export class Legend {
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
             .text((d) => `${vis.config.name} ${d}`)
             .style("fill", (d) => vis.epitopeColors[d])
+            .style("opacity", (d) =>
+              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+            )
             .attr("text-anchor", "left")
             .style("alignment-baseline", "middle")
             .style("user-select", "none")
             .on("click", (event, datum) => {
-              if (event.altKey && vis.chartEpitopes.includes(datum)) {
+              if (event.altKey && vis.config.chartEpitopes.includes(datum)) {
                 vis.deselectChartEpitopes(datum);
-              } else if (event.altKey && !vis.chartEpitopes.includes(datum)) {
+              } else if (
+                event.altKey &&
+                !vis.config.chartEpitopes.includes(datum)
+              ) {
                 vis.selectChartEpitopes(datum);
               } else {
                 vis.selectProteinEpitope(datum);
@@ -182,7 +192,10 @@ export class Legend {
           update
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
             .text((d) => `${vis.config.name} ${d}`)
-            .style("fill", (d) => vis.epitopeColors[d]),
+            .style("fill", (d) => vis.epitopeColors[d])
+            .style("opacity", (d) =>
+              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+            ),
         (exit) => exit.remove()
       );
   }
@@ -190,7 +203,7 @@ export class Legend {
     let vis = this;
 
     // If the selected epitope isn't in the chart selection, don't do anything
-    if (!vis.chartEpitopes.includes(datum)) {
+    if (!vis.config.chartEpitopes.includes(datum)) {
       return;
     }
 
@@ -210,11 +223,11 @@ export class Legend {
       .classed("selected-epitope", true);
 
     // Update the selected epitope
-    vis.config.epitope = datum;
+    vis.config.proteinEpitope = datum;
 
     // Dispatch an event to notify about the selected epitope
     const proteinEpitopeEvent = new CustomEvent("proteinEpitopeSelected", {
-      detail: vis.config.epitope,
+      detail: vis.config.proteinEpitope,
     });
     window.dispatchEvent(proteinEpitopeEvent);
   }
@@ -238,11 +251,11 @@ export class Legend {
       .style("opacity", "1");
 
     // Add this epitope to the selected epitopes
-    vis.chartEpitopes.push(datum);
+    vis.config.chartEpitopes.push(datum);
 
     // Dispatch an event to notify about the plot epitopes
     const chartEpitopeEvent = new CustomEvent("chartEpitopesSelected", {
-      detail: vis.chartEpitopes,
+      detail: vis.config.chartEpitopes,
     });
     window.dispatchEvent(chartEpitopeEvent);
   }
@@ -250,18 +263,18 @@ export class Legend {
     let vis = this;
 
     // If this is the last epitope, don't deselect it
-    if (vis.chartEpitopes.length == 1) {
+    if (vis.config.chartEpitopes.length == 1) {
       return;
     }
 
     // Remove this epitope from the selected epitopes
-    vis.chartEpitopes = vis.chartEpitopes.filter(function (d) {
+    vis.config.chartEpitopes = vis.config.chartEpitopes.filter(function (d) {
       return d != datum;
     });
 
     // If this epitope is highlighted, remove the highlight and move it to the next epitope in the list
-    if (vis.config.epitope == datum) {
-      vis.selectProteinEpitope(vis.chartEpitopes[0]);
+    if (vis.config.proteinEpitope == datum) {
+      vis.selectProteinEpitope(vis.config.chartEpitopes[0]);
     }
 
     // Add opacity to the text labels and points
@@ -281,7 +294,7 @@ export class Legend {
 
     // Dispatch an event to notify about the plot epitopes
     const chartEpitopeEvent = new CustomEvent("chartEpitopesSelected", {
-      detail: vis.chartEpitopes,
+      detail: vis.config.chartEpitopes,
     });
     window.dispatchEvent(chartEpitopeEvent);
   }

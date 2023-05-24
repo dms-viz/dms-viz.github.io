@@ -56,13 +56,13 @@ export class Tool {
     // Set up the initial chart
     tool.chart = new Chart(
       {
+        parentElement: "#chart",
         experiment: tool.experiment,
-        epitopes: tool.epitopes,
+        chartEpitopes: tool.chartEpitopes,
         summary: tool.summary,
         floor: tool.floor,
         metric: tool.data[tool.experiment].metric_col,
         tooltips: tool.tooltipCols,
-        parentElement: "#chart",
       },
       tool.data
     );
@@ -72,7 +72,8 @@ export class Tool {
       {
         parentElement: "#legend",
         experiment: tool.experiment,
-        epitope: tool.epitope,
+        proteinEpitope: tool.proteinEpitope,
+        chartEpitopes: tool.chartEpitopes,
       },
       tool.data
     );
@@ -82,7 +83,7 @@ export class Tool {
       {
         parentElement: "viewport",
         experiment: tool.experiment,
-        epitope: tool.epitope,
+        proteinEpitope: tool.proteinEpitope,
         summary: tool.summary,
         floor: tool.floor,
         pdbID: tool.pdb,
@@ -208,11 +209,12 @@ export class Tool {
     tool.protein.config.experiment = tool.experiment;
     tool.legend.config.experiment = tool.experiment;
     // Update the epitope selection because experiments have different epitopes
-    tool.epitopes = tool.data[tool.experiment].epitopes;
-    tool.epitope = tool.epitopes[0];
-    tool.chart.config.epitopes = tool.epitopes;
-    tool.protein.config.epitope = tool.epitope;
-    tool.legend.config.epitope = tool.epitope;
+    tool.chartEpitopes = tool.data[tool.experiment].epitopes;
+    tool.proteinEpitope = tool.chartEpitopes[0];
+    tool.chart.config.chartEpitopes = tool.chartEpitopes;
+    tool.legend.config.chartEpitopes = tool.chartEpitopes;
+    tool.protein.config.proteinEpitope = tool.proteinEpitope;
+    tool.legend.config.proteinEpitope = tool.proteinEpitope;
     // Update the pdb structure since this is also experiment specific
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
@@ -275,8 +277,8 @@ export class Tool {
     let tool = this;
 
     // Update the config
-    tool["epitope"] = epitope;
-    tool.protein.config["epitope"] = epitope;
+    tool.proteinEpitope = epitope;
+    tool.protein.config.proteinEpitope = epitope;
 
     // Update the chart and protein
     tool.protein.makeColorScheme();
@@ -290,8 +292,8 @@ export class Tool {
     let tool = this;
 
     // Update the config
-    tool["epitopes"] = epitopes;
-    tool.chart.config["epitopes"] = epitopes;
+    tool.chartEpitopes = epitopes;
+    tool.chart.config.chartEpitopes = epitopes;
 
     // Update the chart and protein
     tool.chart.updateVis();
@@ -349,15 +351,15 @@ export class Tool {
 
     // Default values for URL parameters
     const experiment = Object.keys(tool.data)[0];
-    const epitope = tool.data[experiment].epitopes[0];
+    const proteinEpitope = tool.data[experiment].epitopes[0];
     const chartEpitopes = tool.data[experiment].epitopes;
     const summary = "sum";
     const floor = true;
 
     // Set the default values or get the values from the URL
     tool.experiment = urlParams.get("experiment") || experiment;
-    tool.epitope = urlParams.get("epitope") || epitope;
-    tool.epitopes =
+    tool.proteinEpitope = urlParams.get("proteinEpitope") || proteinEpitope;
+    tool.chartEpitopes =
       JSON.parse(decodeURIComponent(urlParams.get("chartEpitopes"))) ||
       chartEpitopes;
     tool.summary = urlParams.get("summary") || summary;
@@ -376,10 +378,10 @@ export class Tool {
     const urlParams = new URLSearchParams(window.location.search);
 
     urlParams.set("experiment", tool.experiment);
-    urlParams.set("epitope", tool.epitope);
     urlParams.set("summary", tool.summary);
     urlParams.set("floor", tool.floor);
-    urlParams.set("chartEpitopes", JSON.stringify(tool.epitopes));
+    urlParams.set("proteinEpitope", tool.proteinEpitope);
+    urlParams.set("chartEpitopes", JSON.stringify(tool.chartEpitopes));
 
     // Update the URL
     window.history.replaceState(
