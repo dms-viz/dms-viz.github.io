@@ -46,12 +46,10 @@ export class Tool {
     }
 
     // Get the detils from the data
+    this.setStateFromURL();
+
     tool.experiments = Object.keys(tool.data);
-    tool.experiment = tool.experiments[0];
     tool.epitopes = tool.data[tool.experiment].epitopes;
-    tool.epitope = tool.epitopes[0];
-    tool.summary = "sum";
-    tool.floor = true;
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.metric = tool.data[tool.experiment].metric_col;
     tool.filterCols = tool.data[tool.experiment].filter_cols;
@@ -95,10 +93,20 @@ export class Tool {
       tool.data
     );
 
-    // Add the sliders and select elements
+    // Add the sliders and select elements and set initial values
     tool.initFilters();
-    tool.initSelect(d3.select("#experiment"), tool.experiments);
-    tool.initSelect(d3.select("#summary"), ["sum", "mean", "max", "min"]);
+    tool.initSelect(
+      d3.select("#experiment"),
+      tool.experiments,
+      tool.experiment
+    );
+    tool.initSelect(
+      d3.select("#summary"),
+      ["sum", "mean", "max", "min"],
+      tool.summary
+    );
+    console.log(typeof tool.floor);
+    tool.initCheckboxes(d3.select("#floor"), tool.floor);
     tool.initSelect(d3.select("#proteinRepresentation"), [
       "cartoon",
       "rope",
@@ -117,13 +125,14 @@ export class Tool {
   /**
    * Initialize and populate a select element
    */
-  initSelect(selection, options) {
+  initSelect(selection, options, selected = options[0]) {
     selection
       .selectAll("option")
       .data(options)
       .join("option")
       .attr("value", (d) => d)
-      .text((d) => d);
+      .text((d) => d)
+      .property("selected", (d) => d === selected);
   }
   /**
    * Initialize and populate a slider object
@@ -134,6 +143,13 @@ export class Tool {
       .attr("max", max)
       .attr("value", start)
       .attr("step", step);
+  }
+  /**
+   * Initialize and set up the checkboxes
+   */
+  initCheckboxes(selection, checked = true) {
+    console.log(checked);
+    selection.property("checked", checked);
   }
   /**
    * Initialize and set up the filters
@@ -214,6 +230,8 @@ export class Tool {
     setTimeout(() => {
       tool.protein.clear();
     }, 100);
+
+    tool.updateURLParams();
   }
   /**
    * Handle updates within a single experiment
@@ -234,6 +252,8 @@ export class Tool {
     // Update the chart and protein
     tool.chart.updateVis();
     tool.protein.makeColorScheme();
+
+    tool.updateURLParams();
   }
   /**
    * Handle updates to the protein representation
@@ -264,6 +284,9 @@ export class Tool {
 
     // Update the chart and protein
     tool.protein.makeColorScheme();
+
+    // TEST
+    tool.updateURLParams();
   }
   /**
    * Handle updates to which eptiopes are displayed on the chart
@@ -319,17 +342,51 @@ export class Tool {
     tool.protein.makeColorScheme();
   }
   /**
+   * Get the state from the URL
+   */
+  setStateFromURL() {
+    let tool = this;
+
+    // Get the URL parameters object
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Default values for URL parameters
+    const experiment = Object.keys(tool.data)[0];
+    const epitope = tool.data[experiment].epitopes[0];
+    const summary = "sum";
+    const floor = true;
+
+    // Set the default values or get the values from the URL
+    tool.experiment = urlParams.get("experiment") || experiment;
+    tool.epitope = urlParams.get("epitope") || epitope;
+    tool.summary = urlParams.get("summary") || summary;
+    tool.floor = urlParams.get("floor") || floor;
+    // if the floor is a string, convert it to a boolean
+    if (typeof tool.floor == "string") {
+      tool.floor = tool.floor == "true";
+    }
+  }
+  /**
    * Update the URL parameters when the state changes
    */
   updateURLParams() {
     let tool = this;
-    console.log(tool.data);
-  }
-  /**
-   * Get the state from the URL
-   */
-  getStateFromURL() {
-    let tool = this;
-    console.log(tool.data);
+
+    // Get the URL parameters object
+    const urlParams = new URLSearchParams(window.location.search);
+
+    urlParams.set("experiment", tool.experiment);
+    urlParams.set("epitope", tool.epitope);
+    urlParams.set("summary", tool.summary);
+    urlParams.set("floor", tool.floor);
+
+    // Update the URL
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.origin}${
+        window.location.pathname
+      }?${urlParams.toString()}`
+    );
   }
 }

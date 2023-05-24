@@ -5,7 +5,21 @@ import * as NGL from "ngl";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
-// Initiate the tool with URL-linked data if provided
+// Initialize the tool and it's state
+let State;
+fetchData().then((data) => {
+  // Add data to the tool
+  State = new Tool(data);
+
+  // Set up the event listeners
+  setUpJsonFileUploadListeners();
+  setUpChartOptionListeners();
+  setUpProteinOptionListeners();
+  setUpDownloadButtonListeners();
+  setUpWindowResizeListener();
+});
+
+// Get data from remote URL or local JSON file
 async function fetchData() {
   const urlParams = new URLSearchParams(window.location.search);
   const dataUrl = urlParams.get("data");
@@ -29,20 +43,6 @@ async function fetchData() {
     return exampleData; // no dataUrl parameter, return example data
   }
 }
-
-// Initialize the tool and it's state
-let State;
-fetchData().then((data) => {
-  // Add data to the tool
-  State = new Tool(data);
-
-  // Set up the event listeners
-  setUpJsonFileUploadListeners();
-  setUpChartOptionListeners();
-  setUpProteinOptionListeners();
-  setUpDownloadButtonListeners();
-  setUpWindowResizeListener();
-});
 
 // Set up the event listener for the JSON file upload
 function setUpJsonFileUploadListeners() {
