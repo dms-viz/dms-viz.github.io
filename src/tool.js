@@ -48,10 +48,8 @@ export class Tool {
     // Get the detils from the data
     this.setStateFromURL();
 
-    tool.experiments = Object.keys(tool.data);
-    tool.epitopes = tool.data[tool.experiment].epitopes;
+    // TODO: Refactor these into the state or remove
     tool.pdb = tool.data[tool.experiment].pdb;
-    tool.metric = tool.data[tool.experiment].metric_col;
     tool.filterCols = tool.data[tool.experiment].filter_cols;
     tool.tooltipCols = tool.data[tool.experiment].tooltip_cols;
 
@@ -62,7 +60,7 @@ export class Tool {
         epitopes: tool.epitopes,
         summary: tool.summary,
         floor: tool.floor,
-        metric: tool.metric,
+        metric: tool.data[tool.experiment].metric_col,
         tooltips: tool.tooltipCols,
         parentElement: "#chart",
       },
@@ -97,7 +95,7 @@ export class Tool {
     tool.initFilters();
     tool.initSelect(
       d3.select("#experiment"),
-      tool.experiments,
+      Object.keys(tool.data),
       tool.experiment
     );
     tool.initSelect(
@@ -105,7 +103,6 @@ export class Tool {
       ["sum", "mean", "max", "min"],
       tool.summary
     );
-    console.log(typeof tool.floor);
     tool.initCheckboxes(d3.select("#floor"), tool.floor);
     tool.initSelect(d3.select("#proteinRepresentation"), [
       "cartoon",
@@ -148,7 +145,6 @@ export class Tool {
    * Initialize and set up the checkboxes
    */
   initCheckboxes(selection, checked = true) {
-    console.log(checked);
     selection.property("checked", checked);
   }
   /**
@@ -285,7 +281,6 @@ export class Tool {
     // Update the chart and protein
     tool.protein.makeColorScheme();
 
-    // TEST
     tool.updateURLParams();
   }
   /**
@@ -300,6 +295,8 @@ export class Tool {
 
     // Update the chart and protein
     tool.chart.updateVis();
+
+    tool.updateURLParams();
   }
   /**
    * Update sites in the chart based on filters
@@ -353,15 +350,18 @@ export class Tool {
     // Default values for URL parameters
     const experiment = Object.keys(tool.data)[0];
     const epitope = tool.data[experiment].epitopes[0];
+    const chartEpitopes = tool.data[experiment].epitopes;
     const summary = "sum";
     const floor = true;
 
     // Set the default values or get the values from the URL
     tool.experiment = urlParams.get("experiment") || experiment;
     tool.epitope = urlParams.get("epitope") || epitope;
+    tool.epitopes =
+      JSON.parse(decodeURIComponent(urlParams.get("chartEpitopes"))) ||
+      chartEpitopes;
     tool.summary = urlParams.get("summary") || summary;
     tool.floor = urlParams.get("floor") || floor;
-    // if the floor is a string, convert it to a boolean
     if (typeof tool.floor == "string") {
       tool.floor = tool.floor == "true";
     }
@@ -379,6 +379,7 @@ export class Tool {
     urlParams.set("epitope", tool.epitope);
     urlParams.set("summary", tool.summary);
     urlParams.set("floor", tool.floor);
+    urlParams.set("chartEpitopes", JSON.stringify(tool.epitopes));
 
     // Update the URL
     window.history.replaceState(
