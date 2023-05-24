@@ -46,7 +46,10 @@ export class Tool {
     }
 
     // Get the detils from the data
-    this.setStateFromURL();
+    tool.setStateFromURL();
+
+    // Update the URL parameters
+    tool.updateURLParams();
 
     // TODO: Refactor these into the state or remove
     tool.pdb = tool.data[tool.experiment].pdb;
@@ -131,7 +134,7 @@ export class Tool {
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
 
-    // Populate the Filer Sites
+    // Populate the Filter Sites
     tool.initFilters();
   }
   /**
@@ -417,10 +420,13 @@ export class Tool {
   updateURLParams() {
     let tool = this;
 
-    console.log("Updating URL");
-
     // Get the URL parameters object
     const urlParams = new URLSearchParams(window.location.search);
+
+    // If the data parameter is not in the URL, then return
+    if (!urlParams.has("data")) {
+      return;
+    }
 
     // Set the URL parameters for the chart options
     urlParams.set("experiment", tool.experiment);

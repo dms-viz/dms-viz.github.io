@@ -78,8 +78,15 @@ function setUpJsonFileUploadListeners() {
 
     // Update the URL and remove the data URL
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.delete("data");
-    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+    // Clear all URL parameters
+    // Display the keys
+    for (const key of urlParams.keys()) {
+      urlParams.delete(key);
+    }
+    window.history.replaceState({}, "", `${location.pathname}`);
+
+    // Clear the URL input element
+    document.getElementById("url-json-file").value = "";
   });
 
   d3.select("#url-json-file").on("keyup", async function (event) {
@@ -114,14 +121,18 @@ function setUpJsonFileUploadListeners() {
 
       // Parse the response into a JSON object
       const data = await response.json();
-      // Update the tool's state
-      State.data = data;
-      State.initTool();
 
       // Update the URL to include the data URL
       const urlParams = new URLSearchParams(window.location.search);
       urlParams.set("data", this.value);
       window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+
+      // Update the tool's state
+      State.data = data;
+      State.initTool();
+
+      // Clear the local input element
+      document.getElementById("local-json-file").value = "";
     } catch (error) {
       alert(`Fetch operation failed: ${error.message}`);
     }
