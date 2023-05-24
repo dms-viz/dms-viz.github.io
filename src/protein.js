@@ -18,13 +18,13 @@ export class Protein {
       floor: _config.floor,
       pdbID: _config.pdbID,
       dispatch: _config.dispatch,
+      proteinRepresentation: _config.proteinRepresentation,
+      selectionRepresentation: _config.selectionRepresentation,
+      backgroundRepresentation: _config.backgroundRepresentation,
+      proteinColor: _config.proteinColor,
+      backgroundColor: _config.backgroundColor,
+      showGlycans: _config.showGlycans,
       stageColor: "#FFFFFF",
-      proteinRepresentation: "cartoon",
-      selectionRepresentation: "spacefill",
-      backgroundRepresentation: "rope",
-      proteinColor: "#D3D3D3",
-      backgroundColor: "#D3D3D3",
-      showGlycans: false,
     };
     this.data = _data;
 

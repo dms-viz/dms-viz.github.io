@@ -88,12 +88,17 @@ export class Tool {
         floor: tool.floor,
         pdbID: tool.pdb,
         dispatch: tool.chart.dispatch,
+        proteinRepresentation: tool.proteinRepresentation,
+        selectionRepresentation: tool.selectionRepresentation,
+        backgroundRepresentation: tool.backgroundRepresentation,
+        proteinColor: tool.proteinColor,
+        backgroundColor: tool.backgroundColor,
+        showGlycans: tool.showGlycans,
       },
       tool.data
     );
 
-    // Add the sliders and select elements and set initial values
-    tool.initFilters();
+    // Populate the Chart Options
     tool.initSelect(
       d3.select("#experiment"),
       Object.keys(tool.data),
@@ -104,21 +109,30 @@ export class Tool {
       ["sum", "mean", "max", "min"],
       tool.summary
     );
-    tool.initCheckboxes(d3.select("#floor"), tool.floor);
-    tool.initSelect(d3.select("#proteinRepresentation"), [
-      "cartoon",
-      "rope",
-      "ball+stick",
-    ]);
-    tool.initSelect(d3.select("#selectionRepresentation"), [
-      "spacefill",
-      "surface",
-    ]);
-    tool.initSelect(d3.select("#backgroundRepresentation"), [
-      "rope",
-      "cartoon",
-      "ball+stick",
-    ]);
+    tool.initCheckbox(d3.select("#floor"), tool.floor);
+
+    // Populate the Protein Options
+    tool.initSelect(
+      d3.select("#proteinRepresentation"),
+      ["cartoon", "rope", "ball+stick"],
+      tool.proteinRepresentation
+    );
+    tool.initSelect(
+      d3.select("#selectionRepresentation"),
+      ["spacefill", "surface"],
+      tool.selectionRepresentation
+    );
+    tool.initSelect(
+      d3.select("#backgroundRepresentation"),
+      ["rope", "cartoon", "ball+stick"],
+      tool.backgroundRepresentation
+    );
+    tool.initCheckbox(d3.select("#showGlycans"), tool.showGlycans);
+    tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
+    tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
+
+    // Populate the Filer Sites
+    tool.initFilters();
   }
   /**
    * Initialize and populate a select element
@@ -145,8 +159,14 @@ export class Tool {
   /**
    * Initialize and set up the checkboxes
    */
-  initCheckboxes(selection, checked = true) {
+  initCheckbox(selection, checked = true) {
     selection.property("checked", checked);
+  }
+  /**
+   * Initialize and set up the color pickers
+   */
+  initColorPicker(selection, color = "#D3D3D3") {
+    selection.attr("type", "color").attr("value", color);
   }
   /**
    * Initialize and set up the filters
@@ -265,10 +285,13 @@ export class Tool {
     const value = selection.property(id == "showGlycans" ? "checked" : "value");
 
     // Update the config
+    tool[id] = value;
     tool.protein.config[id] = value;
 
     // Update the chart and protein
     tool.protein.clear();
+
+    tool.updateURLParams();
   }
   /**
    * Handle updates to which eptiope is shown on the protein
@@ -349,14 +372,21 @@ export class Tool {
     // Get the URL parameters object
     const urlParams = new URLSearchParams(window.location.search);
 
-    // Default values for URL parameters
+    // Default chart option values for URL parameters
     const experiment = Object.keys(tool.data)[0];
     const proteinEpitope = tool.data[experiment].epitopes[0];
     const chartEpitopes = tool.data[experiment].epitopes;
     const summary = "sum";
     const floor = true;
+    // Default protein option values for URL parameters
+    const proteinRepresentation = "cartoon";
+    const selectionRepresentation = "spacefill";
+    const backgroundRepresentation = "rope";
+    const proteinColor = "#D3D3D3";
+    const backgroundColor = "#D3D3D3";
+    const showGlycans = false;
 
-    // Set the default values or get the values from the URL
+    // Set the default chart option values or get the values from the URL
     tool.experiment = urlParams.get("experiment") || experiment;
     tool.proteinEpitope = urlParams.get("proteinEpitope") || proteinEpitope;
     tool.chartEpitopes =
@@ -367,6 +397,19 @@ export class Tool {
     if (typeof tool.floor == "string") {
       tool.floor = tool.floor == "true";
     }
+    // Set the defult protein option values or get the values from the URL
+    tool.proteinRepresentation =
+      urlParams.get("proteinRepresentation") || proteinRepresentation;
+    tool.selectionRepresentation =
+      urlParams.get("selectionRepresentation") || selectionRepresentation;
+    tool.backgroundRepresentation =
+      urlParams.get("backgroundRepresentation") || backgroundRepresentation;
+    tool.proteinColor = urlParams.get("proteinColor") || proteinColor;
+    tool.backgroundColor = urlParams.get("backgroundColor") || backgroundColor;
+    tool.showGlycans = urlParams.get("showGlycans") || showGlycans;
+    if (typeof tool.showGlycans == "string") {
+      tool.showGlycans = tool.showGlycans == "true";
+    }
   }
   /**
    * Update the URL parameters when the state changes
@@ -374,14 +417,24 @@ export class Tool {
   updateURLParams() {
     let tool = this;
 
+    console.log("Updating URL");
+
     // Get the URL parameters object
     const urlParams = new URLSearchParams(window.location.search);
 
+    // Set the URL parameters for the chart options
     urlParams.set("experiment", tool.experiment);
     urlParams.set("summary", tool.summary);
     urlParams.set("floor", tool.floor);
     urlParams.set("proteinEpitope", tool.proteinEpitope);
     urlParams.set("chartEpitopes", JSON.stringify(tool.chartEpitopes));
+    // Set the URL parameters for the protein options
+    urlParams.set("proteinRepresentation", tool.proteinRepresentation);
+    urlParams.set("selectionRepresentation", tool.selectionRepresentation);
+    urlParams.set("backgroundRepresentation", tool.backgroundRepresentation);
+    urlParams.set("proteinColor", tool.proteinColor);
+    urlParams.set("backgroundColor", tool.backgroundColor);
+    urlParams.set("showGlycans", tool.showGlycans);
 
     // Update the URL
     window.history.replaceState(
