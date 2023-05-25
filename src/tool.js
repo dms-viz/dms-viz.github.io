@@ -228,6 +228,33 @@ export class Tool {
     // Update the pdb structure since this is also experiment specific
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
+    // Update the filter columns
+    tool.filterCols = tool.data[tool.experiment].filter_cols;
+    tool.filters = Object.keys(tool.data[tool.experiment].filter_cols).reduce(
+      (acc, key) => {
+        acc[key] = d3.min(
+          tool.data[tool.experiment].mut_metric_df,
+          (e) => e[key]
+        );
+        return acc;
+      },
+      {}
+    );
+    tool.chart.config.filters = tool.filters;
+    d3.select("#filters").html("");
+    if (tool.filterCols) {
+      Object.keys(tool.filterCols).forEach((col) => {
+        // Get the range for this column
+        const range = d3.extent(
+          tool.data[tool.experiment].mut_metric_df,
+          (d) => d[col]
+        );
+
+        // Add the filter to the page
+        tool.initFilter(col, tool.filterCols[col], ...range, tool.filters[col]);
+      });
+    }
+
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
     tool.chart.updateVis();

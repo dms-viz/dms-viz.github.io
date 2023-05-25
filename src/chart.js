@@ -338,7 +338,7 @@ export class Chart {
     // Get the data for the selected experiment
     vis.originalMutMetric = vis.data[vis.config.experiment].mut_metric_df;
 
-    // Mask the data if there are masked indicies (from the filters)
+    // Mask the data based on the filters
     vis.mutMetric = vis.originalMutMetric.map((d) => {
       let newRow = { ...d }; // make a copy of the original object
       // Loop through each filter in chart.config.filters
