@@ -66,6 +66,7 @@ export class Tool {
         floor: tool.floor,
         metric: tool.data[tool.experiment].metric_col,
         tooltips: tool.tooltipCols,
+        filters: tool.filters,
       },
       tool.data
     );
@@ -101,7 +102,7 @@ export class Tool {
       tool.data
     );
 
-    // Populate the Chart Options
+    // Populate Chart Options
     tool.initSelect(
       d3.select("#experiment"),
       Object.keys(tool.data),
@@ -114,7 +115,7 @@ export class Tool {
     );
     tool.initCheckbox(d3.select("#floor"), tool.floor);
 
-    // Populate the Protein Options
+    // Populate Protein Options
     tool.initSelect(
       d3.select("#proteinRepresentation"),
       ["cartoon", "rope", "ball+stick"],
@@ -134,8 +135,20 @@ export class Tool {
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
 
-    // Populate the Filter Sites
-    tool.initFilters();
+    // Populate Filter Sites
+    d3.select("#filters").html("");
+    if (tool.filterCols) {
+      Object.keys(tool.filterCols).forEach((col) => {
+        // Get the range for this column
+        const range = d3.extent(
+          tool.data[tool.experiment].mut_metric_df,
+          (d) => d[col]
+        );
+
+        // Add the filter to the page
+        tool.initFilter(col, tool.filterCols[col], ...range, tool.filters[col]);
+      });
+    }
   }
   /**
    * Initialize and populate a select element
@@ -150,16 +163,6 @@ export class Tool {
       .property("selected", (d) => d === selected);
   }
   /**
-   * Initialize and populate a slider object
-   */
-  initSlider(selection, min, max, start, step) {
-    selection
-      .attr("min", min)
-      .attr("max", max)
-      .attr("value", start)
-      .attr("step", step);
-  }
-  /**
    * Initialize and set up the checkboxes
    */
   initCheckbox(selection, checked = true) {
@@ -172,54 +175,38 @@ export class Tool {
     selection.attr("type", "color").attr("value", color);
   }
   /**
-   * Initialize and set up the filters
+   * Initialize and set up a filter slider
    */
-  initFilters() {
+  initFilter(column, label, min, max, value) {
     let tool = this;
 
-    // Remove the old filters
-    d3.select("#filters").html("");
-
-    // If there are filters, add them to the tool
-    if (tool.filterCols) {
-      Object.keys(tool.filterCols).forEach((col) => {
-        // Add the html for each slider
-        document.getElementById("filters").innerHTML += `
-              <label for="${col}" style="display: block">${tool.filterCols[col]}</label>
-              <input id="${col}" type="range" />
-              <span id="${col}-output" class="output"></span>
-            `;
-
-        // Get the min and max values for the column
-        const colRange = d3.extent(
-          tool.data[tool.experiment].mut_metric_df,
-          (d) => d[col]
-        );
-
-        // Make an object that holds the filters and a corresponding mask of indices
-        tool.filters = {
-          [col]: [],
-        };
-        // Update the slider and set the text below the sliders
-        tool.initSlider(
-          d3.select(`#${col}`),
-          ...colRange,
-          colRange[0],
-          (colRange[1] - colRange[0]) / 100
-        );
-        document.getElementById(`${col}-output`).textContent = d3.format(".2f")(
-          colRange[0]
-        );
+    // Container for the filters
+    let filters = d3.select("#filters");
+    // Add a label for the filter
+    filters
+      .append("label")
+      .attr("for", column)
+      .style("display", "block")
+      .text(label);
+    // Add the slider element
+    filters
+      .append("input")
+      .attr("type", "range")
+      .attr("id", column)
+      .attr("min", min)
+      .attr("max", max)
+      .attr("value", value)
+      .attr("step", (max - min) / 100)
+      .on("input", function () {
+        // Add an event listener to update the text when the slider is moved
+        tool.updateFilter(this);
       });
-
-      // Add an event listener to the sliders
-      Object.keys(tool.filterCols).forEach((col) => {
-        document.getElementById(col).addEventListener("input", function () {
-          // Filter the chart data based on the range input
-          tool.updateFilteredSites(this);
-        });
-      });
-    }
+    // Add the text element
+    filters
+      .append("span")
+      .attr("class", "output")
+      .attr("id", `${column}-output`)
+      .text(d3.format(".2f")(value));
   }
   /**
    * Handle updates to the selected experiment
@@ -329,42 +316,26 @@ export class Tool {
   /**
    * Update sites in the chart based on filters
    */
-  updateFilteredSites(node) {
+  updateFilter(node) {
     let tool = this;
 
-    // Get the value of the slider
-    const value = parseFloat(d3.select(node).property("value"));
-    // Get the name of the element
-    const id = d3.select(node).attr("id");
+    // Select the node
+    const selection = d3.select(node);
+    const col = selection.attr("id");
+    const value = parseFloat(selection.property("value"));
 
-    // Set the text below the slider
-    const rangeOutput = document.getElementById(`${id}-output`);
-    rangeOutput.textContent = d3.format(".2f")(value);
-
-    // Get the index of the regions to filter
-    const indices = tool.data[tool.experiment].mut_metric_df
-      .filter((d) => d[id] < value)
-      .map((d) => tool.data[tool.experiment].mut_metric_df.indexOf(d));
+    // Update the label for the filter
+    d3.select(`#${col}-output`).text(d3.format(".2f")(value));
 
     // Update the filter object
-    tool.filters[id] = indices;
+    tool.filters[col] = value;
+    tool.chart.config.filters = tool.filters;
 
-    // Collate all of the masks into a single array
-    const mask = Array.from(
-      new Set([].concat(...Object.values(tool.filters)))
-    ).sort((a, b) => a - b);
-
-    // if the length of the mask is equal to the length of the data, then don't update the chart
-    if (mask.length == tool.data[tool.experiment].mut_metric_df.length) {
-      return;
-    }
-
-    // Add the mask to the chart
-    tool.chart["maskedIndicies"] = mask;
-
-    // // Update the chart
+    // Update the visualization
     tool.chart.updateVis();
     tool.protein.makeColorScheme();
+
+    tool.updateURLParams();
   }
   /**
    * Get the state from the URL
@@ -388,7 +359,14 @@ export class Tool {
     const proteinColor = "#D3D3D3";
     const backgroundColor = "#D3D3D3";
     const showGlycans = false;
-
+    // Default filter values for URL parameters
+    const filters = Object.keys(tool.data[experiment].filter_cols).reduce(
+      (acc, key) => {
+        acc[key] = d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]);
+        return acc;
+      },
+      {}
+    );
     // Set the default chart option values or get the values from the URL
     tool.experiment = urlParams.get("experiment") || experiment;
     tool.proteinEpitope = urlParams.get("proteinEpitope") || proteinEpitope;
@@ -413,6 +391,9 @@ export class Tool {
     if (typeof tool.showGlycans == "string") {
       tool.showGlycans = tool.showGlycans == "true";
     }
+    // Set the default filter values or get the values from the URL
+    tool.filters =
+      JSON.parse(decodeURIComponent(urlParams.get("filters"))) || filters;
   }
   /**
    * Update the URL parameters when the state changes
@@ -441,6 +422,8 @@ export class Tool {
     urlParams.set("proteinColor", tool.proteinColor);
     urlParams.set("backgroundColor", tool.backgroundColor);
     urlParams.set("showGlycans", tool.showGlycans);
+    // Set the URL parameters for the filters
+    urlParams.set("filters", JSON.stringify(tool.filters));
 
     // Update the URL
     window.history.replaceState(

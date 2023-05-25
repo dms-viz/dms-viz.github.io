@@ -17,6 +17,7 @@ export class Chart {
       floor: _config.floor,
       metric: _config.metric,
       tooltips: _config.tooltips,
+      filters: _config.filters,
       parentElement: _config.parentElement,
       width: 1080,
       height: 300,
@@ -334,15 +335,24 @@ export class Chart {
   updateVis() {
     let vis = this;
 
-    // Process DATA
+    // Get the data for the selected experiment
     vis.originalMutMetric = vis.data[vis.config.experiment].mut_metric_df;
-    vis.mutMetric = vis.originalMutMetric.map((d, i) => {
+
+    // Mask the data if there are masked indicies (from the filters)
+    vis.mutMetric = vis.originalMutMetric.map((d) => {
       let newRow = { ...d }; // make a copy of the original object
-      if (vis.maskedIndicies && vis.maskedIndicies.includes(i)) {
-        newRow.metric = null;
+      // Loop through each filter in chart.config.filters
+      for (let filterKey in vis.config.filters) {
+        let filterValue = vis.config.filters[filterKey];
+        // Set the value of metric to null if the row doesn't pass the filter
+        if (newRow[filterKey] < filterValue) {
+          newRow.metric = null;
+          break;
+        }
       }
       return newRow;
     });
+
     // Summarize and filter the experiments based on the selections and epitopes
     vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
       vis.config.chartEpitopes.includes(d.epitope)
