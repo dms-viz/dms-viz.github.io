@@ -12,7 +12,7 @@ export class Chart {
     this.config = _config;
     this.config = {
       experiment: _config.experiment,
-      epitopes: _config.epitopes,
+      chartEpitopes: _config.chartEpitopes,
       summary: _config.summary,
       floor: _config.floor,
       metric: _config.metric,
@@ -43,6 +43,12 @@ export class Chart {
    */
   initVis() {
     let vis = this;
+
+    // Clear any existing chart
+    document.querySelector(this.config.parentElement).innerHTML = "";
+
+    // Clear any existing tooltips
+    d3.selectAll(".tooltip").remove();
 
     // Initialize the MARGINS around the chart
     vis.margin = {
@@ -339,7 +345,7 @@ export class Chart {
     });
     // Summarize and filter the experiments based on the selections and epitopes
     vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
-      vis.config.epitopes.includes(d.epitope)
+      vis.config.chartEpitopes.includes(d.epitope)
     );
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(

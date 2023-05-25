@@ -6,7 +6,9 @@ const modal = document.querySelector(".modal"),
   sidebar = document.getElementById("sidebar"),
   toggle = document.getElementById("sidebar-toggle"),
   headerpd = document.getElementById("header"),
-  mainpd = document.getElementById("main");
+  mainpd = document.getElementById("main"),
+  localFile = document.getElementById("local-file"),
+  remoteFile = document.getElementById("remote-file");
 
 // UI functions to attach to event listeners
 
@@ -60,7 +62,6 @@ function toggleAccordion(btn) {
 }
 
 // Attach UI elements function to event listeners
-
 trigger.addEventListener("click", toggleModal);
 closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
@@ -104,3 +105,23 @@ function highlightHelp() {
   document.removeEventListener("mousedown", highlightHelp);
 }
 document.addEventListener("mousedown", highlightHelp);
+
+// Toggle the download button to show either local or url upload buttons
+function toggleDownload({ target: element }) {
+  const buttons = Array.from(element.parentNode.querySelectorAll("button"));
+  buttons.forEach((button) => button.classList.remove("upload-method"));
+
+  element.classList.add("upload-method");
+
+  // Hide/show corresponding divs
+  if (element.id === "local-file") {
+    document.getElementById("local-file-input").style.display = "block";
+    document.getElementById("remote-url-input").style.display = "none";
+  } else if (element.id === "remote-file") {
+    document.getElementById("remote-url-input").style.display = "block";
+    document.getElementById("local-file-input").style.display = "none";
+  }
+}
+
+localFile.addEventListener("click", toggleDownload);
+remoteFile.addEventListener("click", toggleDownload);

@@ -19,68 +19,176 @@ export class Tool {
   initTool() {
     let tool = this;
 
-    // Grab the filters div by ID and remove the inner HTML
-    d3.select("#filters").html("");
+    // Format the data for each experiment
+    for (const experiment in tool.data) {
+      // Get the epitopes for the experiment and convert to strings
+      tool.data[experiment].epitopes = tool.data[experiment].epitopes.map((e) =>
+        e.toString()
+      );
+      // Get the map for reference sites to sequential sites
+      const siteMap = tool.data[experiment].sitemap;
+      // Get the column name of the mutation-level metric
+      const metric = tool.data[experiment].metric_col;
+      // Map the reference sites to sequential and protein sites
+      tool.data[experiment].mut_metric_df = tool.data[
+        experiment
+      ].mut_metric_df.map((e) => {
+        return {
+          ...e,
+          site: siteMap[e.reference_site].sequential_site,
+          site_reference: e.reference_site,
+          site_protein: siteMap[e.reference_site].protein_site,
+          site_chain: siteMap[e.reference_site].chains,
+          metric: e[metric],
+          epitope: e.epitope.toString(),
+        };
+      });
+    }
 
-    // Format the JSON data
-    tool._formatData();
+    // Get the detils from the data
+    tool.setStateFromURL();
 
-    // Get the available experiments
-    tool.experiments = Object.keys(tool.data);
+    // Update the URL parameters
+    tool.updateURLParams();
 
-    // Set the default selections
-    tool.experiment = tool.experiments[0];
-    tool.epitopes = tool.data[tool.experiment].epitopes.map(
-      (d) => d.toString() // TODO: Why is this necessary?
-    );
-    tool.epitope = tool.epitopes[0];
-    tool.summary = "sum";
-    tool.floor = true;
+    // TODO: Refactor these into the state or remove
     tool.pdb = tool.data[tool.experiment].pdb;
-    tool.metric = tool.data[tool.experiment].metric_col;
-
-    // Columns to filter on
     tool.filterCols = tool.data[tool.experiment].filter_cols;
-
-    // Columns to use a tooltips
     tool.tooltipCols = tool.data[tool.experiment].tooltip_cols;
 
-    // Set up the chart selection menus
-    tool._updateSelection(d3.select("#experiment"), tool.experiments);
-    tool._updateSelection(d3.select("#summary"), ["sum", "mean", "max", "min"]);
+    // Set up the initial chart
+    tool.chart = new Chart(
+      {
+        parentElement: "#chart",
+        experiment: tool.experiment,
+        chartEpitopes: tool.chartEpitopes,
+        summary: tool.summary,
+        floor: tool.floor,
+        metric: tool.data[tool.experiment].metric_col,
+        tooltips: tool.tooltipCols,
+      },
+      tool.data
+    );
+
+    // Set up the inital chart legend
     tool.legend = new Legend(
       {
         parentElement: "#legend",
         experiment: tool.experiment,
-        epitope: tool.epitope,
+        proteinEpitope: tool.proteinEpitope,
+        chartEpitopes: tool.chartEpitopes,
       },
       tool.data
     );
-    // Set up the protein selection menus
-    tool._updateSelection(d3.select("#proteinRepresentation"), [
-      "cartoon",
-      "rope",
-      "ball+stick",
-    ]);
-    tool._updateSelection(d3.select("#selectionRepresentation"), [
-      "spacefill",
-      "surface",
-    ]);
-    tool._updateSelection(d3.select("#backgroundRepresentation"), [
-      "rope",
-      "cartoon",
-      "ball+stick",
-    ]);
 
-    // Add the sliders for the filters
+    // Set up the initial protein viewport
+    tool.protein = new Protein(
+      {
+        parentElement: "viewport",
+        experiment: tool.experiment,
+        proteinEpitope: tool.proteinEpitope,
+        summary: tool.summary,
+        floor: tool.floor,
+        pdbID: tool.pdb,
+        dispatch: tool.chart.dispatch,
+        proteinRepresentation: tool.proteinRepresentation,
+        selectionRepresentation: tool.selectionRepresentation,
+        backgroundRepresentation: tool.backgroundRepresentation,
+        proteinColor: tool.proteinColor,
+        backgroundColor: tool.backgroundColor,
+        showGlycans: tool.showGlycans,
+      },
+      tool.data
+    );
+
+    // Populate the Chart Options
+    tool.initSelect(
+      d3.select("#experiment"),
+      Object.keys(tool.data),
+      tool.experiment
+    );
+    tool.initSelect(
+      d3.select("#summary"),
+      ["sum", "mean", "max", "min"],
+      tool.summary
+    );
+    tool.initCheckbox(d3.select("#floor"), tool.floor);
+
+    // Populate the Protein Options
+    tool.initSelect(
+      d3.select("#proteinRepresentation"),
+      ["cartoon", "rope", "ball+stick"],
+      tool.proteinRepresentation
+    );
+    tool.initSelect(
+      d3.select("#selectionRepresentation"),
+      ["spacefill", "surface"],
+      tool.selectionRepresentation
+    );
+    tool.initSelect(
+      d3.select("#backgroundRepresentation"),
+      ["rope", "cartoon", "ball+stick"],
+      tool.backgroundRepresentation
+    );
+    tool.initCheckbox(d3.select("#showGlycans"), tool.showGlycans);
+    tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
+    tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
+
+    // Populate the Filter Sites
+    tool.initFilters();
+  }
+  /**
+   * Initialize and populate a select element
+   */
+  initSelect(selection, options, selected = options[0]) {
+    selection
+      .selectAll("option")
+      .data(options)
+      .join("option")
+      .attr("value", (d) => d)
+      .text((d) => d)
+      .property("selected", (d) => d === selected);
+  }
+  /**
+   * Initialize and populate a slider object
+   */
+  initSlider(selection, min, max, start, step) {
+    selection
+      .attr("min", min)
+      .attr("max", max)
+      .attr("value", start)
+      .attr("step", step);
+  }
+  /**
+   * Initialize and set up the checkboxes
+   */
+  initCheckbox(selection, checked = true) {
+    selection.property("checked", checked);
+  }
+  /**
+   * Initialize and set up the color pickers
+   */
+  initColorPicker(selection, color = "#D3D3D3") {
+    selection.attr("type", "color").attr("value", color);
+  }
+  /**
+   * Initialize and set up the filters
+   */
+  initFilters() {
+    let tool = this;
+
+    // Remove the old filters
+    d3.select("#filters").html("");
+
+    // If there are filters, add them to the tool
     if (tool.filterCols) {
       Object.keys(tool.filterCols).forEach((col) => {
         // Add the html for each slider
         document.getElementById("filters").innerHTML += `
-          <label for="${col}" style="display: block">${tool.filterCols[col]}</label>
-          <input id="${col}" type="range" />
-          <span id="${col}-output" class="output"></span>
-        `;
+              <label for="${col}" style="display: block">${tool.filterCols[col]}</label>
+              <input id="${col}" type="range" />
+              <span id="${col}-output" class="output"></span>
+            `;
 
         // Get the min and max values for the column
         const colRange = d3.extent(
@@ -93,7 +201,7 @@ export class Tool {
           [col]: [],
         };
         // Update the slider and set the text below the sliders
-        tool._updateSlider(
+        tool.initSlider(
           d3.select(`#${col}`),
           ...colRange,
           colRange[0],
@@ -103,53 +211,20 @@ export class Tool {
           colRange[0]
         );
       });
-    }
 
-    // Add an event listener to the sliders
-    if (tool.filterCols) {
+      // Add an event listener to the sliders
       Object.keys(tool.filterCols).forEach((col) => {
         document.getElementById(col).addEventListener("input", function () {
           // Filter the chart data based on the range input
-          tool.filterData(this);
+          tool.updateFilteredSites(this);
         });
       });
     }
-
-    // Set up the initial chart
-    document.getElementById("chart").innerHTML = "";
-    d3.selectAll(".tooltip").remove();
-    tool.chart = new Chart(
-      {
-        experiment: tool.experiment,
-        epitopes: tool.epitopes,
-        summary: tool.summary,
-        floor: tool.floor,
-        metric: tool.metric,
-        tooltips: tool.tooltipCols,
-        parentElement: "#chart",
-      },
-      tool.data
-    );
-
-    // Set up the initial protein
-    document.getElementById("viewport").innerHTML = "";
-    tool.protein = new Protein(
-      {
-        parentElement: "viewport",
-        experiment: tool.experiment,
-        epitope: tool.epitope,
-        summary: tool.summary,
-        floor: tool.floor,
-        pdbID: tool.pdb,
-        dispatch: tool.chart.dispatch,
-      },
-      tool.data
-    );
   }
   /**
-   * Handle updates to the experiment selection
+   * Handle updates to the selected experiment
    */
-  updateExperiment(node) {
+  updateSelectedExperiment(node) {
     let tool = this;
     // Update the experiment selection in the chart, protein, and legend
     tool.experiment = d3.select(node).property("value");
@@ -157,12 +232,12 @@ export class Tool {
     tool.protein.config.experiment = tool.experiment;
     tool.legend.config.experiment = tool.experiment;
     // Update the epitope selection because experiments have different epitopes
-    tool.epitopes = tool.data[tool.experiment].epitopes;
-    tool.epitope = tool.epitopes[0];
-    tool.chart.config.epitope = tool.epitope;
-    tool.chart.config.epitopes = tool.epitopes;
-    tool.protein.config.epitope = tool.epitope;
-    tool.legend.config.epitope = tool.epitope;
+    tool.chartEpitopes = tool.data[tool.experiment].epitopes;
+    tool.proteinEpitope = tool.chartEpitopes[0];
+    tool.chart.config.chartEpitopes = tool.chartEpitopes;
+    tool.legend.config.chartEpitopes = tool.chartEpitopes;
+    tool.protein.config.proteinEpitope = tool.proteinEpitope;
+    tool.legend.config.proteinEpitope = tool.proteinEpitope;
     // Update the pdb structure since this is also experiment specific
     tool.pdb = tool.data[tool.experiment].pdb;
     tool.protein.config.pdbID = tool.pdb;
@@ -176,11 +251,13 @@ export class Tool {
     setTimeout(() => {
       tool.protein.clear();
     }, 100);
+
+    tool.updateURLParams();
   }
   /**
    * Handle updates within a single experiment
    */
-  updateData(node) {
+  updateChartOptions(node) {
     let tool = this;
 
     // Select the node
@@ -196,31 +273,63 @@ export class Tool {
     // Update the chart and protein
     tool.chart.updateVis();
     tool.protein.makeColorScheme();
+
+    tool.updateURLParams();
   }
-  updateEpitope(epitope) {
+  /**
+   * Handle updates to the protein representation
+   */
+  updateProteinOptions(node) {
+    let tool = this;
+
+    // Select the node
+    const selection = d3.select(node);
+    const id = selection.attr("id");
+    const value = selection.property(id == "showGlycans" ? "checked" : "value");
+
+    // Update the config
+    tool[id] = value;
+    tool.protein.config[id] = value;
+
+    // Update the chart and protein
+    tool.protein.clear();
+
+    tool.updateURLParams();
+  }
+  /**
+   * Handle updates to which eptiope is shown on the protein
+   */
+  updateProteinEpitope(epitope) {
     let tool = this;
 
     // Update the config
-    tool["epitope"] = epitope;
-    tool.protein.config["epitope"] = epitope;
+    tool.proteinEpitope = epitope;
+    tool.protein.config.proteinEpitope = epitope;
 
     // Update the chart and protein
     tool.protein.makeColorScheme();
+
+    tool.updateURLParams();
   }
-  updateEpitopes(epitopes) {
+  /**
+   * Handle updates to which eptiopes are displayed on the chart
+   */
+  updateChartEpitopes(epitopes) {
     let tool = this;
 
     // Update the config
-    tool["epitopes"] = epitopes;
-    tool.chart.config["epitopes"] = epitopes;
+    tool.chartEpitopes = epitopes;
+    tool.chart.config.chartEpitopes = epitopes;
 
     // Update the chart and protein
     tool.chart.updateVis();
+
+    tool.updateURLParams();
   }
   /**
-   * Filter the data based on the range of times seen
+   * Update sites in the chart based on filters
    */
-  filterData(node) {
+  updateFilteredSites(node) {
     let tool = this;
 
     // Get the value of the slider
@@ -258,73 +367,88 @@ export class Tool {
     tool.protein.makeColorScheme();
   }
   /**
-   * Handle updates to the protein representation
+   * Get the state from the URL
    */
-  updateProtein(node) {
+  setStateFromURL() {
     let tool = this;
 
-    // Select the node
-    const selection = d3.select(node);
-    const id = selection.attr("id");
-    const value = selection.property(id == "showGlycans" ? "checked" : "value");
+    // Get the URL parameters object
+    const urlParams = new URLSearchParams(window.location.search);
 
-    // Update the config
-    tool.protein.config[id] = value;
+    // Default chart option values for URL parameters
+    const experiment = Object.keys(tool.data)[0];
+    const proteinEpitope = tool.data[experiment].epitopes[0];
+    const chartEpitopes = tool.data[experiment].epitopes;
+    const summary = "sum";
+    const floor = true;
+    // Default protein option values for URL parameters
+    const proteinRepresentation = "cartoon";
+    const selectionRepresentation = "spacefill";
+    const backgroundRepresentation = "rope";
+    const proteinColor = "#D3D3D3";
+    const backgroundColor = "#D3D3D3";
+    const showGlycans = false;
 
-    // Update the chart and protein
-    tool.protein.clear();
-  }
-  /**
-   * Format the data
-   */
-  _formatData() {
-    let tool = this;
-
-    // Format data for each antibody experiment
-    for (const selection in tool.data) {
-      // Get the epitopes for the experiment and convert to strings
-      tool.data[selection].epitopes = tool.data[selection].epitopes.map((e) =>
-        e.toString()
-      );
-      // Get the map for reference sites to sequential sites
-      const siteMap = tool.data[selection].sitemap;
-      // Get the column name of the mutation-level metric
-      const metric = tool.data[selection].metric_col;
-      // Map the reference sites to sequential and protein sites
-      tool.data[selection].mut_metric_df = tool.data[
-        selection
-      ].mut_metric_df.map((e) => {
-        return {
-          ...e,
-          site: siteMap[e.reference_site].sequential_site,
-          site_reference: e.reference_site,
-          site_protein: siteMap[e.reference_site].protein_site,
-          site_chain: siteMap[e.reference_site].chains,
-          metric: e[metric],
-          epitope: e.epitope.toString(),
-        };
-      });
+    // Set the default chart option values or get the values from the URL
+    tool.experiment = urlParams.get("experiment") || experiment;
+    tool.proteinEpitope = urlParams.get("proteinEpitope") || proteinEpitope;
+    tool.chartEpitopes =
+      JSON.parse(decodeURIComponent(urlParams.get("chartEpitopes"))) ||
+      chartEpitopes;
+    tool.summary = urlParams.get("summary") || summary;
+    tool.floor = urlParams.get("floor") || floor;
+    if (typeof tool.floor == "string") {
+      tool.floor = tool.floor == "true";
+    }
+    // Set the defult protein option values or get the values from the URL
+    tool.proteinRepresentation =
+      urlParams.get("proteinRepresentation") || proteinRepresentation;
+    tool.selectionRepresentation =
+      urlParams.get("selectionRepresentation") || selectionRepresentation;
+    tool.backgroundRepresentation =
+      urlParams.get("backgroundRepresentation") || backgroundRepresentation;
+    tool.proteinColor = urlParams.get("proteinColor") || proteinColor;
+    tool.backgroundColor = urlParams.get("backgroundColor") || backgroundColor;
+    tool.showGlycans = urlParams.get("showGlycans") || showGlycans;
+    if (typeof tool.showGlycans == "string") {
+      tool.showGlycans = tool.showGlycans == "true";
     }
   }
   /**
-   * Update the selection menu
+   * Update the URL parameters when the state changes
    */
-  _updateSelection(selection, options) {
-    selection
-      .selectAll("option")
-      .data(options)
-      .join("option")
-      .attr("value", (d) => d)
-      .text((d) => d);
-  }
-  /**
-   * Update the slider
-   */
-  _updateSlider(selection, min, max, start, step) {
-    selection
-      .attr("min", min)
-      .attr("max", max)
-      .attr("value", start)
-      .attr("step", step);
+  updateURLParams() {
+    let tool = this;
+
+    // Get the URL parameters object
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // If the data parameter is not in the URL, then return
+    if (!urlParams.has("data")) {
+      return;
+    }
+
+    // Set the URL parameters for the chart options
+    urlParams.set("experiment", tool.experiment);
+    urlParams.set("summary", tool.summary);
+    urlParams.set("floor", tool.floor);
+    urlParams.set("proteinEpitope", tool.proteinEpitope);
+    urlParams.set("chartEpitopes", JSON.stringify(tool.chartEpitopes));
+    // Set the URL parameters for the protein options
+    urlParams.set("proteinRepresentation", tool.proteinRepresentation);
+    urlParams.set("selectionRepresentation", tool.selectionRepresentation);
+    urlParams.set("backgroundRepresentation", tool.backgroundRepresentation);
+    urlParams.set("proteinColor", tool.proteinColor);
+    urlParams.set("backgroundColor", tool.backgroundColor);
+    urlParams.set("showGlycans", tool.showGlycans);
+
+    // Update the URL
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.origin}${
+        window.location.pathname
+      }?${urlParams.toString()}`
+    );
   }
 }

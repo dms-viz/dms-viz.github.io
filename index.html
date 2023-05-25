@@ -99,9 +99,31 @@
             </div>
             <span class="title">Upload Data</span>
           </button>
-          <div class="accordion-content">
+          <div class="accordion-content" id="download-accordion">
             <div class="accordion-option">
-              <input type="file" id="json-file" accept=".json" />
+              <div class="download-toggle">
+                <button class="upload-method" id="local-file">Local</button>
+                <button id="remote-file">Remote</button>
+              </div>
+            </div>
+            <div class="accordion-option" id="local-file-input">
+              <input type="file" id="local-json-file" accept=".json" />
+            </div>
+            <div
+              class="accordion-option"
+              id="remote-url-input"
+              style="display: none"
+            >
+              <input
+                type="url"
+                name="url"
+                id="url-json-file"
+                placeholder="https://example.com"
+                pattern="https://.*"
+                size="30"
+                autocomplete="off"
+                required
+              />
             </div>
           </div>
         </div>
@@ -129,7 +151,7 @@
             <div class="accordion-option">
               <label for="Floor"
                 >Floor
-                <input type="checkbox" checked="True" name="Floor" id="floor" />
+                <input type="checkbox" name="Floor" id="floor" />
               </label>
             </div>
           </div>
@@ -163,11 +185,11 @@
             </div>
             <div class="accordion-option color">
               <label for="proteinColor">Protein Color </label>
-              <input type="color" value="#D3D3D3" id="proteinColor" />
+              <input type="color" id="proteinColor" />
             </div>
             <div class="accordion-option color">
               <label for="backgroundColor">Background Color </label>
-              <input type="color" value="#D3D3D3" id="backgroundColor" />
+              <input type="color" id="backgroundColor" />
             </div>
             <div class="accordion-option">
               <label for="showGlycans"
