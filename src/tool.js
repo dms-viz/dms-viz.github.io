@@ -230,17 +230,20 @@ export class Tool {
     tool.protein.config.pdbID = tool.pdb;
     // Update the filter columns
     tool.filterCols = tool.data[tool.experiment].filter_cols;
-    tool.filters = Object.keys(tool.data[tool.experiment].filter_cols).reduce(
-      (acc, key) => {
-        acc[key] = d3.min(
-          tool.data[tool.experiment].mut_metric_df,
-          (e) => e[key]
-        );
-        return acc;
-      },
-      {}
-    );
-    tool.chart.config.filters = tool.filters;
+    if (tool.filterCols) {
+      tool.filters = Object.keys(tool.data[tool.experiment].filter_cols).reduce(
+        (acc, key) => {
+          acc[key] = d3.min(
+            tool.data[tool.experiment].mut_metric_df,
+            (e) => e[key]
+          );
+          return acc;
+        },
+        {}
+      );
+    } else {
+      tool.filters = {};
+    }
     d3.select("#filters").html("");
     if (tool.filterCols) {
       Object.keys(tool.filterCols).forEach((col) => {
@@ -254,6 +257,7 @@ export class Tool {
         tool.initFilter(col, tool.filterCols[col], ...range, tool.filters[col]);
       });
     }
+    tool.chart.config.filters = tool.filters;
 
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
@@ -387,13 +391,16 @@ export class Tool {
     const backgroundColor = "#D3D3D3";
     const showGlycans = false;
     // Default filter values for URL parameters
-    const filters = Object.keys(tool.data[experiment].filter_cols).reduce(
-      (acc, key) => {
-        acc[key] = d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]);
-        return acc;
-      },
-      {}
-    );
+    let filters = {};
+    if (tool.data[experiment].filter_cols) {
+      filters = Object.keys(tool.data[experiment].filter_cols).reduce(
+        (acc, key) => {
+          acc[key] = d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]);
+          return acc;
+        },
+        {}
+      );
+    }
     // Set the default chart option values or get the values from the URL
     tool.experiment = urlParams.get("experiment") || experiment;
     tool.proteinEpitope = urlParams.get("proteinEpitope") || proteinEpitope;
