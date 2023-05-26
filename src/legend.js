@@ -91,7 +91,7 @@ export class Legend {
             .attr("class", "epitope-box")
             .attr("x", vis.margin.left - vis.margin.point / 2)
             .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
-            .attr("width", vis.background.node().getBBox().width - 20)
+            .attr("width", "calc(100% - 20px)")
             .attr("height", 20)
             .style("opacity", 0)
             .attr("ry", 4)
