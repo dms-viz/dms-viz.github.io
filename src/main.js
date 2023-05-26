@@ -198,7 +198,15 @@ function setUpDownloadButtonListeners() {
         transparent: false,
       })
       .then(function (blob) {
-        NGL.download(blob, "protein_plot.png");
+        let now = new Date();
+        let dateString =
+          now.getFullYear().toString() +
+          "-" +
+          (now.getMonth() + 1).toString().padStart(2, "0") +
+          "-" +
+          now.getDate().toString().padStart(2, "0");
+        let fileName = `${State.experiment}_${State.proteinEpitope}_${dateString}.png`;
+        NGL.download(blob, fileName);
       });
   });
 }
