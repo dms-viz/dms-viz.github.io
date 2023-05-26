@@ -188,17 +188,29 @@ kbd {
   font-size: 1.25rem;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.75);
-
 }
 
 .sidebar .header .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: 'Press Start 2P', monospace;
   font-size: 1em;
   font-weight: bold;
   color: rgba(0, 0, 0, 0.75);
-  padding-left: 52px;
-  padding-right: 52px;
   white-space: nowrap;
+  transition: justify-content 0.5s ease;
+  width: 100%;
+  gap: 10px; 
+}
+
+.logo-img {
+  width: var(--nav-icon-width);
+  height: auto;
+}
+
+.sidebar.sidebar--collapsed .header .logo {
+  justify-content: flex-start;
 }
 
 .sidebar .accordion {
