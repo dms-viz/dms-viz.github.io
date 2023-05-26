@@ -51,11 +51,6 @@ export class Tool {
     // Update the URL parameters
     tool.updateURLParams();
 
-    // TODO: Refactor these into the state or remove
-    tool.pdb = tool.data[tool.experiment].pdb;
-    tool.filterCols = tool.data[tool.experiment].filter_cols;
-    tool.tooltipCols = tool.data[tool.experiment].tooltip_cols;
-
     // Set up the initial chart
     tool.chart = new Chart(
       {
@@ -65,7 +60,7 @@ export class Tool {
         summary: tool.summary,
         floor: tool.floor,
         metric: tool.data[tool.experiment].metric_col,
-        tooltips: tool.tooltipCols,
+        tooltips: tool.data[tool.experiment].tooltip_cols,
         filters: tool.filters,
       },
       tool.data
@@ -90,7 +85,7 @@ export class Tool {
         proteinEpitope: tool.proteinEpitope,
         summary: tool.summary,
         floor: tool.floor,
-        pdbID: tool.pdb,
+        pdbID: tool.data[tool.experiment].pdb,
         dispatch: tool.chart.dispatch,
         proteinRepresentation: tool.proteinRepresentation,
         selectionRepresentation: tool.selectionRepresentation,
@@ -137,16 +132,16 @@ export class Tool {
 
     // Populate Filter Sites
     d3.select("#filters").html("");
-    if (tool.filterCols) {
-      Object.keys(tool.filterCols).forEach((col) => {
-        // Get the range for this column
-        const range = d3.extent(
-          tool.data[tool.experiment].mut_metric_df,
-          (d) => d[col]
-        );
-
+    if (tool.data[tool.experiment].filter_cols) {
+      Object.keys(tool.data[tool.experiment].filter_cols).forEach((col) => {
         // Add the filter to the page
-        tool.initFilter(col, tool.filterCols[col], ...range, tool.filters[col]);
+        tool.initFilter(
+          col,
+          tool.data[tool.experiment].filter_cols[col],
+          d3.min(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
+          d3.max(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
+          tool.filters[col]
+        );
       });
     }
   }
@@ -226,35 +221,32 @@ export class Tool {
     tool.protein.config.proteinEpitope = tool.proteinEpitope;
     tool.legend.config.proteinEpitope = tool.proteinEpitope;
     // Update the pdb structure since this is also experiment specific
-    tool.pdb = tool.data[tool.experiment].pdb;
-    tool.protein.config.pdbID = tool.pdb;
-    // Update the filter columns
-    tool.filterCols = tool.data[tool.experiment].filter_cols;
-    if (tool.filterCols) {
+    tool.protein.config.pdbID = tool.data[tool.experiment].pdb;
+    // Update the filters
+    tool.filters = {};
+    if (tool.data[tool.experiment].filter_cols) {
       tool.filters = Object.keys(tool.data[tool.experiment].filter_cols).reduce(
-        (acc, key) => {
-          acc[key] = d3.min(
+        (acc, key) => ({
+          ...acc,
+          [key]: d3.min(
             tool.data[tool.experiment].mut_metric_df,
             (e) => e[key]
-          );
-          return acc;
-        },
+          ),
+        }),
         {}
       );
-    } else {
-      tool.filters = {};
     }
     d3.select("#filters").html("");
-    if (tool.filterCols) {
-      Object.keys(tool.filterCols).forEach((col) => {
-        // Get the range for this column
-        const range = d3.extent(
-          tool.data[tool.experiment].mut_metric_df,
-          (d) => d[col]
-        );
-
+    if (tool.data[tool.experiment].filter_cols) {
+      Object.keys(tool.data[tool.experiment].filter_cols).forEach((col) => {
         // Add the filter to the page
-        tool.initFilter(col, tool.filterCols[col], ...range, tool.filters[col]);
+        tool.initFilter(
+          col,
+          tool.data[tool.experiment].filter_cols[col],
+          d3.min(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
+          d3.max(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
+          tool.filters[col]
+        );
       });
     }
     tool.chart.config.filters = tool.filters;
@@ -394,10 +386,10 @@ export class Tool {
     let filters = {};
     if (tool.data[experiment].filter_cols) {
       filters = Object.keys(tool.data[experiment].filter_cols).reduce(
-        (acc, key) => {
-          acc[key] = d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]);
-          return acc;
-        },
+        (acc, key) => ({
+          ...acc,
+          [key]: d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]),
+        }),
         {}
       );
     }
