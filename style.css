@@ -369,11 +369,10 @@ kbd {
   pointer-events: none;
   transform: translate(-50%, -100%);
   font-family: "Helvetica", sans-serif;
-  background: rgba(20,10,30,0.6);
   transition: 0.2s opacity ease-out, 0.1s border-color ease-out;
-  backdrop-filter: blur(4px);
   background: rgba(250,240,255,0.2);
   backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
   z-index: var(--z-fixed);
 }
 
@@ -392,11 +391,10 @@ kbd {
   pointer-events: none;
   transform: translate(-50%, -100%);
   font-family: "Helvetica", sans-serif;
-  background: rgba(20,10,30,0.6);
   transition: 0.2s opacity ease-out, 0.1s border-color ease-out;
-  backdrop-filter: blur(4px);
   background: rgba(250,240,255,0.2);
   backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
   z-index: var(--z-fixed);
 }
 
