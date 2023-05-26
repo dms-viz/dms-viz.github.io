@@ -175,6 +175,7 @@ export class Legend {
             )
             .attr("text-anchor", "left")
             .style("alignment-baseline", "middle")
+            .attr("dominant-baseline", "middle")
             .style("user-select", "none")
             .on("click", (event, datum) => {
               if (event.altKey && vis.config.chartEpitopes.includes(datum)) {

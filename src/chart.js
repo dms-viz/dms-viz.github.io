@@ -684,6 +684,7 @@ export class Chart {
       .attr("y", (d) => vis.yScaleHeatmap(d))
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
+      .attr("dominant-baseline", "middle")
       .attr("font-size", "1em")
       .attr("font-weight", "bold")
       .text("x");
@@ -1011,6 +1012,7 @@ export class Chart {
       .attr("y", (d) => vis.yScaleHeatmap(d))
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
+      .attr("dominant-baseline", "middle")
       .attr("font-size", "1em")
       .attr("font-weight", "bold")
       .text("x");
