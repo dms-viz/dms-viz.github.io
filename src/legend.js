@@ -93,7 +93,9 @@ export class Legend {
             .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
             .attr("width", "calc(100% - 20px)")
             .attr("height", 20)
-            .style("opacity", 0)
+            .style("opacity", (d) =>
+              vis.config.proteinEpitope.includes(d) ? ".25" : "0"
+            )
             .attr("ry", 4)
             .style("fill", (d) => vis.epitopeColors[d])
             .on("click", (event, datum) => {
@@ -112,12 +114,12 @@ export class Legend {
           update
             // Attributes that need to be updated go here
             .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
-            .style("fill", (d) => vis.epitopeColors[d]),
+            .style("fill", (d) => vis.epitopeColors[d])
+            .style("opacity", (d) =>
+              vis.config.proteinEpitope.includes(d) ? ".25" : "0"
+            ),
         (exit) => exit.remove()
       );
-
-    // Highlight the selected epitope by default
-    vis.selectProteinEpitope(vis.config.proteinEpitope);
 
     // Add one dot in the legend for each name.
     vis.legend
@@ -209,10 +211,7 @@ export class Legend {
     }
 
     // First, hide all other boxes
-    vis.legend
-      .selectAll(".epitope-box")
-      .style("opacity", "0")
-      .classed("selected-epitope", false);
+    vis.legend.selectAll(".epitope-box").style("opacity", "0");
 
     // Select the box with the same epitope as the clicked box
     vis.legend
@@ -220,9 +219,7 @@ export class Legend {
       .filter(function (d) {
         return d == datum;
       })
-      .style("opacity", ".25")
-      .classed("selected-epitope", true);
-
+      .style("opacity", ".25");
     // Update the selected epitope
     vis.config.proteinEpitope = datum;
 
