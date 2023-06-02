@@ -125,6 +125,11 @@ export class Chart {
       .attr("width", vis.bounds.context.width)
       .attr("height", vis.bounds.context.height);
 
+    // Add groups for the lines and circles
+    vis.contextAreaG = vis.contextPlot
+      .append("g")
+      .attr("class", "context-area-group");
+
     // Define the elements of the FOCUS
     vis.focusPlot = vis.boundedArea
       .append("g")
@@ -145,6 +150,14 @@ export class Chart {
       .attr("transform", "translate(0," + -5 + ")")
       .attr("width", vis.bounds.focus.width)
       .attr("height", vis.bounds.focus.height + 5);
+
+    // Add groups for the lines and circles
+    vis.focusLineG = vis.focusPlot
+      .append("g")
+      .attr("class", "focus-line-group");
+    vis.focusCircleG = vis.focusPlot
+      .append("g")
+      .attr("class", "focus-circle-group");
 
     // Define the elements of the FOCUS LEGEND
     vis.focusLegend = vis.focusPlot
@@ -305,7 +318,7 @@ export class Chart {
       });
 
     // Initialize FOCUS BRUSH component
-    vis.focusBrushG = vis.focusPlot
+    vis.focusBrushG = vis.focusCircleG
       .append("g")
       .attr("class", "brush focus-brush");
 
@@ -358,13 +371,11 @@ export class Chart {
       vis.config.chartEpitopes.includes(d.epitope)
     );
 
-    // TESTING CODE
+    // Group the data by epitope
     vis.mutMetricSummaryPerEpitope = Array.from(
       d3.group(vis.mutMetricSummary, (d) => d.epitope),
       ([key, value]) => ({ epitope: key, data: value })
     );
-    console.log(vis.mutMetricSummaryPerEpitope);
-    // TESTING CODE
 
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
@@ -521,9 +532,9 @@ export class Chart {
     let vis = this;
 
     // Draw the CONTEXT plot
-    vis.contextPlot
+    vis.contextAreaG
       .selectAll(".context-area")
-      .data(vis.mutMetricSummaryPerEpitope)
+      .data(vis.mutMetricSummaryPerEpitope, (d) => `${d.epitope}-${d.site}`)
       .join("path")
       .attr("class", "context-area")
       .attr("clip-path", "url(#contextClipPath)")
@@ -534,9 +545,9 @@ export class Chart {
       );
 
     // Draw the FOCUS plot
-    vis.focusPlot
+    vis.focusLineG
       .selectAll(".focus-line")
-      .data(vis.mutMetricSummaryPerEpitope)
+      .data(vis.mutMetricSummaryPerEpitope, (d) => `${d.epitope}-${d.site}`)
       .join("path")
       .attr("class", "focus-line")
       .attr("clip-path", "url(#focusClipPath)")
@@ -551,9 +562,9 @@ export class Chart {
         (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
       );
 
-    vis.focusPlot
+    vis.focusCircleG
       .selectAll("circle")
-      .data(vis.filteredMutMetricSummary, (d) => d.site)
+      .data(vis.filteredMutMetricSummary, (d) => `${d.epitope}-${d.site}`)
       .join(
         (enter) =>
           enter
