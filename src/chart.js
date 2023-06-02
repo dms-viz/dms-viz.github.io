@@ -357,6 +357,15 @@ export class Chart {
     vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
       vis.config.chartEpitopes.includes(d.epitope)
     );
+
+    // TESTING CODE
+    vis.mutMetricSummaryPerEpitope = Array.from(
+      d3.group(vis.mutMetricSummary, (d) => d.epitope),
+      ([key, value]) => ({ epitope: key, data: value })
+    );
+    console.log(vis.mutMetricSummaryPerEpitope);
+    // TESTING CODE
+
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
       (d) => d[vis.config.summary] !== null
@@ -514,16 +523,11 @@ export class Chart {
     // Draw the CONTEXT plot
     vis.contextPlot
       .selectAll(".context-area")
-      .data(vis.mutMetricSummary, (d) => d.site)
+      .data(vis.mutMetricSummaryPerEpitope)
       .join("path")
       .attr("class", "context-area")
       .attr("clip-path", "url(#contextClipPath)")
-      .attr("d", (d, i) =>
-        i < vis.mutMetricSummary.length - 1 &&
-        d.site + 1 === vis.mutMetricSummary[i + 1].site
-          ? vis.contextArea([d, vis.mutMetricSummary[i + 1]])
-          : null
-      )
+      .attr("d", (d) => vis.contextArea(d.data))
       .attr(
         "fill",
         (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
@@ -532,7 +536,7 @@ export class Chart {
     // Draw the FOCUS plot
     vis.focusPlot
       .selectAll(".focus-line")
-      .data(vis.mutMetricSummary, (d) => d.site)
+      .data(vis.mutMetricSummaryPerEpitope)
       .join("path")
       .attr("class", "focus-line")
       .attr("clip-path", "url(#focusClipPath)")
@@ -541,15 +545,10 @@ export class Chart {
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 1)
+      .attr("d", (d) => vis.focusLine(d.data))
       .attr(
         "stroke",
         (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
-      )
-      .attr("d", (d, i) =>
-        i < vis.mutMetricSummary.length - 1 &&
-        d.site + 1 === vis.mutMetricSummary[i + 1].site
-          ? vis.focusLine([d, vis.mutMetricSummary[i + 1]])
-          : null
       );
 
     vis.focusPlot
@@ -763,12 +762,8 @@ export class Chart {
     // Redraw line and update x-axis labels in focus view
     vis.focusPlot
       .selectAll(".focus-line")
-      .attr("d", (d, i) =>
-        i < vis.mutMetricSummary.length - 1 &&
-        d.site + 1 === vis.mutMetricSummary[i + 1].site
-          ? vis.focusLine([d, vis.mutMetricSummary[i + 1]])
-          : null
-      );
+      .attr("d", (d) => vis.focusLine(d.data));
+
     vis.focusPlot
       .selectAll("circle")
       .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
