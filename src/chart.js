@@ -373,9 +373,43 @@ export class Chart {
 
     // Group the data by epitope
     vis.mutMetricSummaryPerEpitope = Array.from(
-      d3.group(vis.mutMetricSummary, (d) => d.epitope),
+      d3.group(
+        // Filter to only the key columns
+        vis.mutMetricSummary.map((e) => {
+          return {
+            epitope: e.epitope,
+            site: e.site,
+            [vis.config.summary]: e[vis.config.summary],
+          };
+        }),
+        (d) => d.epitope
+      ),
       ([key, value]) => ({ epitope: key, data: value })
     );
+
+    // Take the data for the line plot and fill in 'null' for the summary metric if the site is not in the data
+    const [minSite, maxSite] = d3.extent(vis.mutMetricSummary, (d) => d.site);
+
+    // Go through each object in the data array
+    vis.mutMetricSummaryPerEpitope.forEach((obj) => {
+      let epitopeData = obj.data;
+      const epitope = obj.epitope;
+      let dataBySite = new Map(epitopeData.map((item) => [item.site, item]));
+
+      // Iterate from minSite to maxSite
+      for (let site = minSite; site <= maxSite; site++) {
+        // If the site is not in the dataBySite map, add it with null metric
+        if (!dataBySite.has(site)) {
+          epitopeData.push({
+            epitope: epitope,
+            site: site,
+            [vis.config.summary]: null,
+          });
+        }
+      }
+      // Sort the data by site after adding missing ones
+      epitopeData.sort((a, b) => a.site - b.site);
+    });
 
     // Filter out the sites where the metric is undefined
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
