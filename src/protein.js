@@ -23,6 +23,7 @@ export class Protein {
       backgroundRepresentation: _config.backgroundRepresentation,
       proteinColor: _config.proteinColor,
       backgroundColor: _config.backgroundColor,
+      backgroundOpacity: _config.backgroundOpacity,
       showGlycans: _config.showGlycans,
       stageColor: "#FFFFFF",
     };
@@ -96,6 +97,7 @@ export class Protein {
           comp.addRepresentation(protein.config.backgroundRepresentation, {
             sele: protein.backgroundChainSelection,
             color: protein.config.backgroundColor,
+            opacity: protein.config.backgroundOpacity,
           });
         }
 

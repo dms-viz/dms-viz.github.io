@@ -184,6 +184,9 @@ function setUpProteinOptionListeners() {
   d3.select("#showGlycans").on("change", function () {
     State.updateProteinOptions(this);
   });
+  d3.select("#backgroundOpacity").on("input", function () {
+    State.updateProteinOptions(this);
+  });
 }
 
 // Set up the event listeners for the download buttons

@@ -92,6 +92,7 @@ export class Tool {
         backgroundRepresentation: tool.backgroundRepresentation,
         proteinColor: tool.proteinColor,
         backgroundColor: tool.backgroundColor,
+        backgroundOpacity: tool.backgroundOpacity,
         showGlycans: tool.showGlycans,
       },
       tool.data
@@ -129,6 +130,7 @@ export class Tool {
     tool.initCheckbox(d3.select("#showGlycans"), tool.showGlycans);
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
+    tool.initRange(d3.select("#backgroundOpacity"), tool.backgroundOpacity);
 
     // Populate Filter Sites
     d3.select("#filters").html("");
@@ -168,6 +170,17 @@ export class Tool {
    */
   initColorPicker(selection, color = "#D3D3D3") {
     selection.attr("type", "color").attr("value", color);
+  }
+  /**
+   * Initialize the default value for a range input
+   */
+  initRange(selection, value = 1) {
+    selection
+      .attr("type", "range")
+      .attr("min", 0)
+      .attr("max", 1)
+      .attr("value", value)
+      .attr("step", 0.01);
   }
   /**
    * Initialize and set up a filter slider
@@ -381,6 +394,7 @@ export class Tool {
     const backgroundRepresentation = "rope";
     const proteinColor = "#D3D3D3";
     const backgroundColor = "#D3D3D3";
+    const backgroundOpacity = 1;
     const showGlycans = false;
     // Default filter values for URL parameters
     let filters = {};
@@ -413,6 +427,8 @@ export class Tool {
       urlParams.get("backgroundRepresentation") || backgroundRepresentation;
     tool.proteinColor = urlParams.get("proteinColor") || proteinColor;
     tool.backgroundColor = urlParams.get("backgroundColor") || backgroundColor;
+    tool.backgroundOpacity =
+      urlParams.get("backgroundOpacity") || backgroundOpacity;
     tool.showGlycans = urlParams.get("showGlycans") || showGlycans;
     if (typeof tool.showGlycans == "string") {
       tool.showGlycans = tool.showGlycans == "true";
@@ -447,6 +463,7 @@ export class Tool {
     urlParams.set("backgroundRepresentation", tool.backgroundRepresentation);
     urlParams.set("proteinColor", tool.proteinColor);
     urlParams.set("backgroundColor", tool.backgroundColor);
+    urlParams.set("backgroundOpacity", tool.backgroundOpacity);
     urlParams.set("showGlycans", tool.showGlycans);
     // Set the URL parameters for the filters
     urlParams.set("filters", JSON.stringify(tool.filters));
