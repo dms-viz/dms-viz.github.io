@@ -295,7 +295,7 @@ export class Tool {
 
     // Update the chart and protein
     tool.chart.updateVis();
-    tool.protein.makeColorScheme();
+    tool.protein.update();
 
     tool.updateURLParams();
   }
@@ -315,7 +315,7 @@ export class Tool {
     tool.protein.config[id] = value;
 
     // Update the chart and protein
-    tool.protein.clear();
+    tool.protein.update();
 
     tool.updateURLParams();
   }
@@ -330,7 +330,7 @@ export class Tool {
     tool.protein.config.proteinEpitope = epitope;
 
     // Update the chart and protein
-    tool.protein.makeColorScheme();
+    tool.protein.update();
 
     tool.updateURLParams();
   }
@@ -369,7 +369,7 @@ export class Tool {
 
     // Update the visualization
     tool.chart.updateVis();
-    tool.protein.makeColorScheme();
+    tool.protein.update();
 
     tool.updateURLParams();
   }
