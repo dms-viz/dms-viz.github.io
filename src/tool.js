@@ -233,8 +233,6 @@ export class Tool {
     tool.legend.config.chartEpitopes = tool.chartEpitopes;
     tool.protein.config.proteinEpitope = tool.proteinEpitope;
     tool.legend.config.proteinEpitope = tool.proteinEpitope;
-    // Update the pdb structure since this is also experiment specific
-    tool.protein.config.pdbID = tool.data[tool.experiment].pdb;
     // Update the filters
     tool.filters = {};
     if (tool.data[tool.experiment].filter_cols) {
@@ -269,11 +267,12 @@ export class Tool {
     tool.chart.updateVis();
     tool.legend.updateVis();
 
-    // Set a timeout to make sure the chart has been updated
-    // This prevents the odd loading issue with the protein on Chrome
-    setTimeout(() => {
+    // Only update the protein if the structure has changed
+    if (tool.data[tool.experiment].pdb !== tool.protein.config.pdbID) {
+      tool.protein.config.pdbID = tool.data[tool.experiment].pdb;
       tool.protein.clear();
-    }, 100);
+      tool.protein.load();
+    }
 
     tool.updateURLParams();
   }

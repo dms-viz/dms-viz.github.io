@@ -109,7 +109,7 @@ export class Protein {
         });
         // Update the structure representation
         protein.update();
-        // Autoview
+        // Set the initial zoom
         protein.stage.autoView();
       })
       .catch(function (error) {
@@ -272,7 +272,7 @@ export class Protein {
     // Handle the resize event for the protein structure
     protein.stage.handleResize();
     // Reset the Zoom
-    protein.stage.autoView();
+    // protein.stage.autoView();
   }
   /**
    * Clear the protein structure and reload it
@@ -281,7 +281,6 @@ export class Protein {
     let protein = this;
     // Clear the protein structure
     protein.stage.removeAllComponents();
-    protein.load();
   }
   /**
    * Convert the three letter code to a one letter code
