@@ -84,18 +84,41 @@ export class Protein {
     }
 
     // Get the chain selections for the protein structure
+    // let dataChains = protein.data[protein.config.experiment].dataChains;
+    // let excludeChains = protein.data[protein.config.experiment].excludeChains;
+    // protein.dataChainSelection =
+    //   dataChains !== "polymer" ? `:${dataChains.join(" or :")}` : "polymer";
+    // protein.backgroundChainSelection =
+    //   dataChains !== "polymer"
+    //     ? `(protein) and not :${dataChains.join(" and not :")}${
+    //         excludeChains !== "none"
+    //           ? ` and not :${excludeChains.join(" and not :")}`
+    //           : ""
+    //       }`
+    //     : "none";
+
+    // Get the chain selections for the protein structure
     let dataChains = protein.data[protein.config.experiment].dataChains;
     let excludeChains = protein.data[protein.config.experiment].excludeChains;
-    protein.dataChainSelection =
-      dataChains !== "polymer" ? `:${dataChains.join(" or :")}` : "polymer";
-    protein.backgroundChainSelection =
-      dataChains !== "polymer"
-        ? `(protein) and not :${dataChains.join(" and not :")}${
-            excludeChains !== "none"
-              ? ` and not :${excludeChains.join(" and not :")}`
-              : ""
-          }`
-        : "none";
+
+    // Make the selection of chains to include in the protein structure
+    if (dataChains != "polymer") {
+      protein.dataChainSelection = `:${dataChains.join(" or :")}`;
+      protein.backgroundChainSelection = `not :${dataChains.join(
+        " and not :"
+      )}`;
+      if (excludeChains != "none") {
+        protein.backgroundChainSelection += ` and not :${excludeChains.join(
+          " and not :"
+        )}`;
+      }
+    } else {
+      protein.dataChainSelection = "polymer";
+      protein.backgroundChainSelection = "none";
+    }
+
+    console.log(protein.dataChainSelection);
+    console.log(protein.backgroundChainSelection);
 
     // Load the protein structure
     protein.stage

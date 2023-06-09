@@ -45,8 +45,12 @@ export class Tool {
       });
     }
 
+    console.log(tool.proteinColor);
+
     // Get the detils from the data
     tool.setStateFromURL();
+
+    console.log(tool.proteinColor);
 
     // Update the URL parameters
     tool.updateURLParams();
@@ -181,7 +185,8 @@ export class Tool {
    * Initialize and set up the color pickers
    */
   initColorPicker(selection, color = "#D3D3D3") {
-    selection.attr("type", "color").attr("value", color);
+    console.log("Setting color to", color);
+    selection.attr("type", "color").property("value", color);
   }
   /**
    * Initialize the default value for a range input
@@ -191,7 +196,7 @@ export class Tool {
       .attr("type", "range")
       .attr("min", 0)
       .attr("max", 1)
-      .attr("value", value)
+      .property("value", value)
       .attr("step", 0.01);
   }
   /**
