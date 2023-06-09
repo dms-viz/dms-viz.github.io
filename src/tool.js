@@ -90,9 +90,13 @@ export class Tool {
         proteinRepresentation: tool.proteinRepresentation,
         selectionRepresentation: tool.selectionRepresentation,
         backgroundRepresentation: tool.backgroundRepresentation,
+        ligandRepresentation: tool.ligandRepresentation,
         proteinColor: tool.proteinColor,
         backgroundColor: tool.backgroundColor,
+        ligandColor: tool.ligandColor,
         backgroundOpacity: tool.backgroundOpacity,
+        proteinOpacity: tool.proteinOpacity,
+        selectionOpacity: tool.selectionOpacity,
         showGlycans: tool.showGlycans,
       },
       tool.data
@@ -127,9 +131,17 @@ export class Tool {
       ["rope", "cartoon", "ball+stick"],
       tool.backgroundRepresentation
     );
+    tool.initSelect(
+      d3.select("#ligandRepresentation"),
+      ["spacefill", "ball+stick"],
+      tool.ligandRepresentation
+    );
     tool.initCheckbox(d3.select("#showGlycans"), tool.showGlycans);
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
+    tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
+    tool.initRange(d3.select("#proteinOpacity"), tool.proteinOpacity);
+    tool.initRange(d3.select("#selectionOpacity"), tool.selectionOpacity);
     tool.initRange(d3.select("#backgroundOpacity"), tool.backgroundOpacity);
 
     // Populate Filter Sites
@@ -391,8 +403,12 @@ export class Tool {
     const proteinRepresentation = "cartoon";
     const selectionRepresentation = "spacefill";
     const backgroundRepresentation = "rope";
+    const ligandRepresentation = "spacefill";
     const proteinColor = "#D3D3D3";
     const backgroundColor = "#D3D3D3";
+    const ligandColor = "#D3D3D3";
+    const proteinOpacity = 1;
+    const selectionOpacity = 1;
     const backgroundOpacity = 1;
     const showGlycans = false;
     // Default filter values for URL parameters
@@ -424,8 +440,14 @@ export class Tool {
       urlParams.get("selectionRepresentation") || selectionRepresentation;
     tool.backgroundRepresentation =
       urlParams.get("backgroundRepresentation") || backgroundRepresentation;
+    tool.ligandRepresentation =
+      urlParams.get("ligandRepresentation") || ligandRepresentation;
     tool.proteinColor = urlParams.get("proteinColor") || proteinColor;
     tool.backgroundColor = urlParams.get("backgroundColor") || backgroundColor;
+    tool.ligandColor = urlParams.get("ligandColor") || ligandColor;
+    tool.proteinOpacity = urlParams.get("proteinOpacity") || proteinOpacity;
+    tool.selectionOpacity =
+      urlParams.get("selectionOpacity") || selectionOpacity;
     tool.backgroundOpacity =
       urlParams.get("backgroundOpacity") || backgroundOpacity;
     tool.showGlycans = urlParams.get("showGlycans") || showGlycans;
@@ -460,8 +482,12 @@ export class Tool {
     urlParams.set("proteinRepresentation", tool.proteinRepresentation);
     urlParams.set("selectionRepresentation", tool.selectionRepresentation);
     urlParams.set("backgroundRepresentation", tool.backgroundRepresentation);
+    urlParams.set("ligandRepresentation", tool.ligandRepresentation);
     urlParams.set("proteinColor", tool.proteinColor);
     urlParams.set("backgroundColor", tool.backgroundColor);
+    urlParams.set("ligandColor", tool.ligandColor);
+    urlParams.set("proteinOpacity", tool.proteinOpacity);
+    urlParams.set("selectionOpacity", tool.selectionOpacity);
     urlParams.set("backgroundOpacity", tool.backgroundOpacity);
     urlParams.set("showGlycans", tool.showGlycans);
     // Set the URL parameters for the filters

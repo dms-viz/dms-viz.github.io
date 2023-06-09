@@ -175,16 +175,28 @@ function setUpProteinOptionListeners() {
   d3.select("#backgroundRepresentation").on("change", function () {
     State.updateProteinOptions(this);
   });
+  d3.select("#ligandRepresentation").on("change", function () {
+    State.updateProteinOptions(this);
+  });
   d3.select("#proteinColor").on("change", function () {
     State.updateProteinOptions(this);
   });
   d3.select("#backgroundColor").on("change", function () {
     State.updateProteinOptions(this);
   });
-  d3.select("#showGlycans").on("change", function () {
+  d3.select("#ligandColor").on("change", function () {
     State.updateProteinOptions(this);
   });
   d3.select("#backgroundOpacity").on("input", function () {
+    State.updateProteinOptions(this);
+  });
+  d3.select("#proteinOpacity").on("input", function () {
+    State.updateProteinOptions(this);
+  });
+  d3.select("#selectionOpacity").on("input", function () {
+    State.updateProteinOptions(this);
+  });
+  d3.select("#showGlycans").on("change", function () {
     State.updateProteinOptions(this);
   });
 }

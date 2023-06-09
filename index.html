@@ -179,22 +179,42 @@
               ></select>
             </div>
             <div class="accordion-option">
-              <label for="BackgroundRepr">Background Representation</label>
+              <label for="BackgroundRepr">Peripheral Representation</label>
               <select
                 name="BackgroundRepr"
                 id="backgroundRepresentation"
               ></select>
+            </div>
+            <div class="accordion-option">
+              <label for="LignadRepr">Ligand Representation</label>
+              <select name="LignadRepr" id="ligandRepresentation"></select>
             </div>
             <div class="accordion-option color">
               <label for="proteinColor">Protein Color </label>
               <input type="color" id="proteinColor" />
             </div>
             <div class="accordion-option color">
-              <label for="backgroundColor">Background Color </label>
+              <label for="backgroundColor">Peripheral Color </label>
               <input type="color" id="backgroundColor" />
             </div>
+            <div class="accordion-option color">
+              <label for="ligandColor">Ligand Color </label>
+              <input type="color" id="ligandColor" />
+            </div>
             <div class="accordion-option">
-              <label for="backgroundOpacity">Background Opacity </label>
+              <label for="proteinOpacity">Protein Opacity </label>
+              <input type="range" id="proteinOpacity" name="proteinOpacity" />
+            </div>
+            <div class="accordion-option">
+              <label for="selectionOpacity">Selection Opacity </label>
+              <input
+                type="range"
+                id="selectionOpacity"
+                name="selectionOpacity"
+              />
+            </div>
+            <div class="accordion-option">
+              <label for="backgroundOpacity">Peripheral Opacity </label>
               <input
                 type="range"
                 id="backgroundOpacity"
@@ -203,7 +223,7 @@
             </div>
             <div class="accordion-option">
               <label for="showGlycans"
-                >Show Glycans
+                >Show Ligands
                 <input type="checkbox" name="showGlycans" id="showGlycans" />
               </label>
             </div>

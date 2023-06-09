@@ -127,6 +127,7 @@ export class Protein {
     protein.component.addRepresentation(protein.config.proteinRepresentation, {
       sele: protein.dataChainSelection,
       color: protein.config.proteinColor,
+      opacity: protein.config.proteinOpacity,
       name: "dataChains",
     });
     protein.stage.getRepresentationsByName("backgroundChains").dispose();
@@ -143,9 +144,9 @@ export class Protein {
     }
     protein.stage.getRepresentationsByName("ligands").dispose();
     if (protein.config.showGlycans) {
-      protein.component.addRepresentation("ball+stick", {
+      protein.component.addRepresentation(protein.config.ligandRepresentation, {
         sele: "ligand and not protein",
-        color: "element",
+        color: protein.config.ligandColor,
         name: "ligands",
       });
     }
@@ -245,6 +246,7 @@ export class Protein {
       return protein.component
         .addRepresentation(protein.config.selectionRepresentation, {
           color: protein.schemeId,
+          opacity: protein.config.selectionOpacity,
           roughness: 1,
           name: "currentSelection",
           surfaceType: "av",
