@@ -1,7 +1,6 @@
 import "../style.css";
 import "./ui.js";
 import * as d3 from "d3";
-import * as NGL from "ngl";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
@@ -205,24 +204,7 @@ function setUpProteinOptionListeners() {
 function setUpDownloadButtonListeners() {
   // Set up the event listeners for the download buttons
   d3.select("#downloadProtein").on("click", function () {
-    State.protein.stage
-      .makeImage({
-        factor: 4,
-        antialias: true,
-        trim: false,
-        transparent: false,
-      })
-      .then(function (blob) {
-        let now = new Date();
-        let dateString =
-          now.getFullYear().toString() +
-          "-" +
-          (now.getMonth() + 1).toString().padStart(2, "0") +
-          "-" +
-          now.getDate().toString().padStart(2, "0");
-        let fileName = `${State.experiment}_${State.proteinEpitope}_${dateString}.png`;
-        NGL.download(blob, fileName);
-      });
+    State.protein.saveImage();
   });
 }
 

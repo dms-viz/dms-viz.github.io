@@ -306,7 +306,7 @@ export class Tool {
 
     // Update the chart and protein
     tool.chart.updateVis();
-    tool.protein.update();
+    tool.protein.updateData();
 
     tool.updateURLParams();
   }
@@ -326,7 +326,7 @@ export class Tool {
     tool.protein.config[id] = value;
 
     // Update the chart and protein
-    tool.protein.update();
+    tool.protein.updateRepresentation();
 
     tool.updateURLParams();
   }
@@ -341,7 +341,7 @@ export class Tool {
     tool.protein.config.proteinEpitope = epitope;
 
     // Update the chart and protein
-    tool.protein.update();
+    tool.protein.updateData();
 
     tool.updateURLParams();
   }
@@ -380,7 +380,8 @@ export class Tool {
 
     // Update the visualization
     tool.chart.updateVis();
-    tool.protein.update();
+    tool.protein.updateData();
+    tool.protein.selectSites(d3.selectAll(".selected").data());
 
     tool.updateURLParams();
   }

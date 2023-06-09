@@ -108,7 +108,8 @@ export class Protein {
           protein.selectSites(d);
         });
         // Update the structure representation
-        protein.update();
+        protein.updateRepresentation();
+        protein.updateData();
         // Set the initial zoom
         protein.stage.autoView();
       })
@@ -117,18 +118,19 @@ export class Protein {
       });
   }
   /**
-   * Update the component representations and color
+   * Update the representation of the protein structure
    */
-  update() {
+  updateRepresentation() {
     let protein = this;
 
-    // Add the protein structure representations
     protein.stage.getRepresentationsByName("dataChains").dispose();
     protein.component.addRepresentation(protein.config.proteinRepresentation, {
       sele: protein.dataChainSelection,
       color: protein.config.proteinColor,
       opacity: protein.config.proteinOpacity,
       name: "dataChains",
+      smoothSheet: true,
+      side: "front",
     });
     protein.stage.getRepresentationsByName("backgroundChains").dispose();
     if (protein.backgroundChainSelection != "none") {
@@ -139,6 +141,8 @@ export class Protein {
           color: protein.config.backgroundColor,
           opacity: protein.config.backgroundOpacity,
           name: "backgroundChains",
+          smoothSheet: true,
+          side: "front",
         }
       );
     }
@@ -150,6 +154,24 @@ export class Protein {
         name: "ligands",
       });
     }
+    if (protein.currentSelectionSiteString !== undefined) {
+      protein.stage.getRepresentationsByName("currentSelection").setParameters({
+        opacity: protein.config.selectionOpacity,
+      });
+      if (
+        protein.config.selectionRepresentation !==
+        protein.stage.getRepresentationsByName("currentSelection")["list"][0]
+          .repr.type
+      ) {
+        protein.selectSites(d3.selectAll(".selected").data());
+      }
+    }
+  }
+  /**
+   * Update the component representations and color
+   */
+  updateData() {
+    let protein = this;
 
     // Summarize the data
     protein.mutMetric = protein.data[protein.config.experiment].mut_metric_df;
@@ -211,8 +233,12 @@ export class Protein {
       };
     });
 
-    // Run selectSites to update the color scheme
-    protein.selectSites(d3.selectAll(".selected").data());
+    // Recolor the current selection
+    if (protein.currentSelectionSiteString !== undefined) {
+      protein.stage.getRepresentationsByName("currentSelection").setParameters({
+        color: protein.schemeId,
+      });
+    }
   }
   /**
    * Select sites on the protein structure based on the chart selection
@@ -250,6 +276,8 @@ export class Protein {
           roughness: 1,
           name: "currentSelection",
           surfaceType: "av",
+          side: "front",
+          useWorker: true,
         })
         .setSelection(protein.currentSelectionSiteString);
     } else {
@@ -283,6 +311,32 @@ export class Protein {
     let protein = this;
     // Clear the protein structure
     protein.stage.removeAllComponents();
+  }
+  /**
+   * Save an image of the protein structure
+   */
+  saveImage() {
+    let protein = this;
+
+    protein.stage
+      .makeImage({
+        factor: 4,
+        antialias: true,
+        trim: false,
+        transparent: false,
+      })
+      // Make a specific filename for the image
+      .then(function (blob) {
+        let now = new Date();
+        let dateString =
+          now.getFullYear().toString() +
+          "-" +
+          (now.getMonth() + 1).toString().padStart(2, "0") +
+          "-" +
+          now.getDate().toString().padStart(2, "0");
+        let fileName = `${protein.config.experiment}_${protein.config.proteinEpitope}_${dateString}.png`;
+        NGL.download(blob, fileName);
+      });
   }
   /**
    * Convert the three letter code to a one letter code
