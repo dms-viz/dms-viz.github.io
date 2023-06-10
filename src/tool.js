@@ -45,12 +45,8 @@ export class Tool {
       });
     }
 
-    console.log(tool.proteinColor);
-
     // Get the detils from the data
     tool.setStateFromURL();
-
-    console.log(tool.proteinColor);
 
     // Update the URL parameters
     tool.updateURLParams();
@@ -185,7 +181,6 @@ export class Tool {
    * Initialize and set up the color pickers
    */
   initColorPicker(selection, color = "#D3D3D3") {
-    console.log("Setting color to", color);
     selection.attr("type", "color").property("value", color);
   }
   /**
