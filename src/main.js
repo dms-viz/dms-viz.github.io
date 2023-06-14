@@ -202,9 +202,13 @@ function setUpProteinOptionListeners() {
 
 // Set up the event listeners for the download buttons
 function setUpDownloadButtonListeners() {
-  // Set up the event listeners for the download buttons
+  // Set up the event listener for downloading the protein image
   d3.select("#downloadProtein").on("click", function () {
     State.protein.saveImage();
+  });
+  // Set up the event listener for downloading the plot image
+  d3.select("#downloadPlot").on("click", function () {
+    State.chart.saveImage();
   });
 }
 

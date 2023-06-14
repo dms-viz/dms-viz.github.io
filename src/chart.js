@@ -1,5 +1,6 @@
 /* Making a class to hold the chart code inspried by https://www.cs.ubc.ca/~tmm/courses/436V-20/reading/reusable_d3_components.pdf */
 import * as d3 from "d3";
+import html2canvas from "html2canvas";
 import { summarizeMetricData, invertColor } from "./utils.js";
 
 export class Chart {
@@ -1074,5 +1075,54 @@ export class Chart {
     vis.svg
       .attr("width", vis.config.width)
       .attr("height", vis.config.width / vis.aspect);
+  }
+  /**
+   * Save plot as a PNG image
+   */
+  async saveImage() {
+    let vis = this;
+
+    // Get the plot container element
+    const plotContainer = d3.select(vis.config.parentElement).node();
+
+    // Create a clone of the plot container the user can't see
+    const clone = plotContainer.cloneNode(true);
+
+    // Define the DPI and scale factors
+    const dpi = 300; // Desired DPI
+    const scaleFactor = dpi / 96; // Assume the browser is set to 96 DPI (typical browser setting)
+
+    // Scale the cloned plot container
+    clone.style.transform = `scale(${scaleFactor})`;
+    clone.style.transformOrigin = "top left";
+
+    // Append the cloned container to the body, offscreen
+    clone.style.position = "fixed";
+    clone.style.top = "-10000px";
+    document.body.appendChild(clone);
+
+    // Render the cloned plot as a canvas element
+    const canvas = await html2canvas(clone, {
+      scale: scaleFactor,
+      useCORS: true,
+      logging: false,
+    });
+
+    // Remove the cloned plot container
+    document.body.removeChild(clone);
+
+    // Convert the canvas to a blob
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/png")
+    );
+
+    // Create a link to download the image
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${vis.config.experiment}_${vis.config.metric}_${vis.config.summary}.png`;
+    link.click();
+
+    // Remove the link
+    link.remove();
   }
 }
