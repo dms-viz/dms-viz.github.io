@@ -191,8 +191,8 @@ export class Tool {
       .attr("type", "range")
       .attr("min", 0)
       .attr("max", 1)
-      .property("value", value)
-      .attr("step", 0.01);
+      .attr("step", 0.01)
+      .property("value", value);
   }
   /**
    * Initialize and set up a filter slider
@@ -446,11 +446,12 @@ export class Tool {
     tool.proteinColor = urlParams.get("proteinColor") || proteinColor;
     tool.backgroundColor = urlParams.get("backgroundColor") || backgroundColor;
     tool.ligandColor = urlParams.get("ligandColor") || ligandColor;
-    tool.proteinOpacity = urlParams.get("proteinOpacity") || proteinOpacity;
+    tool.proteinOpacity =
+      Number(urlParams.get("proteinOpacity")) || proteinOpacity;
     tool.selectionOpacity =
-      urlParams.get("selectionOpacity") || selectionOpacity;
+      Number(urlParams.get("selectionOpacity")) || selectionOpacity;
     tool.backgroundOpacity =
-      urlParams.get("backgroundOpacity") || backgroundOpacity;
+      Number(urlParams.get("backgroundOpacity")) || backgroundOpacity;
     tool.showGlycans = urlParams.get("showGlycans") || showGlycans;
     if (typeof tool.showGlycans == "string") {
       tool.showGlycans = tool.showGlycans == "true";
