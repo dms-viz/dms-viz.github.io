@@ -75,13 +75,7 @@ function setUpJsonFileUploadListeners() {
     };
     reader.readAsText(file);
 
-    // Update the URL and remove the data URL
-    const urlParams = new URLSearchParams(window.location.search);
-    // Clear all URL parameters
-    // Display the keys
-    for (const key of urlParams.keys()) {
-      urlParams.delete(key);
-    }
+    // Get the URL parameters
     window.history.replaceState({}, "", `${location.pathname}`);
 
     // Clear the URL input element
@@ -121,8 +115,10 @@ function setUpJsonFileUploadListeners() {
       // Parse the response into a JSON object
       const data = await response.json();
 
-      // Update the URL to include the data URL
-      const urlParams = new URLSearchParams(window.location.search);
+      // Get the URL parameters
+      const urlParams = new URLSearchParams();
+
+      // Set the data parameter of the URL
       urlParams.set("data", this.value);
       window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
 

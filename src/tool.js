@@ -441,8 +441,8 @@ export class Tool {
       if (value !== null) {
         tool[key] = JSON.parse(decodeURIComponent(value));
       } else {
-        // Otherwise, set the state to the default value
-        tool[key] = tool.urlParams[key].default;
+        // Otherwise, set the state to a copy of the default value
+        tool[key] = JSON.parse(JSON.stringify(tool.urlParams[key].default));
       }
     }
   }
@@ -455,13 +455,20 @@ export class Tool {
     // Get the current URL parameters object
     const currentURLParams = new URLSearchParams(window.location.search);
 
-    // If the data parameter is not in the URL, then return
+    // If the data parameter is not in the URL don't add any parameters
     if (!currentURLParams.has("data")) {
       return;
     }
 
     // Set the values of the URL parameters from the state
     for (const key in tool.urlParams) {
+      // If the value is the default, then don't add it to the URL
+      if (
+        JSON.stringify(tool[key]) ===
+        JSON.stringify(tool.urlParams[key].default)
+      ) {
+        continue;
+      }
       currentURLParams.set(
         tool.urlParams[key].name,
         encodeURIComponent(JSON.stringify(tool[key]))
