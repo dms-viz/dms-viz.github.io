@@ -391,31 +391,37 @@ export class Tool {
   setStateFromURL() {
     let tool = this;
 
-    // Get the URL parameters object
-    const urlParams = new URLSearchParams(window.location.search);
-
-    // Default chart option values for URL parameters
+    // Default parameter options
     const experiment = Object.keys(tool.data)[0];
-    const proteinEpitope = tool.data[experiment].epitopes[0];
-    const chartEpitopes = tool.data[experiment].epitopes;
-    const summary = "sum";
-    const floor = true;
-    // Default protein option values for URL parameters
-    const proteinRepresentation = "cartoon";
-    const selectionRepresentation = "spacefill";
-    const backgroundRepresentation = "rope";
-    const ligandRepresentation = "spacefill";
-    const proteinColor = "#D3D3D3";
-    const backgroundColor = "#D3D3D3";
-    const ligandColor = "#D3D3D3";
-    const proteinOpacity = 1;
-    const selectionOpacity = 1;
-    const backgroundOpacity = 1;
-    const showGlycans = false;
-    // Default filter values for URL parameters
-    let filters = {};
+    tool.urlParams = {
+      experiment: { name: "e", default: experiment },
+      proteinEpitope: {
+        name: "pe",
+        default: tool.data[experiment].epitopes[0],
+      },
+      chartEpitopes: {
+        name: "ce",
+        default: tool.data[experiment].epitopes,
+      },
+      summary: { summary: "s", default: "sum" },
+      floor: { name: "f", default: true },
+      proteinRepresentation: { name: "pr", default: "cartoon" },
+      selectionRepresentation: { name: "sr", default: "spacefill" },
+      backgroundRepresentation: { name: "br", default: "rope" },
+      ligandRepresentation: { name: "lr", default: "spacefill" },
+      proteinColor: { name: "pc", default: "#D3D3D3" },
+      backgroundColor: { name: "bc", default: "#D3D3D3" },
+      ligandColor: { name: "lc", default: "#D3D3D3" },
+      proteinOpacity: { name: "po", default: 1 },
+      selectionOpacity: { name: "so", default: 1 },
+      backgroundOpacity: { name: "bo", default: 1 },
+      showGlycans: { name: "g", default: false },
+    };
+    tool.urlParams.filters = { name: "fi", default: {} };
     if (tool.data[experiment].filter_cols) {
-      filters = Object.keys(tool.data[experiment].filter_cols).reduce(
+      tool.urlParams.filters.default = Object.keys(
+        tool.data[experiment].filter_cols
+      ).reduce(
         (acc, key) => ({
           ...acc,
           [key]: d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]),
@@ -423,42 +429,22 @@ export class Tool {
         {}
       );
     }
-    // Set the default chart option values or get the values from the URL
-    tool.experiment = urlParams.get("experiment") || experiment;
-    tool.proteinEpitope = urlParams.get("proteinEpitope") || proteinEpitope;
-    tool.chartEpitopes =
-      JSON.parse(decodeURIComponent(urlParams.get("chartEpitopes"))) ||
-      chartEpitopes;
-    tool.summary = urlParams.get("summary") || summary;
-    tool.floor = urlParams.get("floor") || floor;
-    if (typeof tool.floor == "string") {
-      tool.floor = tool.floor == "true";
+
+    // Get the current URL parameters object
+    const currentURLParams = new URLSearchParams(window.location.search);
+
+    // Set the state from the URL parameters or default values
+    for (const key in tool.urlParams) {
+      // Get the value from the URL parameters
+      const value = currentURLParams.get(tool.urlParams[key].name);
+      // If the value is not null, then set the state to the value
+      if (value !== null) {
+        tool[key] = JSON.parse(decodeURIComponent(value));
+      } else {
+        // Otherwise, set the state to the default value
+        tool[key] = tool.urlParams[key].default;
+      }
     }
-    // Set the defult protein option values or get the values from the URL
-    tool.proteinRepresentation =
-      urlParams.get("proteinRepresentation") || proteinRepresentation;
-    tool.selectionRepresentation =
-      urlParams.get("selectionRepresentation") || selectionRepresentation;
-    tool.backgroundRepresentation =
-      urlParams.get("backgroundRepresentation") || backgroundRepresentation;
-    tool.ligandRepresentation =
-      urlParams.get("ligandRepresentation") || ligandRepresentation;
-    tool.proteinColor = urlParams.get("proteinColor") || proteinColor;
-    tool.backgroundColor = urlParams.get("backgroundColor") || backgroundColor;
-    tool.ligandColor = urlParams.get("ligandColor") || ligandColor;
-    tool.proteinOpacity =
-      Number(urlParams.get("proteinOpacity")) || proteinOpacity;
-    tool.selectionOpacity =
-      Number(urlParams.get("selectionOpacity")) || selectionOpacity;
-    tool.backgroundOpacity =
-      Number(urlParams.get("backgroundOpacity")) || backgroundOpacity;
-    tool.showGlycans = urlParams.get("showGlycans") || showGlycans;
-    if (typeof tool.showGlycans == "string") {
-      tool.showGlycans = tool.showGlycans == "true";
-    }
-    // Set the default filter values or get the values from the URL
-    tool.filters =
-      JSON.parse(decodeURIComponent(urlParams.get("filters"))) || filters;
   }
   /**
    * Update the URL parameters when the state changes
@@ -466,34 +452,21 @@ export class Tool {
   updateURLParams() {
     let tool = this;
 
-    // Get the URL parameters object
-    const urlParams = new URLSearchParams(window.location.search);
+    // Get the current URL parameters object
+    const currentURLParams = new URLSearchParams(window.location.search);
 
     // If the data parameter is not in the URL, then return
-    if (!urlParams.has("data")) {
+    if (!currentURLParams.has("data")) {
       return;
     }
 
-    // Set the URL parameters for the chart options
-    urlParams.set("experiment", tool.experiment);
-    urlParams.set("summary", tool.summary);
-    urlParams.set("floor", tool.floor);
-    urlParams.set("proteinEpitope", tool.proteinEpitope);
-    urlParams.set("chartEpitopes", JSON.stringify(tool.chartEpitopes));
-    // Set the URL parameters for the protein options
-    urlParams.set("proteinRepresentation", tool.proteinRepresentation);
-    urlParams.set("selectionRepresentation", tool.selectionRepresentation);
-    urlParams.set("backgroundRepresentation", tool.backgroundRepresentation);
-    urlParams.set("ligandRepresentation", tool.ligandRepresentation);
-    urlParams.set("proteinColor", tool.proteinColor);
-    urlParams.set("backgroundColor", tool.backgroundColor);
-    urlParams.set("ligandColor", tool.ligandColor);
-    urlParams.set("proteinOpacity", tool.proteinOpacity);
-    urlParams.set("selectionOpacity", tool.selectionOpacity);
-    urlParams.set("backgroundOpacity", tool.backgroundOpacity);
-    urlParams.set("showGlycans", tool.showGlycans);
-    // Set the URL parameters for the filters
-    urlParams.set("filters", JSON.stringify(tool.filters));
+    // Set the values of the URL parameters from the state
+    for (const key in tool.urlParams) {
+      currentURLParams.set(
+        tool.urlParams[key].name,
+        encodeURIComponent(JSON.stringify(tool[key]))
+      );
+    }
 
     // Update the URL
     window.history.replaceState(
@@ -501,7 +474,7 @@ export class Tool {
       "",
       `${window.location.origin}${
         window.location.pathname
-      }?${urlParams.toString()}`
+      }?${currentURLParams.toString()}`
     );
   }
 }
