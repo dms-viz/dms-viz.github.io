@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { isEqual, cloneDeep } from "lodash";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
 import { Legend } from "./legend.js";
@@ -45,8 +46,11 @@ export class Tool {
       });
     }
 
+    // Set the default experiment
+    tool.experiment = Object.keys(tool.data)[0];
+
     // Get the detils from the data
-    tool.setStateFromURL();
+    tool.setState();
 
     // Update the URL parameters
     tool.updateURLParams();
@@ -187,6 +191,11 @@ export class Tool {
    * Initialize the default value for a range input
    */
   initRange(selection, value = 1) {
+    // If value is a string, convert to a number
+    if (typeof value === "string") {
+      value = parseFloat(value);
+    }
+    // Set the attributes of the range input
     selection
       .attr("type", "range")
       .attr("min", 0)
@@ -388,61 +397,87 @@ export class Tool {
   /**
    * Get the state from the URL
    */
-  setStateFromURL() {
+  setState() {
     let tool = this;
 
-    // Default parameter options
-    const experiment = Object.keys(tool.data)[0];
-    tool.urlParams = {
-      experiment: { name: "e", default: experiment },
+    // Defaults for the tool's state
+    tool.defaultParams = {
+      experiment: { abbrev: "e", default: tool.experiment, json: false },
       proteinEpitope: {
-        name: "pe",
-        default: tool.data[experiment].epitopes[0],
+        abbrev: "pe",
+        default: tool.data[tool.experiment].epitopes[0],
+        json: false,
       },
       chartEpitopes: {
-        name: "ce",
-        default: tool.data[experiment].epitopes,
+        abbrev: "ce",
+        default: tool.data[tool.experiment].epitopes,
+        json: true,
       },
-      summary: { summary: "s", default: "sum" },
-      floor: { name: "f", default: true },
-      proteinRepresentation: { name: "pr", default: "cartoon" },
-      selectionRepresentation: { name: "sr", default: "spacefill" },
-      backgroundRepresentation: { name: "br", default: "rope" },
-      ligandRepresentation: { name: "lr", default: "spacefill" },
-      proteinColor: { name: "pc", default: "#D3D3D3" },
-      backgroundColor: { name: "bc", default: "#D3D3D3" },
-      ligandColor: { name: "lc", default: "#D3D3D3" },
-      proteinOpacity: { name: "po", default: 1 },
-      selectionOpacity: { name: "so", default: 1 },
-      backgroundOpacity: { name: "bo", default: 1 },
-      showGlycans: { name: "g", default: false },
+      summary: { abbrev: "s", default: "sum", json: false },
+      floor: { abbrev: "f", default: true, json: false },
+      proteinRepresentation: { abbrev: "pr", default: "cartoon", json: false },
+      selectionRepresentation: {
+        abbrev: "sr",
+        default: "spacefill",
+        json: false,
+      },
+      backgroundRepresentation: { abbrev: "br", default: "rope", json: false },
+      ligandRepresentation: { abbrev: "lr", default: "spacefill", json: false },
+      proteinColor: { nabbrevame: "pc", default: "#d3d3d3", json: false },
+      backgroundColor: { abbrev: "bc", default: "#d3d3d3", json: false },
+      ligandColor: { abbrev: "lc", default: "#d3d3d3", json: false },
+      proteinOpacity: { abbrev: "po", default: "1", json: false },
+      selectionOpacity: { abbrev: "so", default: "1", json: false },
+      backgroundOpacity: { abbrev: "bo", default: "1", json: false },
+      showGlycans: { abbrev: "g", default: false, json: false },
+      filters: {
+        abbrev: "fi",
+        default: tool.data[tool.experiment].filter_cols
+          ? Object.keys(tool.data[tool.experiment].filter_cols).reduce(
+              (acc, key) => ({
+                ...acc,
+                [key]: d3.min(
+                  tool.data[tool.experiment].mut_metric_df,
+                  (e) => e[key]
+                ),
+              }),
+              {}
+            )
+          : {},
+        json: true,
+      },
     };
-    tool.urlParams.filters = { name: "fi", default: {} };
-    if (tool.data[experiment].filter_cols) {
-      tool.urlParams.filters.default = Object.keys(
-        tool.data[experiment].filter_cols
-      ).reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: d3.min(tool.data[experiment].mut_metric_df, (e) => e[key]),
-        }),
-        {}
-      );
-    }
 
-    // Get the current URL parameters object
-    const currentURLParams = new URLSearchParams(window.location.search);
+    // Get the URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
 
-    // Set the state from the URL parameters or default values
-    for (const key in tool.urlParams) {
-      // Get the value from the URL parameters
-      const value = currentURLParams.get(tool.urlParams[key].name);
-      // If the value is not null, then set the state to the value
-      if (value !== null) {
-        tool[key] = JSON.parse(decodeURIComponent(value));
+    // Set the parameters from the URL or the default
+    for (const parameter in tool.defaultParams) {
+      if (urlParams.has(tool.defaultParams[parameter].abbrev)) {
+        if (tool.defaultParams[parameter].json) {
+          let value = JSON.parse(
+            decodeURIComponent(
+              urlParams.get(tool.defaultParams[parameter].abbrev)
+            )
+          );
+          tool[parameter] = value;
+        } else {
+          let value = urlParams.get(tool.defaultParams[parameter].abbrev);
+          if (value === "true") {
+            tool[parameter] = true;
+          } else if (value === "false") {
+            tool[parameter] = false;
+          } else {
+            tool[parameter] = value;
+          }
+        }
       } else {
-        // Otherwise, set the state to a copy of the default value
-        tool[key] = JSON.parse(JSON.stringify(tool.urlParams[key].default));
+        if (typeof tool.defaultParams[parameter].default === "object") {
+          // Make a copy if the default is an object
+          tool[parameter] = cloneDeep(tool.defaultParams[parameter].default);
+        } else {
+          tool[parameter] = tool.defaultParams[parameter].default;
+        }
       }
     }
   }
@@ -452,36 +487,37 @@ export class Tool {
   updateURLParams() {
     let tool = this;
 
-    // Get the current URL parameters object
-    const currentURLParams = new URLSearchParams(window.location.search);
+    // Get the URL parameters object
+    const urlParams = new URLSearchParams(window.location.search);
 
-    // If the data parameter is not in the URL don't add any parameters
-    if (!currentURLParams.has("data")) {
+    // If the data parameter is not in the URL no need to update
+    if (!urlParams.has("data")) {
       return;
     }
 
-    // Set the values of the URL parameters from the state
-    for (const key in tool.urlParams) {
-      // If the value is the default, then don't add it to the URL
-      if (
-        JSON.stringify(tool[key]) ===
-        JSON.stringify(tool.urlParams[key].default)
-      ) {
+    // Update the URL parameters if they are different from the defaults
+    for (const parameter in tool.defaultParams) {
+      const name = tool.defaultParams[parameter].abbrev;
+      const currentValue = tool[parameter];
+      const defaultValue = tool.defaultParams[parameter].default;
+
+      // If the current value is different from the default, update the URL
+      if (!isEqual(currentValue, defaultValue)) {
+        // If the value is should be as JSON, stringify it and encode it
+        if (tool.defaultParams[parameter].json) {
+          urlParams.set(name, encodeURIComponent(JSON.stringify(currentValue)));
+        } else {
+          urlParams.set(name, currentValue);
+        }
         continue;
       }
-      currentURLParams.set(
-        tool.urlParams[key].name,
-        encodeURIComponent(JSON.stringify(tool[key]))
-      );
-    }
 
-    // Update the URL
-    window.history.replaceState(
-      {},
-      "",
-      `${window.location.origin}${
-        window.location.pathname
-      }?${currentURLParams.toString()}`
-    );
+      // If the current value is the same as the default, remove it from the URL if it exists
+      if (urlParams.has(name)) {
+        urlParams.delete(name);
+      }
+    }
+    // Update the URL with the new parameters
+    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
   }
 }
