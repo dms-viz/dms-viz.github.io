@@ -183,6 +183,9 @@ export class Chart {
       .attr("height", vis.bounds.heatmap.height)
       .style("fill", "none")
       .style("stroke", "black");
+    vis.heatmapPlotG = vis.heatmapPlot
+      .append("g")
+      .attr("class", "heatmap-group");
 
     // Define the elements of the HEATMAP LEGEND
     vis.heatmapLegend = vis.heatmapPlot
@@ -416,6 +419,14 @@ export class Chart {
     vis.filteredMutMetricSummary = vis.mutMetricSummary.filter(
       (d) => d[vis.config.summary] !== null
     );
+
+    // If all sites are filtered out, render an empty chart
+    if (vis.filteredMutMetricSummary.length === 0) {
+      console.log("All sites filtered out!");
+      vis.renderEmpty();
+      return;
+    }
+
     // Pick the site with the highest metric for the selected summary metric
     vis.initSiteSelection = vis.mutMetricSummary.filter(
       (d) =>
@@ -440,6 +451,9 @@ export class Chart {
     vis.negativeColor = invertColor(vis.positiveColor);
     // Get the amino acid alphabet for the experiment
     vis.alphabet = vis.data[vis.config.experiment].alphabet;
+
+    // Define the inital heatmap wildtype residue
+    vis.wildtype = vis.mutMetricHeatmap.map((d) => d.wildtype)[0];
 
     // Make a map for the sequential site to the labels used on the x-axis
     vis.siteMap = new Map();
@@ -566,6 +580,9 @@ export class Chart {
   renderVis() {
     let vis = this;
 
+    // Select the empty chart message and remove it
+    vis.focusPlot.select(".empty-message").remove();
+
     // Draw the CONTEXT plot
     vis.contextAreaG
       .selectAll(".context-area")
@@ -596,7 +613,6 @@ export class Chart {
         "stroke",
         (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
       );
-
     vis.focusCircleG
       .selectAll("circle")
       .data(vis.filteredMutMetricSummary, (d) => `${d.epitope}-${d.site}`)
@@ -669,7 +685,7 @@ export class Chart {
       .attr("stroke-width", 4);
 
     // Draw the HEATMAP plot
-    vis.heatmapPlot
+    vis.heatmapPlotG
       .selectAll(".mutant-rect")
       .data(vis.mutMetricHeatmap, (d) => d.mutation)
       .join(
@@ -714,8 +730,7 @@ export class Chart {
       });
 
     // Add an 'x' for the wildtype residue
-    vis.wildtype = vis.mutMetricHeatmap.map((d) => d.wildtype)[0];
-    vis.heatmapPlot
+    vis.heatmapPlotG
       .selectAll(".wildtype-text")
       .data([vis.wildtype], (d) => d)
       .join("text")
@@ -815,6 +830,33 @@ export class Chart {
       .attr("cx", (d) => vis.xScaleFocus(vis.xAccessorFocus(d)));
     // Update the x axis of the focus plot based on selection
     vis.xAxisFocusG.call(vis.xAxisFocus);
+  }
+  /*
+   * Render an empty plot if all sites are filtered out
+   */
+  renderEmpty() {
+    let vis = this;
+
+    // Select the empty chart message and remove it
+    vis.focusPlot.select(".empty-message").remove();
+
+    // Remove all visual elements from the plots
+    vis.contextAreaG.selectAll(".context-area").remove();
+    vis.focusLineG.selectAll(".focus-line").remove();
+    vis.focusCircleG.selectAll("circle").remove();
+    vis.heatmapPlotG.selectAll(".mutant-rect").remove();
+    vis.heatmapPlotG.selectAll(".wildtype-text").remove();
+
+    // Add a message to the focus plot
+    vis.focusPlot
+      .append("text")
+      .attr("class", "empty-message")
+      .attr("x", vis.bounds.focus.width / 2)
+      .attr("y", vis.bounds.focus.height / 2)
+      .attr("text-anchor", "middle")
+      .attr("alignment-baseline", "middle")
+      .attr("font-size", "1.5em")
+      .text("All sites filtered out!");
   }
   /**
    * React to brush events in the focus plot
@@ -995,7 +1037,7 @@ export class Chart {
     vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
 
     // Update the heatmap to be this site
-    vis.heatmapPlot
+    vis.heatmapPlotG
       .selectAll(".mutant-rect")
       .data(vis.mutMetricHeatmap, (d) => d.mutation)
       .join(
@@ -1039,7 +1081,7 @@ export class Chart {
         vis.heatmapTooltip.style("opacity", 0);
       });
 
-    vis.heatmapPlot
+    vis.heatmapPlotG
       .selectAll(".wildtype-text")
       .data([vis.wildtype], (d) => d)
       .join("text")
