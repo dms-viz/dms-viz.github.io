@@ -422,7 +422,6 @@ export class Chart {
 
     // If all sites are filtered out, render an empty chart
     if (vis.filteredMutMetricSummary.length === 0) {
-      console.log("All sites filtered out!");
       vis.renderEmpty();
       return;
     }
@@ -847,6 +846,11 @@ export class Chart {
     vis.heatmapPlotG.selectAll(".mutant-rect").remove();
     vis.heatmapPlotG.selectAll(".wildtype-text").remove();
 
+    // Clear the axis ticks and labels
+    vis.yAxisFocusG.selectAll(".tick").remove();
+    vis.yAxisContextG.selectAll(".tick").remove();
+    vis.xAxisHeatmapG.selectAll(".tick").remove();
+
     // Add a message to the focus plot
     vis.focusPlot
       .append("text")
@@ -856,7 +860,8 @@ export class Chart {
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
       .attr("font-size", "1.5em")
-      .text("All sites filtered out!");
+      .attr("fill", "darkred")
+      .text("All sites filtered out");
   }
   /**
    * React to brush events in the focus plot
