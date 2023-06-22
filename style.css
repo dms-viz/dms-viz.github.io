@@ -390,6 +390,7 @@ kbd {
 
 .heatmap-tooltip {
   transform: translate(-50%, 25%) !important;
+  font-size: 14px !important;
 }
 
 .protein-tooltip {
@@ -410,6 +411,18 @@ kbd {
   z-index: var(--z-fixed);
 }
 
+@media (max-width: 1000px) {
+  .focus-tooltip,
+  .protein-tooltip  {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+  .heatmap-tooltip {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+
+}
 
 .axis {
   -webkit-user-select: none;  

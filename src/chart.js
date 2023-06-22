@@ -561,14 +561,14 @@ export class Chart {
     // define a function to make the tooltip html
     vis.tooltipContent = (d) => {
       // default tooltip html
-      const defaultTooltip = `${vis.config.metric}: ${
+      const defaultTooltip = `<strong>${vis.config.metric}:</strong> ${
         d.metric !== null ? d.metric.toFixed(2) : "Filtered"
       }</br>`;
       // if the tooltips exist, add them to the html
       if (vis.config.tooltips) {
         const lines = Object.entries(vis.config.tooltips).map(
           ([column, name]) =>
-            `${name}: ${
+            `<strong>${name}:</strong> ${
               typeof d[column] === "number" ? d[column].toFixed(2) : d[column]
             }</br>`
         );
@@ -660,9 +660,11 @@ export class Chart {
         vis.focusTooltip
           .style("opacity", 1)
           .html(
-            `Site: ${d.site_reference}<br>${vis.config.metric} ${
-              vis.config.summary
-            }: ${d[vis.config.summary].toFixed(2)}<br>Wildtype: ${d.wildtype}`
+            `<strong>Site:</strong> ${d.site_reference}<br><strong>${
+              vis.config.metric
+            } ${vis.config.summary}:</strong> ${d[vis.config.summary].toFixed(
+              2
+            )}<br><strong>Wildtype:</strong> ${d.wildtype}`
           )
           .style(
             "border-color",

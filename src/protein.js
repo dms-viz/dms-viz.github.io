@@ -44,11 +44,13 @@ export class Protein {
     protein.stage.signals.hovered.add(function (pickingProxy) {
       if (pickingProxy && pickingProxy.atom) {
         let atom = pickingProxy.atom;
-        tooltip.innerHTML = `Site: ${atom.resno} </br > Residue: ${
+        tooltip.innerHTML = `<strong>Site:</strong> ${
+          atom.resno
+        } </br > <strong>Residue:</strong> ${
           atom.resname
-        }${protein.#getOneLetterCode(atom.resname)} </br > Chain: ${
-          atom.chainname
-        }`;
+        }${protein.#getOneLetterCode(
+          atom.resname
+        )} </br > <strong>Chain:</strong> ${atom.chainname}`;
         tooltip.style.display = "block";
       } else {
         tooltip.style.display = "none";
