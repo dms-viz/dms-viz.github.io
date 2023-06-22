@@ -273,18 +273,16 @@ export class Chart {
       .tickFormat((n) => {
         // Get the absolute value of the number
         var absValue = Math.abs(n);
-
         // Get the number of places after the decimal
         var decimalPlaces = n.toString().split(".")[1]
           ? n.toString().split(".")[1].length
           : 0;
-
         // If the number is greater than 1000 or less than 0.001, use scientific notation
         if ((absValue > 1000 || absValue < 0.001) && absValue !== 0) {
-          return n.toExponential(0);
-          // Or, if it has more than 3 decimal places, round it to 3 decimal places
+          return d3.format(".2e")(n);
+          // Or, if it has more than 3 decimal places, format to 3 decimal places
         } else if (decimalPlaces > 3) {
-          return n.toFixed(3);
+          return d3.format(".3f")(n);
           // Otherwise, use the default formatting
         } else {
           return d3.format("")(n);
