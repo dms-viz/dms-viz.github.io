@@ -266,7 +266,30 @@ export class Chart {
       .attr("font-size", "16px")
       .attr("text-anchor", "middle")
       .text("Site");
-    vis.yAxisFocus = d3.axisLeft(vis.yScaleFocus).tickSizeOuter(0);
+    vis.yAxisFocus = d3
+      .axisLeft(vis.yScaleFocus)
+      .tickSizeOuter(0)
+      .ticks(6)
+      .tickFormat((n) => {
+        // Get the absolute value of the number
+        var absValue = Math.abs(n);
+
+        // Get the number of places after the decimal
+        var decimalPlaces = n.toString().split(".")[1]
+          ? n.toString().split(".")[1].length
+          : 0;
+
+        // If the number is greater than 1000 or less than 0.001, use scientific notation
+        if ((absValue > 1000 || absValue < 0.001) && absValue !== 0) {
+          return n.toExponential(0);
+          // Or, if it has more than 3 decimal places, round it to 3 decimal places
+        } else if (decimalPlaces > 3) {
+          return n.toFixed(3);
+          // Otherwise, use the default formatting
+        } else {
+          return d3.format("")(n);
+        }
+      });
     vis.yAxisFocusG = vis.focusPlot.append("g").attr("class", "axis y-axis");
     vis.yAxisFocusG
       .append("text")
