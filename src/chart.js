@@ -20,11 +20,11 @@ export class Chart {
       tooltips: _config.tooltips,
       filters: _config.filters,
       parentElement: _config.parentElement,
-      width: 1080,
+      width: 1100,
       height: 300,
       scaling: {
         top: 0.025,
-        left: 0.06,
+        left: 0.1,
         bottom: 0.15,
         right: 0.06,
         innerTop: 0.05,
@@ -300,7 +300,7 @@ export class Chart {
       )
       .attr("transform", "rotate(-90)")
       .attr("x", -(vis.bounds.focus.height / 2))
-      .attr("y", -40)
+      .attr("y", -60)
       .attr("fill", "black")
       .attr("font-size", "16px")
       .attr("text-anchor", "middle");

@@ -214,7 +214,7 @@ kbd {
 }
 
 .sidebar .accordion {
-  width:100%;
+  width: 100%;
   display: flex;
   align-items: center;
   border: none;
@@ -294,7 +294,7 @@ kbd {
 }
 
 .body-pad {
-  padding: 0 3em 0 calc(var(--nav-icon-width) + 3em) !important;
+  padding: 0 2.5em 0 calc(var(--nav-icon-width) + 2.5em) !important;
 }
 
 .download-toggle {
@@ -334,21 +334,21 @@ kbd {
 
 .main {
   margin-top: 3em;
-  padding: 0 3em 0 calc(var(--nav-width) + 3em);
+  padding: 0 2.5em 0 calc(var(--nav-width) + 2.5em);
   transition: 0.5s;
 }
 
 @media (min-width: 1400px) {
   .body-pad {
-    padding: 0 6em 0 calc(var(--nav-icon-width) + 6em) !important;
+    padding: 0 4em 0 calc(var(--nav-icon-width) + 4em) !important;
   }
   .main {
-    padding: 0 6em 0 calc(var(--nav-width) + 6em);
+    padding: 0 4em 0 calc(var(--nav-width) + 4em);
   }
 }
 
 .chart {  
-  max-width: 1080px; 
+  max-width: 1200px; 
   min-width: 750px;
 }
 
