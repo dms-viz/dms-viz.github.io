@@ -14,7 +14,7 @@ export class Legend {
       dataset: _config.dataset,
       proteinCondition: _config.proteinCondition,
       chartConditions: _config.chartConditions,
-      name: _config.name || "condition",
+      prefix: _config.prefix || "condition",
     };
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
@@ -170,7 +170,7 @@ export class Legend {
             .attr("class", "condition-label")
             .attr("x", vis.margin.left * 2)
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
-            .text((d) => `${vis.config.name} ${d}`)
+            .text((d) => `${vis.config.prefix} ${d}`)
             .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
               vis.config.chartConditions.includes(d) ? "1" : "0.2"
@@ -194,7 +194,7 @@ export class Legend {
         (update) =>
           update
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
-            .text((d) => `${vis.config.name} ${d}`)
+            .text((d) => `${vis.config.prefix} ${d}`)
             .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
               vis.config.chartConditions.includes(d) ? "1" : "0.2"

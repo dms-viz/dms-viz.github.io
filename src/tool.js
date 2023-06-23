@@ -77,6 +77,7 @@ export class Tool {
         dataset: tool.dataset,
         proteinCondition: tool.proteinCondition,
         chartConditions: tool.chartConditions,
+        prefix: "epitope",
       },
       tool.data
     );
