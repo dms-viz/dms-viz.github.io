@@ -22,10 +22,18 @@ export class Tool {
 
     // Format the data for each dataset in the JSON file
     for (const dataset in tool.data) {
-      // Get the conditions for the dataset and convert to strings
-      tool.data[dataset].conditions = tool.data[dataset].conditions.map((e) =>
-        e.toString()
-      );
+      // If the dataset doesn't have any 'conditions' set it to default
+      if (!tool.data[dataset].conditions) {
+        tool.data[dataset].conditions = ["default"];
+        // Set the legend to false because there is only one condition
+        tool.data[dataset].legend = false;
+      } else {
+        // Get the conditions for the dataset and convert to strings
+        tool.data[dataset].conditions = tool.data[dataset].conditions.map((e) =>
+          e.toString()
+        );
+        tool.data[dataset].legend = true;
+      }
       // Get the map for reference sites to sequential sites
       const siteMap = tool.data[dataset].sitemap;
       // Get the column name of the mutation-level metric
@@ -33,6 +41,7 @@ export class Tool {
       // Map the reference sites to sequential and protein sites
       tool.data[dataset].mut_metric_df = tool.data[dataset].mut_metric_df.map(
         (e) => {
+          const condition = e.condition ? e.condition.toString() : "default";
           return {
             ...e,
             site: siteMap[e.reference_site].sequential_site,
@@ -40,7 +49,7 @@ export class Tool {
             site_protein: siteMap[e.reference_site].protein_site,
             site_chain: siteMap[e.reference_site].chains,
             metric: e[metric],
-            condition: e.condition.toString(),
+            condition: condition,
           };
         }
       );
@@ -284,7 +293,7 @@ export class Tool {
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
     tool.chart.updateVis();
-    tool.legend.updateVis();
+    tool.legend.updateLegend();
 
     // Only update the protein if the structure has changed
     if (tool.data[tool.dataset].pdb !== tool.protein.config.pdbID) {

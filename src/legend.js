@@ -19,10 +19,10 @@ export class Legend {
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
     // Initialize the visualization
-    this.initVis();
+    this.initLegend();
   }
   // Initialize the visualization
-  initVis() {
+  initLegend() {
     let vis = this;
 
     // Clear any existing legend
@@ -54,10 +54,18 @@ export class Legend {
     // Make the legend
     vis.legend = vis.svg.append("g").attr("class", "condition-legend");
 
-    vis.updateVis();
+    vis.updateLegend();
   }
-  updateVis() {
+  updateLegend() {
     let vis = this;
+
+    // If the are no conditions, don't do anything and set the display to none
+    if (!vis.data[vis.config.dataset].legend) {
+      document.getElementById("condition-option").style.display = "none";
+      return;
+    } else {
+      document.getElementById("condition-option").style.display = "block";
+    }
 
     // Get all conditions as the data for the legend
     vis.allConditions = Object.keys(
@@ -75,9 +83,9 @@ export class Legend {
     vis.svg.attr("height", vis.config.height);
     vis.background.attr("height", vis.config.height);
 
-    vis.renderVis();
+    vis.renderLegend();
   }
-  renderVis() {
+  renderLegend() {
     let vis = this;
 
     // Add a highlight-box for each condition and set the visibility to hidden
