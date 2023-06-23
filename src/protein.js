@@ -86,8 +86,8 @@ export class Protein {
     }
 
     // Get the chain selections for the protein structure
-    let dataChains = protein.data[protein.config.experiment].dataChains;
-    let excludeChains = protein.data[protein.config.experiment].excludeChains;
+    let dataChains = protein.data[protein.config.dataset].dataChains;
+    let excludeChains = protein.data[protein.config.dataset].excludeChains;
 
     // Make the selection of chains to include in the protein structure
     if (dataChains != "polymer") {
@@ -182,7 +182,7 @@ export class Protein {
     let protein = this;
 
     // Summarize the data
-    protein.mutMetric = protein.data[protein.config.experiment].mut_metric_df;
+    protein.mutMetric = protein.data[protein.config.dataset].mut_metric_df;
     protein.mutMetricSummary = summarizeMetricData(protein.mutMetric).filter(
       (e) => e.epitope === protein.config.proteinEpitope
     );
@@ -196,7 +196,7 @@ export class Protein {
 
     // Update the color scale
     const positiveColor =
-      protein.data[protein.config.experiment].epitope_colors[
+      protein.data[protein.config.dataset].epitope_colors[
         protein.config.proteinEpitope
       ];
     const negativeColor = invertColor(positiveColor);
@@ -342,7 +342,7 @@ export class Protein {
           (now.getMonth() + 1).toString().padStart(2, "0") +
           "-" +
           now.getDate().toString().padStart(2, "0");
-        let fileName = `${protein.config.experiment}_${protein.config.proteinEpitope}_${dateString}.png`;
+        let fileName = `${protein.config.dataset}_${protein.config.proteinEpitope}_${dateString}.png`;
         NGL.download(blob, fileName);
       });
   }

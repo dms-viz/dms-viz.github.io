@@ -11,7 +11,7 @@ export class Legend {
     this.config = _config;
     this.config = {
       parentElement: _config.parentElement,
-      experiment: _config.experiment,
+      dataset: _config.dataset,
       proteinEpitope: _config.proteinEpitope,
       chartEpitopes: _config.chartEpitopes,
       name: _config.name || "epitope",
@@ -60,12 +60,10 @@ export class Legend {
     let vis = this;
 
     // Get all epitopes as the data for the legend
-    vis.allEpitopes = Object.keys(
-      vis.data[vis.config.experiment].epitope_colors
-    );
+    vis.allEpitopes = Object.keys(vis.data[vis.config.dataset].epitope_colors);
 
     // Epitope colors
-    vis.epitopeColors = vis.data[vis.config.experiment].epitope_colors;
+    vis.epitopeColors = vis.data[vis.config.dataset].epitope_colors;
 
     // Set the height based on the number of elements
     vis.config.height =

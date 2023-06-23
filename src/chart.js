@@ -12,7 +12,7 @@ export class Chart {
   constructor(_config, _data) {
     this.config = _config;
     this.config = {
-      experiment: _config.experiment,
+      dataset: _config.dataset,
       chartEpitopes: _config.chartEpitopes,
       summary: _config.summary,
       floor: _config.floor,
@@ -373,8 +373,8 @@ export class Chart {
   updateVis() {
     let vis = this;
 
-    // Get the data for the selected experiment
-    vis.originalMutMetric = vis.data[vis.config.experiment].mut_metric_df;
+    // Get the data for the selected dataset
+    vis.originalMutMetric = vis.data[vis.config.dataset].mut_metric_df;
 
     // Mask the data based on the filters
     vis.mutMetric = vis.originalMutMetric.map((d) => {
@@ -391,7 +391,7 @@ export class Chart {
       return newRow;
     });
 
-    // Summarize and filter the experiments based on the selections and epitopes
+    // Summarize and filter the datasets based on the selections and epitopes
     vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
       vis.config.chartEpitopes.includes(d.epitope)
     );
@@ -467,17 +467,17 @@ export class Chart {
     );
     // Make the color scheme for the plots
     vis.positiveColor =
-      vis.data[vis.config.experiment].epitope_colors[vis.initEpitopeSelection];
+      vis.data[vis.config.dataset].epitope_colors[vis.initEpitopeSelection];
     vis.negativeColor = invertColor(vis.positiveColor);
-    // Get the amino acid alphabet for the experiment
-    vis.alphabet = vis.data[vis.config.experiment].alphabet;
+    // Get the amino acid alphabet for the dataset
+    vis.alphabet = vis.data[vis.config.dataset].alphabet;
 
     // Define the inital heatmap wildtype residue
     vis.wildtype = vis.mutMetricHeatmap.map((d) => d.wildtype)[0];
 
     // Make a map for the sequential site to the labels used on the x-axis
     vis.siteMap = new Map();
-    Object.entries(vis.data[vis.config.experiment].sitemap).forEach((entry) => {
+    Object.entries(vis.data[vis.config.dataset].sitemap).forEach((entry) => {
       const [key, value] = entry;
       vis.siteMap.set(value.sequential_site, key);
     });
@@ -613,7 +613,7 @@ export class Chart {
       .attr("d", (d) => vis.contextArea(d.data))
       .attr(
         "fill",
-        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
       );
 
     // Draw the FOCUS plot
@@ -631,7 +631,7 @@ export class Chart {
       .attr("d", (d) => vis.focusLine(d.data))
       .attr(
         "stroke",
-        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
       );
     vis.focusCircleG
       .selectAll("circle")
@@ -653,7 +653,7 @@ export class Chart {
       .attr("fill", "white")
       .attr(
         "stroke",
-        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
       )
       .attr("stroke-width", 2)
       .on("mouseover", (evt, d) => {
@@ -668,7 +668,7 @@ export class Chart {
           )
           .style(
             "border-color",
-            vis.data[vis.config.experiment].epitope_colors[d.epitope]
+            vis.data[vis.config.dataset].epitope_colors[d.epitope]
           );
       })
       .on("mousemove", (evt) => {
@@ -689,7 +689,7 @@ export class Chart {
       .filter((d) => vis.selection.map((d) => d.site).includes(d.site))
       .attr(
         "fill",
-        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
       )
       .classed("selected", true);
 
@@ -922,7 +922,7 @@ export class Chart {
         .classed("selected", true)
         .attr(
           "fill",
-          (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+          (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
         );
 
       // Add the selected points to the selection
@@ -995,7 +995,7 @@ export class Chart {
     // Get the site information from the datum
     const site = datum.site;
     const epitope = datum.epitope;
-    vis.positiveColor = vis.data[vis.config.experiment].epitope_colors[epitope];
+    vis.positiveColor = vis.data[vis.config.dataset].epitope_colors[epitope];
     vis.negativeColor = invertColor(vis.positiveColor);
     vis.wildtype = datum.wildtype;
 
@@ -1006,7 +1006,7 @@ export class Chart {
       .attr("stroke-width", 2)
       .attr(
         "stroke",
-        (d) => vis.data[vis.config.experiment].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
       )
       .classed("heatmap-site", false);
 
@@ -1189,7 +1189,7 @@ export class Chart {
     // Create a link to download the image
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${vis.config.experiment}_${vis.config.metric}_${vis.config.summary}.png`;
+    link.download = `${vis.config.dataset}_${vis.config.metric}_${vis.config.summary}.png`;
     link.click();
 
     // Remove the link

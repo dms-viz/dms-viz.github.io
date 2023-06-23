@@ -136,8 +136,8 @@ function setUpJsonFileUploadListeners() {
 
 // Set up the event listeners for the chart options
 function setUpChartOptionListeners() {
-  d3.select("#experiment").on("change", function () {
-    State.updateSelectedExperiment(this);
+  d3.select("#dataset").on("change", function () {
+    State.updateSelectedDataset(this);
     // Reize the accordion menu if necessary (i.e. legend size changes)
     let btn = document.getElementById("chart-btn");
     if (btn.classList.contains("is-open")) {
