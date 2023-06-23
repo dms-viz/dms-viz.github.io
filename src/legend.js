@@ -12,9 +12,9 @@ export class Legend {
     this.config = {
       parentElement: _config.parentElement,
       dataset: _config.dataset,
-      proteinEpitope: _config.proteinEpitope,
-      chartEpitopes: _config.chartEpitopes,
-      name: _config.name || "epitope",
+      proteinCondition: _config.proteinCondition,
+      chartConditions: _config.chartConditions,
+      name: _config.name || "condition",
     };
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
@@ -59,15 +59,17 @@ export class Legend {
   updateVis() {
     let vis = this;
 
-    // Get all epitopes as the data for the legend
-    vis.allEpitopes = Object.keys(vis.data[vis.config.dataset].epitope_colors);
+    // Get all conditions as the data for the legend
+    vis.allConditions = Object.keys(
+      vis.data[vis.config.dataset].condition_colors
+    );
 
-    // Epitope colors
-    vis.epitopeColors = vis.data[vis.config.dataset].epitope_colors;
+    // Condition colors
+    vis.conditionColors = vis.data[vis.config.dataset].condition_colors;
 
     // Set the height based on the number of elements
     vis.config.height =
-      (vis.allEpitopes.length - 1) * vis.margin.point +
+      (vis.allConditions.length - 1) * vis.margin.point +
       vis.margin.top +
       vis.margin.bottom;
     vis.svg.attr("height", vis.config.height);
@@ -78,161 +80,161 @@ export class Legend {
   renderVis() {
     let vis = this;
 
-    // Add a highlight-box for each epitope and set the visibility to hidden
+    // Add a highlight-box for each condition and set the visibility to hidden
     vis.legend
-      .selectAll(".epitope-box")
-      .data(vis.allEpitopes, (d) => d)
+      .selectAll(".condition-box")
+      .data(vis.allConditions, (d) => d)
       .join(
         (enter) =>
           enter
             .append("rect")
-            .attr("class", "epitope-box")
+            .attr("class", "condition-box")
             .attr("x", vis.margin.left - vis.margin.point / 2)
             .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
             .attr("width", "calc(100% - 20px)")
             .attr("height", 20)
             .style("opacity", (d) =>
-              vis.config.proteinEpitope.includes(d) ? ".25" : "0"
+              vis.config.proteinCondition.includes(d) ? ".25" : "0"
             )
             .attr("ry", 4)
-            .style("fill", (d) => vis.epitopeColors[d])
+            .style("fill", (d) => vis.conditionColors[d])
             .on("click", (event, datum) => {
-              if (event.altKey && vis.config.chartEpitopes.includes(datum)) {
-                vis.deselectChartEpitopes(datum);
+              if (event.altKey && vis.config.chartConditions.includes(datum)) {
+                vis.deselectChartConditions(datum);
               } else if (
                 event.altKey &&
-                !vis.config.chartEpitopes.includes(datum)
+                !vis.config.chartConditions.includes(datum)
               ) {
-                vis.selectChartEpitopes(datum);
+                vis.selectChartConditions(datum);
               } else {
-                vis.selectProteinEpitope(datum);
+                vis.selectProteinCondition(datum);
               }
             }),
         (update) =>
           update
             // Attributes that need to be updated go here
             .attr("y", (d, i) => vis.margin.top - 10 + i * vis.margin.point)
-            .style("fill", (d) => vis.epitopeColors[d])
+            .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
-              vis.config.proteinEpitope.includes(d) ? ".25" : "0"
+              vis.config.proteinCondition.includes(d) ? ".25" : "0"
             ),
         (exit) => exit.remove()
       );
 
     // Add one dot in the legend for each name.
     vis.legend
-      .selectAll(".epitope-circle")
-      .data(vis.allEpitopes, (d) => d)
+      .selectAll(".condition-circle")
+      .data(vis.allConditions, (d) => d)
       .join(
         (enter) =>
           enter
             .append("circle")
-            .attr("class", "epitope-circle")
+            .attr("class", "condition-circle")
             .attr("cx", vis.margin.left)
             .attr("cy", (d, i) => vis.margin.top + i * vis.margin.point)
             .attr("r", 7)
-            .style("fill", (d) => vis.epitopeColors[d])
+            .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
-              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+              vis.config.chartConditions.includes(d) ? "1" : "0.2"
             )
             .on("click", (event, datum) => {
-              if (event.altKey && vis.config.chartEpitopes.includes(datum)) {
-                vis.deselectChartEpitopes(datum);
+              if (event.altKey && vis.config.chartConditions.includes(datum)) {
+                vis.deselectChartConditions(datum);
               } else if (
                 event.altKey &&
-                !vis.config.chartEpitopes.includes(datum)
+                !vis.config.chartConditions.includes(datum)
               ) {
-                vis.selectChartEpitopes(datum);
+                vis.selectChartConditions(datum);
               } else {
-                vis.selectProteinEpitope(datum);
+                vis.selectProteinCondition(datum);
               }
             }),
         (update) =>
           update
             .attr("cy", (d, i) => vis.margin.top + i * vis.margin.point)
-            .style("fill", (d) => vis.epitopeColors[d])
+            .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
-              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+              vis.config.chartConditions.includes(d) ? "1" : "0.2"
             ),
         (exit) => exit.remove()
       );
 
     // Add one dot in the legend for each name.
     vis.legend
-      .selectAll(".epitope-label")
-      .data(vis.allEpitopes, (d) => d)
+      .selectAll(".condition-label")
+      .data(vis.allConditions, (d) => d)
       .join(
         (enter) =>
           enter
             .append("text")
-            .attr("class", "epitope-label")
+            .attr("class", "condition-label")
             .attr("x", vis.margin.left * 2)
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
             .text((d) => `${vis.config.name} ${d}`)
-            .style("fill", (d) => vis.epitopeColors[d])
+            .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
-              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+              vis.config.chartConditions.includes(d) ? "1" : "0.2"
             )
             .attr("text-anchor", "left")
             .style("alignment-baseline", "middle")
             .attr("dominant-baseline", "middle")
             .style("user-select", "none")
             .on("click", (event, datum) => {
-              if (event.altKey && vis.config.chartEpitopes.includes(datum)) {
-                vis.deselectChartEpitopes(datum);
+              if (event.altKey && vis.config.chartConditions.includes(datum)) {
+                vis.deselectChartConditions(datum);
               } else if (
                 event.altKey &&
-                !vis.config.chartEpitopes.includes(datum)
+                !vis.config.chartConditions.includes(datum)
               ) {
-                vis.selectChartEpitopes(datum);
+                vis.selectChartConditions(datum);
               } else {
-                vis.selectProteinEpitope(datum);
+                vis.selectProteinCondition(datum);
               }
             }),
         (update) =>
           update
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
             .text((d) => `${vis.config.name} ${d}`)
-            .style("fill", (d) => vis.epitopeColors[d])
+            .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
-              vis.config.chartEpitopes.includes(d) ? "1" : "0.2"
+              vis.config.chartConditions.includes(d) ? "1" : "0.2"
             ),
         (exit) => exit.remove()
       );
   }
-  selectProteinEpitope(datum) {
+  selectProteinCondition(datum) {
     let vis = this;
 
-    // If the selected epitope isn't in the chart selection, don't do anything
-    if (!vis.config.chartEpitopes.includes(datum)) {
+    // If the selected condition isn't in the chart selection, don't do anything
+    if (!vis.config.chartConditions.includes(datum)) {
       return;
     }
 
     // First, hide all other boxes
-    vis.legend.selectAll(".epitope-box").style("opacity", "0");
+    vis.legend.selectAll(".condition-box").style("opacity", "0");
 
-    // Select the box with the same epitope as the clicked box
+    // Select the box with the same condition as the clicked box
     vis.legend
-      .selectAll(".epitope-box")
+      .selectAll(".condition-box")
       .filter(function (d) {
         return d == datum;
       })
       .style("opacity", ".25");
-    // Update the selected epitope
-    vis.config.proteinEpitope = datum;
+    // Update the selected condition
+    vis.config.proteinCondition = datum;
 
-    // Dispatch an event to notify about the selected epitope
-    const proteinEpitopeEvent = new CustomEvent("proteinEpitopeSelected", {
-      detail: vis.config.proteinEpitope,
+    // Dispatch an event to notify about the selected condition
+    const proteinConditionEvent = new CustomEvent("proteinConditionSelected", {
+      detail: vis.config.proteinCondition,
     });
-    window.dispatchEvent(proteinEpitopeEvent);
+    window.dispatchEvent(proteinConditionEvent);
   }
-  selectChartEpitopes(datum) {
+  selectChartConditions(datum) {
     let vis = this;
 
     // Color the text labels back in
     vis.legend
-      .selectAll(".epitope-label")
+      .selectAll(".condition-label")
       .filter(function (d) {
         return d == datum;
       })
@@ -240,58 +242,60 @@ export class Legend {
 
     // Color the points back in
     vis.legend
-      .selectAll(".epitope-circle")
+      .selectAll(".condition-circle")
       .filter(function (d) {
         return d == datum;
       })
       .style("opacity", "1");
 
-    // Add this epitope to the selected epitopes
-    vis.config.chartEpitopes.push(datum);
+    // Add this condition to the selected conditions
+    vis.config.chartConditions.push(datum);
 
-    // Dispatch an event to notify about the plot epitopes
-    const chartEpitopeEvent = new CustomEvent("chartEpitopesSelected", {
-      detail: vis.config.chartEpitopes,
+    // Dispatch an event to notify about the plot conditions
+    const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
+      detail: vis.config.chartConditions,
     });
-    window.dispatchEvent(chartEpitopeEvent);
+    window.dispatchEvent(chartConditionEvent);
   }
-  deselectChartEpitopes(datum) {
+  deselectChartConditions(datum) {
     let vis = this;
 
-    // If this is the last epitope, don't deselect it
-    if (vis.config.chartEpitopes.length == 1) {
+    // If this is the last condition, don't deselect it
+    if (vis.config.chartConditions.length == 1) {
       return;
     }
 
-    // Remove this epitope from the selected epitopes
-    vis.config.chartEpitopes = vis.config.chartEpitopes.filter(function (d) {
+    // Remove this condition from the selected conditions
+    vis.config.chartConditions = vis.config.chartConditions.filter(function (
+      d
+    ) {
       return d != datum;
     });
 
-    // If this epitope is highlighted, remove the highlight and move it to the next epitope in the list
-    if (vis.config.proteinEpitope == datum) {
-      vis.selectProteinEpitope(vis.config.chartEpitopes[0]);
+    // If this condition is highlighted, remove the highlight and move it to the next condition in the list
+    if (vis.config.proteinCondition == datum) {
+      vis.selectProteinCondition(vis.config.chartConditions[0]);
     }
 
     // Add opacity to the text labels and points
     vis.legend
-      .selectAll(".epitope-label")
+      .selectAll(".condition-label")
       .filter(function (d) {
         return d == datum;
       })
       .style("opacity", ".25");
 
     vis.legend
-      .selectAll(".epitope-circle")
+      .selectAll(".condition-circle")
       .filter(function (d) {
         return d == datum;
       })
       .style("opacity", ".25");
 
-    // Dispatch an event to notify about the plot epitopes
-    const chartEpitopeEvent = new CustomEvent("chartEpitopesSelected", {
-      detail: vis.config.chartEpitopes,
+    // Dispatch an event to notify about the plot conditions
+    const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
+      detail: vis.config.chartConditions,
     });
-    window.dispatchEvent(chartEpitopeEvent);
+    window.dispatchEvent(chartConditionEvent);
   }
 }

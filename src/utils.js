@@ -2,7 +2,7 @@ import * as d3 from "d3";
 
 // Summarize metric data
 export function summarizeMetricData(data) {
-  // Calculate summary stats for each site/epitope pair
+  // Calculate summary stats for each site/condition pair
   const metricDataRollup = d3.rollup(
     data,
     (v) => {
@@ -22,27 +22,27 @@ export function summarizeMetricData(data) {
       };
     },
     (d) => d.site,
-    (d) => d.epitope
+    (d) => d.condition
   );
 
   // Join the map of summarized metric back to the original
   const metricDataSummary = data
     .map((e) => {
       return {
-        epitope: e.epitope,
+        condition: e.condition,
         site: e.site,
         site_reference: e.site_reference,
         site_protein: e.site_protein,
         site_chain: e.site_chain,
         wildtype: e.wildtype,
-        ...metricDataRollup.get(e.site).get(e.epitope),
+        ...metricDataRollup.get(e.site).get(e.condition),
       };
     })
     .filter(
       (element, index, self) =>
         index ===
         self.findIndex(
-          (e) => e.site === element.site && e.epitope === element.epitope
+          (e) => e.site === element.site && e.condition === element.condition
         )
     );
 

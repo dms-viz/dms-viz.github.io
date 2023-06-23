@@ -145,11 +145,11 @@ function setUpChartOptionListeners() {
       content.style.maxHeight = content.scrollHeight + "px";
     }
   });
-  window.addEventListener("proteinEpitopeSelected", function (event) {
-    State.updateProteinEpitope(event.detail);
+  window.addEventListener("proteinConditionSelected", function (event) {
+    State.updateProteinCondition(event.detail);
   });
-  window.addEventListener("chartEpitopesSelected", function (event) {
-    State.updateChartEpitopes(event.detail);
+  window.addEventListener("chartConditionsSelected", function (event) {
+    State.updateChartConditions(event.detail);
   });
   d3.select("#summary").on("change", function () {
     State.updateChartOptions(this);

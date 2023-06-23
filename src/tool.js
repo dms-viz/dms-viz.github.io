@@ -22,8 +22,8 @@ export class Tool {
 
     // Format the data for each dataset in the JSON file
     for (const dataset in tool.data) {
-      // Get the epitopes for the dataset and convert to strings
-      tool.data[dataset].epitopes = tool.data[dataset].epitopes.map((e) =>
+      // Get the conditions for the dataset and convert to strings
+      tool.data[dataset].conditions = tool.data[dataset].conditions.map((e) =>
         e.toString()
       );
       // Get the map for reference sites to sequential sites
@@ -40,7 +40,7 @@ export class Tool {
             site_protein: siteMap[e.reference_site].protein_site,
             site_chain: siteMap[e.reference_site].chains,
             metric: e[metric],
-            epitope: e.epitope.toString(),
+            condition: e.condition.toString(),
           };
         }
       );
@@ -60,7 +60,7 @@ export class Tool {
       {
         parentElement: "#chart",
         dataset: tool.dataset,
-        chartEpitopes: tool.chartEpitopes,
+        chartConditions: tool.chartConditions,
         summary: tool.summary,
         floor: tool.floor,
         metric: tool.data[tool.dataset].metric_col,
@@ -75,8 +75,8 @@ export class Tool {
       {
         parentElement: "#legend",
         dataset: tool.dataset,
-        proteinEpitope: tool.proteinEpitope,
-        chartEpitopes: tool.chartEpitopes,
+        proteinCondition: tool.proteinCondition,
+        chartConditions: tool.chartConditions,
       },
       tool.data
     );
@@ -86,7 +86,7 @@ export class Tool {
       {
         parentElement: "viewport",
         dataset: tool.dataset,
-        proteinEpitope: tool.proteinEpitope,
+        proteinCondition: tool.proteinCondition,
         summary: tool.summary,
         floor: tool.floor,
         pdbID: tool.data[tool.dataset].pdb,
@@ -247,13 +247,13 @@ export class Tool {
     tool.chart.config.dataset = tool.dataset;
     tool.protein.config.dataset = tool.dataset;
     tool.legend.config.dataset = tool.dataset;
-    // Update the epitope selection because datasets have different epitopes
-    tool.chartEpitopes = tool.data[tool.dataset].epitopes;
-    tool.proteinEpitope = tool.chartEpitopes[0];
-    tool.chart.config.chartEpitopes = tool.chartEpitopes;
-    tool.legend.config.chartEpitopes = tool.chartEpitopes;
-    tool.protein.config.proteinEpitope = tool.proteinEpitope;
-    tool.legend.config.proteinEpitope = tool.proteinEpitope;
+    // Update the condition selection because datasets have different conditions
+    tool.chartConditions = tool.data[tool.dataset].conditions;
+    tool.proteinCondition = tool.chartConditions[0];
+    tool.chart.config.chartConditions = tool.chartConditions;
+    tool.legend.config.chartConditions = tool.chartConditions;
+    tool.protein.config.proteinCondition = tool.proteinCondition;
+    tool.legend.config.proteinCondition = tool.proteinCondition;
     // Update the filters
     tool.filters = {};
     if (tool.data[tool.dataset].filter_cols) {
@@ -339,12 +339,12 @@ export class Tool {
   /**
    * Handle updates to which eptiope is shown on the protein
    */
-  updateProteinEpitope(epitope) {
+  updateProteinCondition(condition) {
     let tool = this;
 
     // Update the config
-    tool.proteinEpitope = epitope;
-    tool.protein.config.proteinEpitope = epitope;
+    tool.proteinCondition = condition;
+    tool.protein.config.proteinCondition = condition;
 
     // Update the chart and protein
     tool.protein.updateData();
@@ -354,12 +354,12 @@ export class Tool {
   /**
    * Handle updates to which eptiopes are displayed on the chart
    */
-  updateChartEpitopes(epitopes) {
+  updateChartConditions(conditions) {
     let tool = this;
 
     // Update the config
-    tool.chartEpitopes = epitopes;
-    tool.chart.config.chartEpitopes = epitopes;
+    tool.chartConditions = conditions;
+    tool.chart.config.chartConditions = conditions;
 
     // Update the chart and protein
     tool.chart.updateVis();
@@ -400,14 +400,14 @@ export class Tool {
     // Defaults for the tool's state
     tool.defaultParams = {
       dataset: { abbrev: "e", default: tool.dataset, json: false },
-      proteinEpitope: {
+      proteinCondition: {
         abbrev: "pe",
-        default: tool.data[tool.dataset].epitopes[0],
+        default: tool.data[tool.dataset].conditions[0],
         json: false,
       },
-      chartEpitopes: {
+      chartConditions: {
         abbrev: "ce",
-        default: tool.data[tool.dataset].epitopes,
+        default: tool.data[tool.dataset].conditions,
         json: true,
       },
       summary: { abbrev: "s", default: "sum", json: false },

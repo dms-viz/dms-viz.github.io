@@ -13,7 +13,7 @@ export class Chart {
     this.config = _config;
     this.config = {
       dataset: _config.dataset,
-      chartEpitopes: _config.chartEpitopes,
+      chartConditions: _config.chartConditions,
       summary: _config.summary,
       floor: _config.floor,
       metric: _config.metric,
@@ -391,49 +391,49 @@ export class Chart {
       return newRow;
     });
 
-    // Summarize and filter the datasets based on the selections and epitopes
+    // Summarize and filter the datasets based on the selections and conditions
     vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
-      vis.config.chartEpitopes.includes(d.epitope)
+      vis.config.chartConditions.includes(d.condition)
     );
 
-    // Group the data by epitope
-    vis.mutMetricSummaryPerEpitope = Array.from(
+    // Group the data by condition
+    vis.mutMetricSummaryPerCondition = Array.from(
       d3.group(
         // Filter to only the key columns
         vis.mutMetricSummary.map((e) => {
           return {
-            epitope: e.epitope,
+            condition: e.condition,
             site: e.site,
             [vis.config.summary]: e[vis.config.summary],
           };
         }),
-        (d) => d.epitope
+        (d) => d.condition
       ),
-      ([key, value]) => ({ epitope: key, data: value })
+      ([key, value]) => ({ condition: key, data: value })
     );
 
     // Take the data for the line plot and fill in 'null' for the summary metric if the site is not in the data
     const [minSite, maxSite] = d3.extent(vis.mutMetricSummary, (d) => d.site);
 
     // Go through each object in the data array
-    vis.mutMetricSummaryPerEpitope.forEach((obj) => {
-      let epitopeData = obj.data;
-      const epitope = obj.epitope;
-      let dataBySite = new Map(epitopeData.map((item) => [item.site, item]));
+    vis.mutMetricSummaryPerCondition.forEach((obj) => {
+      let conditionData = obj.data;
+      const condition = obj.condition;
+      let dataBySite = new Map(conditionData.map((item) => [item.site, item]));
 
       // Iterate from minSite to maxSite
       for (let site = minSite; site <= maxSite; site++) {
         // If the site is not in the dataBySite map, add it with null metric
         if (!dataBySite.has(site)) {
-          epitopeData.push({
-            epitope: epitope,
+          conditionData.push({
+            condition: condition,
             site: site,
             [vis.config.summary]: null,
           });
         }
       }
       // Sort the data by site after adding missing ones
-      epitopeData.sort((a, b) => a.site - b.site);
+      conditionData.sort((a, b) => a.site - b.site);
     });
 
     // Filter out the sites where the metric is undefined
@@ -453,21 +453,21 @@ export class Chart {
         d[vis.config.summary] ===
         d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
     )[0].site;
-    vis.initEpitopeSelection = vis.mutMetricSummary.filter(
+    vis.initConditionSelection = vis.mutMetricSummary.filter(
       (d) =>
         d[vis.config.summary] ===
         d3.max(vis.mutMetricSummary, (d) => d[vis.config.summary])
-    )[0].epitope;
+    )[0].condition;
 
     // Initialize the heatmap data for the selected site
     vis.mutMetricHeatmap = vis.mutMetric.filter(
       (e) =>
         e.site === vis.initSiteSelection &&
-        e.epitope === vis.initEpitopeSelection
+        e.condition === vis.initConditionSelection
     );
     // Make the color scheme for the plots
     vis.positiveColor =
-      vis.data[vis.config.dataset].epitope_colors[vis.initEpitopeSelection];
+      vis.data[vis.config.dataset].condition_colors[vis.initConditionSelection];
     vis.negativeColor = invertColor(vis.positiveColor);
     // Get the amino acid alphabet for the dataset
     vis.alphabet = vis.data[vis.config.dataset].alphabet;
@@ -606,20 +606,20 @@ export class Chart {
     // Draw the CONTEXT plot
     vis.contextAreaG
       .selectAll(".context-area")
-      .data(vis.mutMetricSummaryPerEpitope, (d) => `${d.epitope}-${d.site}`)
+      .data(vis.mutMetricSummaryPerCondition, (d) => `${d.condition}-${d.site}`)
       .join("path")
       .attr("class", "context-area")
       .attr("clip-path", "url(#contextClipPath)")
       .attr("d", (d) => vis.contextArea(d.data))
       .attr(
         "fill",
-        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
       );
 
     // Draw the FOCUS plot
     vis.focusLineG
       .selectAll(".focus-line")
-      .data(vis.mutMetricSummaryPerEpitope, (d) => `${d.epitope}-${d.site}`)
+      .data(vis.mutMetricSummaryPerCondition, (d) => `${d.condition}-${d.site}`)
       .join("path")
       .attr("class", "focus-line")
       .attr("clip-path", "url(#focusClipPath)")
@@ -631,11 +631,11 @@ export class Chart {
       .attr("d", (d) => vis.focusLine(d.data))
       .attr(
         "stroke",
-        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
       );
     vis.focusCircleG
       .selectAll("circle")
-      .data(vis.filteredMutMetricSummary, (d) => `${d.epitope}-${d.site}`)
+      .data(vis.filteredMutMetricSummary, (d) => `${d.condition}-${d.site}`)
       .join(
         (enter) =>
           enter
@@ -653,7 +653,7 @@ export class Chart {
       .attr("fill", "white")
       .attr(
         "stroke",
-        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
       )
       .attr("stroke-width", 2)
       .on("mouseover", (evt, d) => {
@@ -668,7 +668,7 @@ export class Chart {
           )
           .style(
             "border-color",
-            vis.data[vis.config.dataset].epitope_colors[d.epitope]
+            vis.data[vis.config.dataset].condition_colors[d.condition]
           );
       })
       .on("mousemove", (evt) => {
@@ -689,7 +689,7 @@ export class Chart {
       .filter((d) => vis.selection.map((d) => d.site).includes(d.site))
       .attr(
         "fill",
-        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
       )
       .classed("selected", true);
 
@@ -699,7 +699,7 @@ export class Chart {
       .filter(
         (d) =>
           d.site === vis.initSiteSelection &&
-          d.epitope === vis.initEpitopeSelection
+          d.condition === vis.initConditionSelection
       )
       .classed("heatmap-site", true)
       .attr("r", 8)
@@ -922,7 +922,7 @@ export class Chart {
         .classed("selected", true)
         .attr(
           "fill",
-          (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
+          (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
         );
 
       // Add the selected points to the selection
@@ -994,8 +994,9 @@ export class Chart {
 
     // Get the site information from the datum
     const site = datum.site;
-    const epitope = datum.epitope;
-    vis.positiveColor = vis.data[vis.config.dataset].epitope_colors[epitope];
+    const condition = datum.condition;
+    vis.positiveColor =
+      vis.data[vis.config.dataset].condition_colors[condition];
     vis.negativeColor = invertColor(vis.positiveColor);
     vis.wildtype = datum.wildtype;
 
@@ -1006,14 +1007,14 @@ export class Chart {
       .attr("stroke-width", 2)
       .attr(
         "stroke",
-        (d) => vis.data[vis.config.dataset].epitope_colors[d.epitope]
+        (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
       )
       .classed("heatmap-site", false);
 
     // Highlight the selected site in the focus plot
     vis.focusPlot
       .selectAll("circle")
-      .filter((d) => d.site === site && d.epitope === epitope)
+      .filter((d) => d.site === site && d.condition === condition)
       .classed("heatmap-site", true)
       .attr("r", 8)
       .attr("stroke", "black")
@@ -1021,13 +1022,13 @@ export class Chart {
 
     // Initialize the heatmap data for the selected site
     vis.mutMetricHeatmap = vis.mutMetric.filter(
-      (e) => e.site === site && e.epitope === epitope
+      (e) => e.site === site && e.condition === condition
     );
 
     // Update the scale based on the site
     vis.xScaleHeatmap.domain([site]);
 
-    // Update the color scale based on the epitope
+    // Update the color scale based on the condition
     if (!vis.config.floor) {
       vis.colorScaleHeatmap.range([
         vis.negativeColor,

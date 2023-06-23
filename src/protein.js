@@ -184,7 +184,7 @@ export class Protein {
     // Summarize the data
     protein.mutMetric = protein.data[protein.config.dataset].mut_metric_df;
     protein.mutMetricSummary = summarizeMetricData(protein.mutMetric).filter(
-      (e) => e.epitope === protein.config.proteinEpitope
+      (e) => e.condition === protein.config.proteinCondition
     );
 
     // Set up the accessor function
@@ -196,8 +196,8 @@ export class Protein {
 
     // Update the color scale
     const positiveColor =
-      protein.data[protein.config.dataset].epitope_colors[
-        protein.config.proteinEpitope
+      protein.data[protein.config.dataset].condition_colors[
+        protein.config.proteinCondition
       ];
     const negativeColor = invertColor(positiveColor);
     const metricExtent = d3
@@ -342,7 +342,7 @@ export class Protein {
           (now.getMonth() + 1).toString().padStart(2, "0") +
           "-" +
           now.getDate().toString().padStart(2, "0");
-        let fileName = `${protein.config.dataset}_${protein.config.proteinEpitope}_${dateString}.png`;
+        let fileName = `${protein.config.dataset}_${protein.config.proteinCondition}_${dateString}.png`;
         NGL.download(blob, fileName);
       });
   }
