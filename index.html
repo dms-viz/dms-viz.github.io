@@ -12,7 +12,7 @@
       rel="stylesheet"
     />
     
-    <script type="module" crossorigin src="/assets/index.5a149ca7.js"></script>
+    <script type="module" crossorigin src="/assets/index.2b216d54.js"></script>
     <link rel="stylesheet" href="/assets/index.82a077c1.css">
   </head>
   <!-- Body Contents -->
@@ -57,8 +57,8 @@
           <p>
             To configure the visualization, you can open the menu to the left to
             choose various aspects of the view including colors, summary
-            statistics, filters, and more. You can also switch between
-            experiments present in the same file.
+            statistics, filters, and more. You can also switch between datasets
+            present in the same JSON file.
           </p>
           <p>
             To use the visualization, you can zoom in and out of regions of your
@@ -74,13 +74,13 @@
             either <strong>double-click</strong> on the <em>line/point</em> plot
             or hold down the option key <kbd>⌥</kbd> and
             <strong>brush</strong> over the sites that you want to deselect. If
-            there is more than one epitope in your data, an interactive legend
-            will appear in the <em>Chart Options</em>. You can select an epitope
-            to color the protein structure with by <strong>clicking</strong> on
-            an epitope in the legend. You can remove or add epitopes to the
-            <em>line/point</em> plot by holding down the option key
-            <kbd>⌥</kbd> while <strong>clicking</strong>. You can reorient and
-            zoom into the protein structure by
+            there is more than one condition in your data, an interactive legend
+            will appear in the <em>Chart Options</em>. You can select an
+            condition to color the protein structure with by
+            <strong>clicking</strong> on an condition in the legend. You can
+            remove or add conditions to the <em>line/point</em> plot by holding
+            down the option key <kbd>⌥</kbd> while <strong>clicking</strong>.
+            You can reorient and zoom into the protein structure by
             <strong>clicking and dragging</strong> it around the window. You can
             also reset the protein structure to its original orientation by
             pressing the <kbd>R</kbd> button on your keyboard.
@@ -141,11 +141,11 @@
           </button>
           <div class="accordion-content">
             <div class="accordion-option">
-              <label for="Experiment">Experiment</label>
-              <select name="Experiment" id="experiment"></select>
+              <label for="Dataset">Dataset</label>
+              <select name="Dataset" id="dataset"></select>
             </div>
-            <div class="accordion-option">
-              <label>Epitope</label>
+            <div class="accordion-option" id="condition-option">
+              <label>Condition</label>
               <div class="legend" id="legend"></div>
             </div>
             <div class="accordion-option">
