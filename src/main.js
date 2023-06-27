@@ -136,8 +136,8 @@ function setUpJsonFileUploadListeners() {
 
 // Set up the event listeners for the chart options
 function setUpChartOptionListeners() {
-  d3.select("#experiment").on("change", function () {
-    State.updateSelectedExperiment(this);
+  d3.select("#dataset").on("change", function () {
+    State.updateSelectedDataset(this);
     // Reize the accordion menu if necessary (i.e. legend size changes)
     let btn = document.getElementById("chart-btn");
     if (btn.classList.contains("is-open")) {
@@ -145,11 +145,11 @@ function setUpChartOptionListeners() {
       content.style.maxHeight = content.scrollHeight + "px";
     }
   });
-  window.addEventListener("proteinEpitopeSelected", function (event) {
-    State.updateProteinEpitope(event.detail);
+  window.addEventListener("proteinConditionSelected", function (event) {
+    State.updateProteinCondition(event.detail);
   });
-  window.addEventListener("chartEpitopesSelected", function (event) {
-    State.updateChartEpitopes(event.detail);
+  window.addEventListener("chartConditionsSelected", function (event) {
+    State.updateChartConditions(event.detail);
   });
   d3.select("#summary").on("change", function () {
     State.updateChartOptions(this);

@@ -20,34 +20,46 @@ export class Tool {
   initTool() {
     let tool = this;
 
-    // Format the data for each experiment
-    for (const experiment in tool.data) {
-      // Get the epitopes for the experiment and convert to strings
-      tool.data[experiment].epitopes = tool.data[experiment].epitopes.map((e) =>
-        e.toString()
-      );
+    // Format the data for each dataset in the JSON file
+    for (const dataset in tool.data) {
+      // Check if conditions_col is null
+      if (tool.data[dataset].condition_col === null) {
+        tool.data[dataset].conditions = ["default"];
+        // Set the legend to false because there is only one condition
+        tool.data[dataset].legend = false;
+      } else {
+        // Get the conditions for the dataset and convert to strings
+        tool.data[dataset].conditions = tool.data[dataset].conditions.map((e) =>
+          e.toString()
+        );
+        tool.data[dataset].legend = true;
+      }
       // Get the map for reference sites to sequential sites
-      const siteMap = tool.data[experiment].sitemap;
+      const siteMap = tool.data[dataset].sitemap;
       // Get the column name of the mutation-level metric
-      const metric = tool.data[experiment].metric_col;
+      const metric_col = tool.data[dataset].metric_col;
+      // Get the name of the condition column
+      const condition_col = tool.data[dataset].condition_col;
       // Map the reference sites to sequential and protein sites
-      tool.data[experiment].mut_metric_df = tool.data[
-        experiment
-      ].mut_metric_df.map((e) => {
-        return {
-          ...e,
-          site: siteMap[e.reference_site].sequential_site,
-          site_reference: e.reference_site,
-          site_protein: siteMap[e.reference_site].protein_site,
-          site_chain: siteMap[e.reference_site].chains,
-          metric: e[metric],
-          epitope: e.epitope.toString(),
-        };
-      });
+      tool.data[dataset].mut_metric_df = tool.data[dataset].mut_metric_df.map(
+        (e) => {
+          const condition =
+            condition_col !== null ? e[condition_col].toString() : "default";
+          return {
+            ...e,
+            site: siteMap[e.reference_site].sequential_site,
+            site_reference: e.reference_site,
+            site_protein: siteMap[e.reference_site].protein_site,
+            site_chain: siteMap[e.reference_site].chains,
+            metric: e[metric_col],
+            condition: condition,
+          };
+        }
+      );
     }
 
-    // Set the default experiment
-    tool.experiment = Object.keys(tool.data)[0];
+    // Set the default dataset
+    tool.dataset = Object.keys(tool.data)[0];
 
     // Get the detils from the data
     tool.setState();
@@ -59,12 +71,12 @@ export class Tool {
     tool.chart = new Chart(
       {
         parentElement: "#chart",
-        experiment: tool.experiment,
-        chartEpitopes: tool.chartEpitopes,
+        dataset: tool.dataset,
+        chartConditions: tool.chartConditions,
         summary: tool.summary,
         floor: tool.floor,
-        metric: tool.data[tool.experiment].metric_col,
-        tooltips: tool.data[tool.experiment].tooltip_cols,
+        metric: tool.data[tool.dataset].metric_col,
+        tooltips: tool.data[tool.dataset].tooltip_cols,
         filters: tool.filters,
       },
       tool.data
@@ -74,9 +86,10 @@ export class Tool {
     tool.legend = new Legend(
       {
         parentElement: "#legend",
-        experiment: tool.experiment,
-        proteinEpitope: tool.proteinEpitope,
-        chartEpitopes: tool.chartEpitopes,
+        dataset: tool.dataset,
+        proteinCondition: tool.proteinCondition,
+        chartConditions: tool.chartConditions,
+        label: tool.data[tool.dataset].condition_col,
       },
       tool.data
     );
@@ -85,11 +98,11 @@ export class Tool {
     tool.protein = new Protein(
       {
         parentElement: "viewport",
-        experiment: tool.experiment,
-        proteinEpitope: tool.proteinEpitope,
+        dataset: tool.dataset,
+        proteinCondition: tool.proteinCondition,
         summary: tool.summary,
         floor: tool.floor,
-        pdbID: tool.data[tool.experiment].pdb,
+        pdbID: tool.data[tool.dataset].pdb,
         dispatch: tool.chart.dispatch,
         proteinRepresentation: tool.proteinRepresentation,
         selectionRepresentation: tool.selectionRepresentation,
@@ -108,9 +121,9 @@ export class Tool {
 
     // Populate Chart Options
     tool.initSelect(
-      d3.select("#experiment"),
+      d3.select("#dataset"),
       Object.keys(tool.data),
-      tool.experiment
+      tool.dataset
     );
     tool.initSelect(
       d3.select("#summary"),
@@ -150,14 +163,14 @@ export class Tool {
 
     // Populate Filter Sites
     d3.select("#filters").html("");
-    if (tool.data[tool.experiment].filter_cols) {
-      Object.keys(tool.data[tool.experiment].filter_cols).forEach((col) => {
+    if (tool.data[tool.dataset].filter_cols) {
+      Object.keys(tool.data[tool.dataset].filter_cols).forEach((col) => {
         // Add the filter to the page
         tool.initFilter(
           col,
-          tool.data[tool.experiment].filter_cols[col],
-          d3.min(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
-          d3.max(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
+          tool.data[tool.dataset].filter_cols[col],
+          d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
+          d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
           tool.filters[col]
         );
       });
@@ -238,45 +251,42 @@ export class Tool {
       .text(d3.format(".2f")(value));
   }
   /**
-   * Handle updates to the selected experiment
+   * Handle updates to the selected dataset
    */
-  updateSelectedExperiment(node) {
+  updateSelectedDataset(node) {
     let tool = this;
-    // Update the experiment selection in the chart, protein, and legend
-    tool.experiment = d3.select(node).property("value");
-    tool.chart.config.experiment = tool.experiment;
-    tool.protein.config.experiment = tool.experiment;
-    tool.legend.config.experiment = tool.experiment;
-    // Update the epitope selection because experiments have different epitopes
-    tool.chartEpitopes = tool.data[tool.experiment].epitopes;
-    tool.proteinEpitope = tool.chartEpitopes[0];
-    tool.chart.config.chartEpitopes = tool.chartEpitopes;
-    tool.legend.config.chartEpitopes = tool.chartEpitopes;
-    tool.protein.config.proteinEpitope = tool.proteinEpitope;
-    tool.legend.config.proteinEpitope = tool.proteinEpitope;
+    // Update the dataset selection in the chart, protein, and legend
+    tool.dataset = d3.select(node).property("value");
+    tool.chart.config.dataset = tool.dataset;
+    tool.protein.config.dataset = tool.dataset;
+    tool.legend.config.dataset = tool.dataset;
+    // Update the condition selection because datasets have different conditions
+    tool.chartConditions = tool.data[tool.dataset].conditions;
+    tool.proteinCondition = tool.chartConditions[0];
+    tool.chart.config.chartConditions = tool.chartConditions;
+    tool.legend.config.chartConditions = tool.chartConditions;
+    tool.protein.config.proteinCondition = tool.proteinCondition;
+    tool.legend.config.proteinCondition = tool.proteinCondition;
     // Update the filters
     tool.filters = {};
-    if (tool.data[tool.experiment].filter_cols) {
-      tool.filters = Object.keys(tool.data[tool.experiment].filter_cols).reduce(
+    if (tool.data[tool.dataset].filter_cols) {
+      tool.filters = Object.keys(tool.data[tool.dataset].filter_cols).reduce(
         (acc, key) => ({
           ...acc,
-          [key]: d3.min(
-            tool.data[tool.experiment].mut_metric_df,
-            (e) => e[key]
-          ),
+          [key]: d3.min(tool.data[tool.dataset].mut_metric_df, (e) => e[key]),
         }),
         {}
       );
     }
     d3.select("#filters").html("");
-    if (tool.data[tool.experiment].filter_cols) {
-      Object.keys(tool.data[tool.experiment].filter_cols).forEach((col) => {
+    if (tool.data[tool.dataset].filter_cols) {
+      Object.keys(tool.data[tool.dataset].filter_cols).forEach((col) => {
         // Add the filter to the page
         tool.initFilter(
           col,
-          tool.data[tool.experiment].filter_cols[col],
-          d3.min(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
-          d3.max(tool.data[tool.experiment].mut_metric_df, (d) => d[col]),
+          tool.data[tool.dataset].filter_cols[col],
+          d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
+          d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
           tool.filters[col]
         );
       });
@@ -286,11 +296,11 @@ export class Tool {
     // Update the chart and deselect all sites
     tool.chart.deselectSites();
     tool.chart.updateVis();
-    tool.legend.updateVis();
+    tool.legend.updateLegend();
 
     // Only update the protein if the structure has changed
-    if (tool.data[tool.experiment].pdb !== tool.protein.config.pdbID) {
-      tool.protein.config.pdbID = tool.data[tool.experiment].pdb;
+    if (tool.data[tool.dataset].pdb !== tool.protein.config.pdbID) {
+      tool.protein.config.pdbID = tool.data[tool.dataset].pdb;
       tool.protein.clear();
       tool.protein.load();
     }
@@ -298,7 +308,7 @@ export class Tool {
     tool.updateURLParams();
   }
   /**
-   * Handle updates within a single experiment
+   * Handle updates within a single dataset
    */
   updateChartOptions(node) {
     let tool = this;
@@ -342,12 +352,12 @@ export class Tool {
   /**
    * Handle updates to which eptiope is shown on the protein
    */
-  updateProteinEpitope(epitope) {
+  updateProteinCondition(condition) {
     let tool = this;
 
     // Update the config
-    tool.proteinEpitope = epitope;
-    tool.protein.config.proteinEpitope = epitope;
+    tool.proteinCondition = condition;
+    tool.protein.config.proteinCondition = condition;
 
     // Update the chart and protein
     tool.protein.updateData();
@@ -357,12 +367,12 @@ export class Tool {
   /**
    * Handle updates to which eptiopes are displayed on the chart
    */
-  updateChartEpitopes(epitopes) {
+  updateChartConditions(conditions) {
     let tool = this;
 
     // Update the config
-    tool.chartEpitopes = epitopes;
-    tool.chart.config.chartEpitopes = epitopes;
+    tool.chartConditions = conditions;
+    tool.chart.config.chartConditions = conditions;
 
     // Update the chart and protein
     tool.chart.updateVis();
@@ -402,15 +412,15 @@ export class Tool {
 
     // Defaults for the tool's state
     tool.defaultParams = {
-      experiment: { abbrev: "e", default: tool.experiment, json: false },
-      proteinEpitope: {
+      dataset: { abbrev: "e", default: tool.dataset, json: false },
+      proteinCondition: {
         abbrev: "pe",
-        default: tool.data[tool.experiment].epitopes[0],
+        default: tool.data[tool.dataset].conditions[0],
         json: false,
       },
-      chartEpitopes: {
+      chartConditions: {
         abbrev: "ce",
-        default: tool.data[tool.experiment].epitopes,
+        default: tool.data[tool.dataset].conditions,
         json: true,
       },
       summary: { abbrev: "s", default: "sum", json: false },
@@ -432,12 +442,12 @@ export class Tool {
       showGlycans: { abbrev: "g", default: false, json: false },
       filters: {
         abbrev: "fi",
-        default: tool.data[tool.experiment].filter_cols
-          ? Object.keys(tool.data[tool.experiment].filter_cols).reduce(
+        default: tool.data[tool.dataset].filter_cols
+          ? Object.keys(tool.data[tool.dataset].filter_cols).reduce(
               (acc, key) => ({
                 ...acc,
                 [key]: d3.min(
-                  tool.data[tool.experiment].mut_metric_df,
+                  tool.data[tool.dataset].mut_metric_df,
                   (e) => e[key]
                 ),
               }),
