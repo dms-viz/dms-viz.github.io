@@ -14,7 +14,7 @@ export class Legend {
       dataset: _config.dataset,
       proteinCondition: _config.proteinCondition,
       chartConditions: _config.chartConditions,
-      prefix: _config.prefix || "condition",
+      label: _config.label || "Condition",
     };
     // Data is a deep copy of the data
     this.data = JSON.parse(JSON.stringify(_data));
@@ -64,6 +64,9 @@ export class Legend {
       document.getElementById("condition-option").style.display = "none";
       return;
     } else {
+      // Select the label element inside the div with id 'condition-option'
+      const label = document.querySelector("#condition-option label");
+      label.textContent = vis.config.label;
       document.getElementById("condition-option").style.display = "block";
     }
 
@@ -178,7 +181,7 @@ export class Legend {
             .attr("class", "condition-label")
             .attr("x", vis.margin.left * 2)
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
-            .text((d) => `${vis.config.prefix} ${d}`)
+            .text((d) => `${d}`)
             .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
               vis.config.chartConditions.includes(d) ? "1" : "0.2"
@@ -202,7 +205,7 @@ export class Legend {
         (update) =>
           update
             .attr("y", (d, i) => vis.margin.top + i * vis.margin.point)
-            .text((d) => `${vis.config.prefix} ${d}`)
+            .text((d) => `${d}`)
             .style("fill", (d) => vis.conditionColors[d])
             .style("opacity", (d) =>
               vis.config.chartConditions.includes(d) ? "1" : "0.2"

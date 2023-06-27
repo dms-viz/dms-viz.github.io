@@ -22,8 +22,8 @@ export class Tool {
 
     // Format the data for each dataset in the JSON file
     for (const dataset in tool.data) {
-      // If the dataset doesn't have any 'conditions' set it to default
-      if (!tool.data[dataset].conditions) {
+      // Check if conditions_col is null
+      if (tool.data[dataset].condition_col === null) {
         tool.data[dataset].conditions = ["default"];
         // Set the legend to false because there is only one condition
         tool.data[dataset].legend = false;
@@ -37,18 +37,21 @@ export class Tool {
       // Get the map for reference sites to sequential sites
       const siteMap = tool.data[dataset].sitemap;
       // Get the column name of the mutation-level metric
-      const metric = tool.data[dataset].metric_col;
+      const metric_col = tool.data[dataset].metric_col;
+      // Get the name of the condition column
+      const condition_col = tool.data[dataset].condition_col;
       // Map the reference sites to sequential and protein sites
       tool.data[dataset].mut_metric_df = tool.data[dataset].mut_metric_df.map(
         (e) => {
-          const condition = e.condition ? e.condition.toString() : "default";
+          const condition =
+            condition_col !== null ? e[condition_col].toString() : "default";
           return {
             ...e,
             site: siteMap[e.reference_site].sequential_site,
             site_reference: e.reference_site,
             site_protein: siteMap[e.reference_site].protein_site,
             site_chain: siteMap[e.reference_site].chains,
-            metric: e[metric],
+            metric: e[metric_col],
             condition: condition,
           };
         }
@@ -86,7 +89,7 @@ export class Tool {
         dataset: tool.dataset,
         proteinCondition: tool.proteinCondition,
         chartConditions: tool.chartConditions,
-        prefix: "epitope",
+        label: tool.data[tool.dataset].condition_col,
       },
       tool.data
     );
