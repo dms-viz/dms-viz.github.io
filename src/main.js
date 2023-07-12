@@ -1,9 +1,11 @@
 import "../style.css";
-import "./ui.js";
+import { UI } from "./ui.js";
 import * as d3 from "d3";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
+// Initialize the UI
+const ui = new UI();
 // Initialize the tool and it's state
 let State;
 fetchData().then((data) => {
@@ -212,7 +214,7 @@ function setUpDownloadButtonListeners() {
 function setUpWindowResizeListener() {
   // Set up the event listener to respond to window resizing
   window.addEventListener("resize", function () {
-    State.chart.resize();
-    State.protein.resize();
+    const chartHeight = State.chart.resize();
+    State.protein.resize(chartHeight);
   });
 }
