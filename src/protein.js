@@ -295,22 +295,17 @@ export class Protein {
   /**
    * Reize the protein structure
    */
-  resize() {
+  resize(chartHeight) {
     let protein = this;
 
-    // Get the height of the window, header, and chart
-    const windowHeight = window.innerHeight;
-    const headerHeight = document.querySelector(".header").offsetHeight;
-    const chartHeight = document.querySelector(".chart").offsetHeight;
-    // Margin below the protein viewport
-    const margins = 50;
-    // Calculate the remaining height
-    const proteinHeight = windowHeight - headerHeight - chartHeight - margins;
+    // Calculate the height of the protein, which is 1.5 times the height of the chart
+    const proteinHeight = chartHeight * 1.5;
+
+    // Set the height of the protein element
     document.querySelector(".protein").style.height = `${proteinHeight}px`;
+
     // Handle the resize event for the protein structure
     protein.stage.handleResize();
-    // Reset the Zoom
-    // protein.stage.autoView();
   }
   /**
    * Clear the protein structure and reload it

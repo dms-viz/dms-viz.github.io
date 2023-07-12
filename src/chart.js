@@ -1146,6 +1146,9 @@ export class Chart {
     vis.svg
       .attr("width", vis.config.width)
       .attr("height", vis.config.width / vis.aspect);
+
+    // Return the height to pass to the protein
+    return vis.config.width / vis.aspect;
   }
   /**
    * Save plot as a PNG image
