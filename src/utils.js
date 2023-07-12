@@ -1,7 +1,11 @@
 import * as d3 from "d3";
 
 // Summarize metric data
-export function summarizeMetricData(data) {
+export function summarizeMetricData(data, excludedAminoAcids = null) {
+  // Filter data if excludedAminoAcids is not null
+  if (excludedAminoAcids) {
+    data = data.filter((d) => !excludedAminoAcids.includes(d.mutant));
+  }
   // Calculate summary stats for each site/condition pair
   const metricDataRollup = d3.rollup(
     data,

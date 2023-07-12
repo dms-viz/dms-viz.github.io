@@ -20,6 +20,7 @@ export class Chart {
       tooltips: _config.tooltips,
       filters: _config.filters,
       parentElement: _config.parentElement,
+      excludedAminoAcids: _config.excludedAminoAcids,
       width: 1100,
       height: 300,
       scaling: {
@@ -391,10 +392,14 @@ export class Chart {
       return newRow;
     });
 
+    // Get the excluded amino acids for the dataset
+    vis.excludedAminoAcids = vis.data[vis.config.dataset].excludedAminoAcids;
+
     // Summarize and filter the datasets based on the selections and conditions
-    vis.mutMetricSummary = summarizeMetricData(vis.mutMetric).filter((d) =>
-      vis.config.chartConditions.includes(d.condition)
-    );
+    vis.mutMetricSummary = summarizeMetricData(
+      vis.mutMetric,
+      vis.excludedAminoAcids
+    ).filter((d) => vis.config.chartConditions.includes(d.condition));
 
     // Group the data by condition
     vis.mutMetricSummaryPerCondition = Array.from(
