@@ -83,6 +83,8 @@ export class UI {
       const mediaQuery = window.matchMedia("(max-width: 1000px)");
       if (mediaQuery.matches) {
         this.toggleSidebar();
+      } else {
+        window.dispatchEvent(new Event("resize"));
       }
     });
 

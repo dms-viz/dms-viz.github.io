@@ -5,7 +5,7 @@ import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
 // Initialize the UI
-const ui = new UI();
+new UI();
 // Initialize the tool and it's state
 let State;
 fetchData().then((data) => {
