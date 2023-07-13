@@ -1,5 +1,6 @@
 import "../style.css";
 import { UI, Alerts } from "./ui.js";
+import { validateSpecification } from "./utils.js";
 import * as d3 from "d3";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
@@ -35,6 +36,13 @@ async function fetchData() {
         return exampleData; // return example data as fallback
       } else {
         const data = await response.json();
+        // Validate the data
+        try {
+          validateSpecification(data);
+        } catch (error) {
+          alert.showAlert(error.message);
+          return exampleData; // return example data as fallback
+        }
         return data;
       }
     } catch (error) {
@@ -72,6 +80,13 @@ function setUpJsonFileUploadListeners() {
     reader.onload = function () {
       // Parse the JSON file into an object and write it to data
       const data = JSON.parse(reader.result);
+      // Validate the data
+      try {
+        validateSpecification(data);
+      } catch (error) {
+        alert.showAlert(error.message);
+        return;
+      }
       // Update the tool's state
       State.data = data;
       State.initTool();
@@ -117,6 +132,13 @@ function setUpJsonFileUploadListeners() {
 
       // Parse the response into a JSON object
       const data = await response.json();
+      // Validate the data
+      try {
+        validateSpecification(data);
+      } catch (error) {
+        alert.showAlert(error.message);
+        return;
+      }
 
       // Get the URL parameters
       const urlParams = new URLSearchParams();
