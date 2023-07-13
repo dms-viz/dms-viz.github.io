@@ -332,6 +332,30 @@ kbd {
   border-radius: 0 25px 25px 0;
 }
 
+.github-link {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: var(--primary-bg-color);
+}
+
+.github-link a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.github-link .icon {
+  margin-right: 5px;
+}
+
+
 .alert {
   padding: 15px;
   margin-bottom: 20px;
