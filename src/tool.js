@@ -75,6 +75,7 @@ export class Tool {
         chartConditions: tool.chartConditions,
         summary: tool.summary,
         floor: tool.floor,
+        mutations: tool.mutations,
         metric: tool.data[tool.dataset].metric_col,
         tooltips: tool.data[tool.dataset].tooltip_cols,
         filters: tool.filters,
@@ -131,6 +132,7 @@ export class Tool {
       tool.summary
     );
     tool.initCheckbox(d3.select("#floor"), tool.floor);
+    tool.initCheckbox(d3.select("#mutations"), tool.mutations);
 
     // Populate Protein Options
     tool.initSelect(
@@ -316,7 +318,9 @@ export class Tool {
     // Select the node
     const selection = d3.select(node);
     const id = selection.attr("id");
-    const value = selection.property(id == "floor" ? "checked" : "value");
+    const value = selection.property(
+      id == "floor" || id == "mutations" ? "checked" : "value"
+    );
 
     // Update the config
     tool[id] = value;
@@ -425,6 +429,7 @@ export class Tool {
       },
       summary: { abbrev: "s", default: "sum", json: false },
       floor: { abbrev: "f", default: true, json: false },
+      mutations: { abbrev: "m", default: false, json: false },
       proteinRepresentation: { abbrev: "pr", default: "cartoon", json: false },
       selectionRepresentation: {
         abbrev: "sr",

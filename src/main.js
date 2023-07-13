@@ -159,6 +159,9 @@ function setUpChartOptionListeners() {
   d3.select("#floor").on("change", function () {
     State.updateChartOptions(this);
   });
+  d3.select("#mutations").on("change", function () {
+    State.updateChartOptions(this);
+  });
 }
 
 // Set up the event listeners for the protein options

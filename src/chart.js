@@ -16,6 +16,7 @@ export class Chart {
       chartConditions: _config.chartConditions,
       summary: _config.summary,
       floor: _config.floor,
+      mutations: _config.mutations,
       metric: _config.metric,
       tooltips: _config.tooltips,
       filters: _config.filters,
@@ -410,6 +411,7 @@ export class Chart {
             condition: e.condition,
             site: e.site,
             [vis.config.summary]: e[vis.config.summary],
+            count: e.count,
           };
         }),
         (d) => d.condition
@@ -434,6 +436,7 @@ export class Chart {
             condition: condition,
             site: site,
             [vis.config.summary]: null,
+            count: null,
           });
         }
       }
@@ -490,9 +493,13 @@ export class Chart {
     // Define ACCESSORS
     vis.xAccessorContext = (d) => d.site;
     vis.yAccessorContext = (d) => {
-      return vis.config.floor && d[vis.config.summary] < 0
-        ? 0
-        : d[vis.config.summary];
+      if (vis.config.mutations) {
+        return d.count;
+      } else {
+        return vis.config.floor && d[vis.config.summary] < 0
+          ? 0
+          : d[vis.config.summary];
+      }
     };
     vis.xAccessorFocus = (d) => d.site;
     vis.yAccessorFocus = (d) => {
@@ -512,9 +519,14 @@ export class Chart {
     const xRangeFocus = xExtentFocus[1] - xExtentFocus[0];
     const yExtentFocus = d3.extent(vis.mutMetricSummary, vis.yAccessorFocus);
     const yRangeFocus = yExtentFocus[1] - yExtentFocus[0];
+    const yExtentContext = d3.extent(
+      vis.mutMetricSummary,
+      vis.yAccessorContext
+    );
+    const yRangeContext = yExtentContext[1] - yExtentContext[0];
     vis.yScaleContext.domain([
-      yExtentFocus[0],
-      yExtentFocus[1] + yRangeFocus * 0.05,
+      yExtentContext[0],
+      yExtentContext[1] + yRangeContext * 0.05,
     ]);
     vis.xScaleContext.domain([
       xExtentFocus[0],
@@ -616,9 +628,10 @@ export class Chart {
       .attr("class", "context-area")
       .attr("clip-path", "url(#contextClipPath)")
       .attr("d", (d) => vis.contextArea(d.data))
-      .attr(
-        "fill",
-        (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
+      .attr("fill", (d) =>
+        vis.config.mutations
+          ? "#8a8a8a"
+          : vis.data[vis.config.dataset].condition_colors[d.condition]
       );
 
     // Draw the FOCUS plot
