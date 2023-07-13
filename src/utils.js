@@ -12,6 +12,7 @@ export function summarizeMetricData(data, excludedAminoAcids = null) {
     (v) => {
       if (v.every((d) => d.metric === null)) {
         return {
+          count: null,
           mean: null,
           sum: null,
           min: null,
@@ -19,6 +20,7 @@ export function summarizeMetricData(data, excludedAminoAcids = null) {
         };
       }
       return {
+        count: v.length,
         mean: d3.mean(v, (d) => d.metric),
         sum: d3.sum(v, (d) => d.metric),
         min: d3.min(v, (d) => d.metric),

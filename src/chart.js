@@ -669,7 +669,9 @@ export class Chart {
               vis.config.metric
             } ${vis.config.summary}:</strong> ${d[vis.config.summary].toFixed(
               2
-            )}<br><strong>Wildtype:</strong> ${d.wildtype}`
+            )}<br><strong>Wildtype:</strong> ${
+              d.wildtype
+            }<br><strong>Mutations:</strong> ${d.count}`
           )
           .style(
             "border-color",
