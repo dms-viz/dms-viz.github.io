@@ -332,6 +332,38 @@ kbd {
   border-radius: 0 25px 25px 0;
 }
 
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  position: relative;
+  padding-right: 35px; 
+}
+
+.alert span {
+  font-weight: bold;
+}
+
+.alert.hidden {
+  display: none;
+}
+
+.alert-close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.alert-close i {
+  font-size: 1.25rem;
+}
+
 .main {
   margin-top: 3em;
   padding: 0 2.5em 0 calc(var(--nav-width) + 2.5em);

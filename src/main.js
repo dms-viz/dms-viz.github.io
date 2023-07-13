@@ -5,7 +5,7 @@ import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
 // Initialize the UI
-new UI();
+const ui = new UI();
 // Initialize the tool and it's state
 let State;
 fetchData().then((data) => {
@@ -30,14 +30,14 @@ async function fetchData() {
       const response = await fetch(dataUrl);
 
       if (!response.ok) {
-        alert(`HTTP error! status: ${response.status}`);
+        ui.showAlert(`HTTP error! status: ${response.status}`);
         return exampleData; // return example data as fallback
       } else {
         const data = await response.json();
         return data;
       }
     } catch (error) {
-      alert(`Fetch operation failed: ${error.message}`);
+      ui.showAlert(`Fetch operation failed: ${error.message}`);
       return exampleData; // return example data as fallback
     }
   } else {
@@ -53,7 +53,7 @@ function setUpJsonFileUploadListeners() {
 
     // Check if a file was selected
     if (input.files.length === 0) {
-      alert("Please select a JSON file to upload.");
+      ui.showAlert("Please select a JSON file to upload.");
       return;
     }
 
@@ -62,7 +62,7 @@ function setUpJsonFileUploadListeners() {
 
     // Check if the selected file is a JSON file
     if (file.type !== "application/json") {
-      alert("Please select a valid JSON file.");
+      ui.showAlert("Please select a valid JSON file.");
       return;
     }
 
@@ -92,7 +92,7 @@ function setUpJsonFileUploadListeners() {
 
     // Check if a URL was provided
     if (!this.value) {
-      alert("Please enter a URL.");
+      ui.showAlert("Please enter a URL.");
       return;
     }
 
@@ -100,7 +100,7 @@ function setUpJsonFileUploadListeners() {
     try {
       new URL(this.value);
     } catch (_) {
-      alert("Please enter a valid URL.");
+      ui.showAlert("Please enter a valid URL.");
       return;
     }
 
@@ -108,7 +108,7 @@ function setUpJsonFileUploadListeners() {
       const response = await fetch(this.value);
 
       if (!response.ok) {
-        alert(
+        ui.showAlert(
           `There was an error fetching data from the URL. HTTP Status: ${response.status}`
         );
         return;
@@ -131,7 +131,7 @@ function setUpJsonFileUploadListeners() {
       // Clear the local input element
       document.getElementById("local-json-file").value = "";
     } catch (error) {
-      alert(`Fetch operation failed: ${error.message}`);
+      ui.showAlert(`Fetch operation failed: ${error.message}`);
     }
   });
 }

@@ -14,6 +14,9 @@ export class UI {
     this.remoteFile = document.getElementById("remote-file");
     this.accordionParent = document.getElementById("sidebar");
     this.highlightHelp = once(this.highlightHelp.bind(this));
+    this.alertBanner = document.getElementById("alertBanner");
+    this.alertMessage = document.getElementById("alertMessage");
+    this.alertClose = document.getElementById("alertClose");
     this.registerEventListeners();
   }
 
@@ -60,6 +63,17 @@ export class UI {
     }
   }
 
+  // Function to show the alert banner with a specific message and color
+  showAlert(message) {
+    this.alertMessage.textContent = message;
+    this.alertBanner.classList.remove("hidden");
+  }
+
+  // Function to hide the alert banner
+  hideAlert() {
+    this.alertBanner.classList.add("hidden");
+  }
+
   registerEventListeners() {
     this.trigger.addEventListener("click", () => this.toggleModal());
     this.closeButton.addEventListener("click", () => this.toggleModal());
@@ -76,6 +90,7 @@ export class UI {
       if (accordion) {
         this.toggleAccordion(accordion);
       }
+      this.alertClose.addEventListener("click", () => this.hideAlert());
     });
 
     // Shrink the sidebar on load if the screen is less than 1000px
