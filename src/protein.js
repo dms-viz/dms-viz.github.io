@@ -1,6 +1,7 @@
 import * as NGL from "ngl";
 import * as d3 from "d3";
 import { summarizeMetricData, invertColor } from "./utils.js";
+import { Alerts } from "./ui.js";
 
 export class Protein {
   /**
@@ -122,7 +123,8 @@ export class Protein {
         protein.stage.autoView();
       })
       .catch(function (error) {
-        console.error("Failed to load:", error);
+        const alert = new Alerts();
+        alert.showAlert(`Failed to load protein: (${error})`);
       });
   }
   /**

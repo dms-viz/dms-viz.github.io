@@ -1,11 +1,12 @@
 import "../style.css";
-import { UI } from "./ui.js";
+import { UI, Alerts } from "./ui.js";
 import * as d3 from "d3";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
 // Initialize the UI
-const ui = new UI();
+new UI();
+const alert = new Alerts();
 // Initialize the tool and it's state
 let State;
 fetchData().then((data) => {
@@ -30,14 +31,14 @@ async function fetchData() {
       const response = await fetch(dataUrl);
 
       if (!response.ok) {
-        ui.showAlert(`HTTP error! status: ${response.status}`);
+        alert.showAlert(`HTTP error! status: ${response.status}`);
         return exampleData; // return example data as fallback
       } else {
         const data = await response.json();
         return data;
       }
     } catch (error) {
-      ui.showAlert(`Fetch operation failed: ${error.message}`);
+      alert.showAlert(`Fetch operation failed: ${error.message}`);
       return exampleData; // return example data as fallback
     }
   } else {
@@ -53,7 +54,7 @@ function setUpJsonFileUploadListeners() {
 
     // Check if a file was selected
     if (input.files.length === 0) {
-      ui.showAlert("Please select a JSON file to upload.");
+      alert.showAlert("Please select a JSON file to upload.");
       return;
     }
 
@@ -62,7 +63,7 @@ function setUpJsonFileUploadListeners() {
 
     // Check if the selected file is a JSON file
     if (file.type !== "application/json") {
-      ui.showAlert("Please select a valid JSON file.");
+      alert.showAlert("Please select a valid JSON file.");
       return;
     }
 
@@ -92,7 +93,7 @@ function setUpJsonFileUploadListeners() {
 
     // Check if a URL was provided
     if (!this.value) {
-      ui.showAlert("Please enter a URL.");
+      alert.showAlert("Please enter a URL.");
       return;
     }
 
@@ -100,7 +101,7 @@ function setUpJsonFileUploadListeners() {
     try {
       new URL(this.value);
     } catch (_) {
-      ui.showAlert("Please enter a valid URL.");
+      alert.showAlert("Please enter a valid URL.");
       return;
     }
 
@@ -108,7 +109,7 @@ function setUpJsonFileUploadListeners() {
       const response = await fetch(this.value);
 
       if (!response.ok) {
-        ui.showAlert(
+        alert.showAlert(
           `There was an error fetching data from the URL. HTTP Status: ${response.status}`
         );
         return;
@@ -131,7 +132,7 @@ function setUpJsonFileUploadListeners() {
       // Clear the local input element
       document.getElementById("local-json-file").value = "";
     } catch (error) {
-      ui.showAlert(`Fetch operation failed: ${error.message}`);
+      alert.showAlert(`Fetch operation failed: ${error.message}`);
     }
   });
 }
