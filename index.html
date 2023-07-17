@@ -13,7 +13,7 @@
     />
     
     <script type="module" crossorigin src="/assets/index.9bee6516.js"></script>
-    <link rel="stylesheet" href="/assets/index.b9618b9b.css">
+    <link rel="stylesheet" href="/assets/index.ef96eb99.css">
   </head>
   <!-- Body Contents -->
   <body>
@@ -89,182 +89,185 @@
       </div>
       <!-- Sidebar contains plot configuration options -->
       <div class="sidebar" , id="sidebar">
-        <!-- Menu Title -->
-        <div class="header">
-          <h1 class="logo">
-            <img class="logo-img" src="/logo.png" alt="logo" />
-            <span>dms-viz</span>
-          </h1>
-        </div>
-        <!-- Upload Options -->
-        <div class="submenu">
-          <button class="accordion">
-            <div class="icon">
-              <i class="bx bx-upload"></i>
-            </div>
-            <span class="title">Upload Data</span>
-          </button>
-          <div class="accordion-content" id="download-accordion">
-            <div class="accordion-option">
-              <div class="download-toggle">
-                <button class="upload-method" id="local-file">Local</button>
-                <button id="remote-file">Remote</button>
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Menu Title -->
+          <div class="header">
+            <h1 class="logo">
+              <img class="logo-img" src="/logo.png" alt="logo" />
+              <span>dms-viz</span>
+            </h1>
+          </div>
+          <!-- Upload Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bx-upload"></i>
+              </div>
+              <span class="title">Upload Data</span>
+            </button>
+            <div class="accordion-content" id="download-accordion">
+              <div class="accordion-option">
+                <div class="download-toggle">
+                  <button class="upload-method" id="local-file">Local</button>
+                  <button id="remote-file">Remote</button>
+                </div>
+              </div>
+              <div class="accordion-option" id="local-file-input">
+                <input type="file" id="local-json-file" accept=".json" />
+              </div>
+              <div
+                class="accordion-option"
+                id="remote-url-input"
+                style="display: none"
+              >
+                <input
+                  type="url"
+                  name="url"
+                  id="url-json-file"
+                  placeholder="https://example.com"
+                  pattern="https://.*"
+                  autocomplete="off"
+                  required
+                />
               </div>
             </div>
-            <div class="accordion-option" id="local-file-input">
-              <input type="file" id="local-json-file" accept=".json" />
-            </div>
-            <div
-              class="accordion-option"
-              id="remote-url-input"
-              style="display: none"
-            >
-              <input
-                type="url"
-                name="url"
-                id="url-json-file"
-                placeholder="https://example.com"
-                pattern="https://.*"
-                autocomplete="off"
-                required
-              />
+          </div>
+          <!-- Chart Options -->
+          <div class="submenu">
+            <button class="accordion" , id="chart-btn">
+              <div class="icon">
+                <i class="bx bx-scatter-chart"></i>
+              </div>
+              <span class="title">Chart Options</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <label for="Dataset">Dataset</label>
+                <select name="Dataset" id="dataset"></select>
+              </div>
+              <div class="accordion-option" id="condition-option">
+                <label>Condition</label>
+                <div class="legend" id="legend"></div>
+              </div>
+              <div class="accordion-option">
+                <label for="Summary">Summary Metric</label>
+                <select name="Summary" id="summary"></select>
+              </div>
+              <div class="accordion-option">
+                <label for="Floor"
+                  >Floor
+                  <input type="checkbox" name="Floor" id="floor" />
+                </label>
+              </div>
+              <div class="accordion-option">
+                <label for="Mutations"
+                  >Display Mutation Count
+                  <input type="checkbox" name="Mutations" id="mutations" />
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Chart Options -->
-        <div class="submenu">
-          <button class="accordion" , id="chart-btn">
-            <div class="icon">
-              <i class="bx bx-scatter-chart"></i>
-            </div>
-            <span class="title">Chart Options</span>
-          </button>
-          <div class="accordion-content">
-            <div class="accordion-option">
-              <label for="Dataset">Dataset</label>
-              <select name="Dataset" id="dataset"></select>
-            </div>
-            <div class="accordion-option" id="condition-option">
-              <label>Condition</label>
-              <div class="legend" id="legend"></div>
-            </div>
-            <div class="accordion-option">
-              <label for="Summary">Summary Metric</label>
-              <select name="Summary" id="summary"></select>
-            </div>
-            <div class="accordion-option">
-              <label for="Floor"
-                >Floor
-                <input type="checkbox" name="Floor" id="floor" />
-              </label>
-            </div>
-            <div class="accordion-option">
-              <label for="Mutations"
-                >Display Mutation Count
-                <input type="checkbox" name="Mutations" id="mutations" />
-              </label>
-            </div>
-          </div>
-        </div>
-        <!-- Protein Options -->
-        <div class="submenu">
-          <button class="accordion">
-            <div class="icon">
-              <i class="bx bxs-virus"></i>
-            </div>
-            <span class="title">Protein Options</span>
-          </button>
-          <div class="accordion-content">
-            <div class="accordion-option">
-              <label for="ProteinRepr">Protein Representation</label>
-              <select name="ProteinRepr" id="proteinRepresentation"></select>
-            </div>
-            <div class="accordion-option">
-              <label for="SelectionRepr">Selection Representation</label>
-              <select
-                name="SelectionRepr"
-                id="selectionRepresentation"
-              ></select>
-            </div>
-            <div class="accordion-option">
-              <label for="BackgroundRepr">Peripheral Representation</label>
-              <select
-                name="BackgroundRepr"
-                id="backgroundRepresentation"
-              ></select>
-            </div>
-            <div class="accordion-option">
-              <label for="LignadRepr">Ligand Representation</label>
-              <select name="LignadRepr" id="ligandRepresentation"></select>
-            </div>
-            <div class="accordion-option color">
-              <label for="proteinColor">Protein Color </label>
-              <input type="color" id="proteinColor" />
-            </div>
-            <div class="accordion-option color">
-              <label for="backgroundColor">Peripheral Color </label>
-              <input type="color" id="backgroundColor" />
-            </div>
-            <div class="accordion-option color">
-              <label for="ligandColor">Ligand Color </label>
-              <input type="color" id="ligandColor" />
-            </div>
-            <div class="accordion-option">
-              <label for="proteinOpacity">Protein Opacity </label>
-              <input type="range" id="proteinOpacity" name="proteinOpacity" />
-            </div>
-            <div class="accordion-option">
-              <label for="selectionOpacity">Selection Opacity </label>
-              <input
-                type="range"
-                id="selectionOpacity"
-                name="selectionOpacity"
-              />
-            </div>
-            <div class="accordion-option">
-              <label for="backgroundOpacity">Peripheral Opacity </label>
-              <input
-                type="range"
-                id="backgroundOpacity"
-                name="backgroundOpacity"
-              />
-            </div>
-            <div class="accordion-option">
-              <label for="showGlycans"
-                >Show Ligands
-                <input type="checkbox" name="showGlycans" id="showGlycans" />
-              </label>
+          <!-- Protein Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bxs-virus"></i>
+              </div>
+              <span class="title">Protein Options</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <label for="ProteinRepr">Protein Representation</label>
+                <select name="ProteinRepr" id="proteinRepresentation"></select>
+              </div>
+              <div class="accordion-option">
+                <label for="SelectionRepr">Selection Representation</label>
+                <select
+                  name="SelectionRepr"
+                  id="selectionRepresentation"
+                ></select>
+              </div>
+              <div class="accordion-option">
+                <label for="BackgroundRepr">Peripheral Representation</label>
+                <select
+                  name="BackgroundRepr"
+                  id="backgroundRepresentation"
+                ></select>
+              </div>
+              <div class="accordion-option">
+                <label for="LignadRepr">Ligand Representation</label>
+                <select name="LignadRepr" id="ligandRepresentation"></select>
+              </div>
+              <div class="accordion-option color">
+                <label for="proteinColor">Protein Color </label>
+                <input type="color" id="proteinColor" />
+              </div>
+              <div class="accordion-option color">
+                <label for="backgroundColor">Peripheral Color </label>
+                <input type="color" id="backgroundColor" />
+              </div>
+              <div class="accordion-option color">
+                <label for="ligandColor">Ligand Color </label>
+                <input type="color" id="ligandColor" />
+              </div>
+              <div class="accordion-option">
+                <label for="proteinOpacity">Protein Opacity </label>
+                <input type="range" id="proteinOpacity" name="proteinOpacity" />
+              </div>
+              <div class="accordion-option">
+                <label for="selectionOpacity">Selection Opacity </label>
+                <input
+                  type="range"
+                  id="selectionOpacity"
+                  name="selectionOpacity"
+                />
+              </div>
+              <div class="accordion-option">
+                <label for="backgroundOpacity">Peripheral Opacity </label>
+                <input
+                  type="range"
+                  id="backgroundOpacity"
+                  name="backgroundOpacity"
+                />
+              </div>
+              <div class="accordion-option">
+                <label for="showGlycans"
+                  >Show Ligands
+                  <input type="checkbox" name="showGlycans" id="showGlycans" />
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Filter Options -->
-        <div class="submenu">
-          <button class="accordion">
-            <div class="icon">
-              <i class="bx bx-slider-alt"></i>
-            </div>
-            <span class="title">Filter Sites</span>
-          </button>
-          <div class="accordion-content">
-            <div class="accordion-option">
-              <div id="filters"></div>
+          <!-- Filter Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bx-slider-alt"></i>
+              </div>
+              <span class="title">Filter Sites</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <div id="filters"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Download Options -->
-        <div class="submenu">
-          <button class="accordion">
-            <div class="icon">
-              <i class="bx bx-download"></i>
-            </div>
-            <span class="title">Download Session</span>
-          </button>
-          <div class="accordion-content">
-            <div class="accordion-option">
-              <button id="downloadProtein">Download Protein Image</button>
-            </div>
-            <div class="accordion-option">
-              <button id="downloadPlot">Download Plot Image</button>
+          <!-- Download Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bx-download"></i>
+              </div>
+              <span class="title">Download Session</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <button id="downloadProtein">Download Protein Image</button>
+              </div>
+              <div class="accordion-option">
+                <button id="downloadPlot">Download Plot Image</button>
+              </div>
             </div>
           </div>
         </div>
