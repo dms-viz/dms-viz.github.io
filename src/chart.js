@@ -188,6 +188,12 @@ export class Chart {
     vis.heatmapPlotG = vis.heatmapPlot
       .append("g")
       .attr("class", "heatmap-group");
+    vis.mutantRectG = vis.heatmapPlotG
+      .append("g")
+      .attr("class", "rect-container");
+    vis.wildtypetTextG = vis.heatmapPlotG
+      .append("g")
+      .attr("class", "text-container");
 
     // Define the elements of the HEATMAP LEGEND
     vis.heatmapLegend = vis.heatmapPlot
@@ -727,7 +733,7 @@ export class Chart {
       .attr("stroke-width", 4);
 
     // Draw the HEATMAP plot
-    vis.heatmapPlotG
+    vis.mutantRectG
       .selectAll(".mutant-rect")
       .data(vis.mutMetricHeatmap, (d) => d.mutation)
       .join(
@@ -772,7 +778,7 @@ export class Chart {
       });
 
     // Add an 'x' for the wildtype residue
-    vis.heatmapPlotG
+    vis.wildtypetTextG
       .selectAll(".wildtype-text")
       .data([vis.wildtype], (d) => d)
       .join("text")
@@ -1086,7 +1092,7 @@ export class Chart {
     vis.xAxisHeatmapG.call(vis.xAxisHeatmap);
 
     // Update the heatmap to be this site
-    vis.heatmapPlotG
+    vis.mutantRectG
       .selectAll(".mutant-rect")
       .data(vis.mutMetricHeatmap, (d) => d.mutation)
       .join(
@@ -1130,7 +1136,7 @@ export class Chart {
         vis.heatmapTooltip.style("opacity", 0);
       });
 
-    vis.heatmapPlotG
+    vis.wildtypetTextG
       .selectAll(".wildtype-text")
       .data([vis.wildtype], (d) => d)
       .join("text")
