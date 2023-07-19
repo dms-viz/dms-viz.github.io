@@ -281,6 +281,10 @@ export class Tool {
       tool.data[tool.dataset].description ||
       "A description wasn't provided for this dataset.";
     tool.uiInstance.datasetDescription = tool.datasetDescription;
+    // If the desciption alert is open, update the text
+    if (!d3.select("#alertBanner").classed("hidden")) {
+      d3.select("#alertMessage").text(tool.datasetDescription);
+    }
     // Update the filters
     tool.filters = {};
     if (tool.data[tool.dataset].filter_cols) {
