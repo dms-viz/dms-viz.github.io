@@ -363,11 +363,20 @@ kbd {
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 4px;
+  position: relative;
+  padding-right: 35px; 
+}
+
+.alert.error {
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;
-  position: relative;
-  padding-right: 35px; 
+}
+
+.alert.info {
+  color: #004085;
+  background-color: #cce5ff;
+  border-color: #b8daff;
 }
 
 .alert span {
@@ -388,6 +397,18 @@ kbd {
 
 .alert-close i {
   font-size: 1.25rem;
+}
+
+.tippy-box[data-theme~='select-info'] {
+  color: rgb(222, 222, 222);
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+#dataset-info-button {
+  border: none;
+  outline:none;
+  background: none;
+  text-align: center;
 }
 
 .main {

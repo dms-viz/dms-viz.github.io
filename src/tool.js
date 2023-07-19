@@ -10,8 +10,9 @@ export class Tool {
    * Class constructor with initial configuration
    * @param {Object}
    */
-  constructor(_data) {
+  constructor(_data, ui) {
     this.data = _data;
+    this.uiInstance = ui;
     this.initTool();
   }
   /**
@@ -60,6 +61,12 @@ export class Tool {
 
     // Set the default dataset
     tool.dataset = Object.keys(tool.data)[0];
+
+    // Update the description in the UI based on the dataset
+    tool.datasetDescription =
+      tool.data[tool.dataset].description ||
+      "A description wasn't provided for this dataset.";
+    tool.uiInstance.datasetDescription = tool.datasetDescription;
 
     // Get the detils from the data
     tool.setState();
@@ -269,6 +276,11 @@ export class Tool {
     tool.legend.config.chartConditions = tool.chartConditions;
     tool.protein.config.proteinCondition = tool.proteinCondition;
     tool.legend.config.proteinCondition = tool.proteinCondition;
+    // Update the description in the UI based on the dataset
+    tool.datasetDescription =
+      tool.data[tool.dataset].description ||
+      "A description wasn't provided for this dataset.";
+    tool.uiInstance.datasetDescription = tool.datasetDescription;
     // Update the filters
     tool.filters = {};
     if (tool.data[tool.dataset].filter_cols) {

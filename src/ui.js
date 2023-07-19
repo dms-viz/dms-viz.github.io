@@ -1,4 +1,6 @@
 import { once } from "lodash";
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
 
 export class UI {
   constructor() {
@@ -6,6 +8,7 @@ export class UI {
     this.modal = document.querySelector(".modal");
     this.trigger = document.querySelector(".trigger");
     this.closeButton = document.querySelector(".close-button");
+    this.infoButton = document.getElementById("dataset-info-button");
     this.sidebar = document.getElementById("sidebar");
     this.toggle = document.getElementById("sidebar-toggle");
     this.headerpd = document.getElementById("header");
@@ -13,8 +16,10 @@ export class UI {
     this.localFile = document.getElementById("local-file");
     this.remoteFile = document.getElementById("remote-file");
     this.accordionParent = document.getElementById("sidebar");
+    this.infoButton = document.getElementById("dataset-info-button");
     this.highlightHelp = once(this.highlightHelp.bind(this));
     this.registerEventListeners();
+    this.registerTooltips();
   }
 
   // UI functions to attach to event listeners
@@ -63,6 +68,9 @@ export class UI {
   registerEventListeners() {
     this.trigger.addEventListener("click", () => this.toggleModal());
     this.closeButton.addEventListener("click", () => this.toggleModal());
+    this.infoButton.addEventListener("click", () =>
+      this.showDatasetDescription()
+    );
     window.addEventListener("click", (event) => this.windowOnClick(event));
     this.toggle.addEventListener("click", () => this.handleSidebarToggle());
     this.localFile.addEventListener("click", (event) =>
@@ -89,6 +97,22 @@ export class UI {
     });
 
     document.addEventListener("mousedown", () => this.highlightHelp());
+  }
+
+  registerTooltips() {
+    tippy(".bx-info-circle", {
+      content: "Click here for more information about the dataset",
+      placement: "right",
+      theme: "select-info",
+      animation: "scale",
+    });
+  }
+
+  showDatasetDescription() {
+    const ui = this;
+    // Show the alert banner with a dataset description
+    const alert = new Alerts();
+    alert.showAlert(ui.datasetDescription, "info");
   }
 
   highlightHelp() {
@@ -137,9 +161,11 @@ export class Alerts {
   }
 
   // Function to show the alert banner with a specific message and color
-  showAlert(message) {
+  showAlert(message, type = "error") {
     this.alertMessage.textContent = message;
+    this.alertBanner.classList.remove("error", "info");
     this.alertBanner.classList.remove("hidden");
+    this.alertBanner.classList.add(type);
   }
 
   // Function to hide the alert banner

@@ -6,13 +6,12 @@ import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
 // Initialize the UI
-new UI();
 const alert = new Alerts();
 // Initialize the tool and it's state
 let State;
 fetchData().then((data) => {
   // Add data to the tool
-  State = new Tool(data);
+  State = new Tool(data, new UI());
 
   // Set up the event listeners
   setUpJsonFileUploadListeners();
