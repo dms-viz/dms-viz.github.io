@@ -37,6 +37,15 @@ export class Protein {
     // Set the initial size of the stage
     protein.resize();
 
+    // Make a map from the structure numbering to the reference numbering
+    const refMap = protein.data[protein.config.dataset].mut_metric_df.reduce(
+      (acc, current) => {
+        acc[current.site_protein] = current.site_reference;
+        return acc;
+      },
+      {}
+    );
+
     // Add a tooltip to the stage object
     const tooltip = document.createElement("div");
     tooltip.className = "protein-tooltip";
@@ -45,9 +54,9 @@ export class Protein {
     protein.stage.signals.hovered.add(function (pickingProxy) {
       if (pickingProxy && pickingProxy.atom) {
         let atom = pickingProxy.atom;
-        tooltip.innerHTML = `<strong>Site:</strong> ${
-          atom.resno
-        } </br > <strong>Residue:</strong> ${
+        tooltip.innerHTML = `<strong>Site:</strong> ${[
+          refMap[atom.resno],
+        ]} </br > <strong>Residue:</strong> ${
           atom.resname
         }${protein.#getOneLetterCode(
           atom.resname
