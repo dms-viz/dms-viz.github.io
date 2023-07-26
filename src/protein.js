@@ -150,8 +150,8 @@ export class Protein {
       name: "dataChains",
       smoothSheet: true,
       side: "front",
+      surfaceType: "av",
     });
-    console.log(protein.backgroundChainSelection);
     protein.stage.getRepresentationsByName("backgroundChains").dispose();
     if (protein.backgroundChainSelection != "none") {
       protein.component.addRepresentation(
@@ -163,6 +163,7 @@ export class Protein {
           name: "backgroundChains",
           smoothSheet: true,
           side: "front",
+          surfaceType: "av",
         }
       );
     }

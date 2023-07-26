@@ -144,17 +144,17 @@ export class Tool {
     // Populate Protein Options
     tool.initSelect(
       d3.select("#proteinRepresentation"),
-      ["cartoon", "rope", "ball+stick"],
+      ["spacefill", "surface", "cartoon", "rope", "ball+stick"],
       tool.proteinRepresentation
     );
     tool.initSelect(
       d3.select("#selectionRepresentation"),
-      ["spacefill", "surface"],
+      ["spacefill", "surface", "cartoon", "rope", "ball+stick"],
       tool.selectionRepresentation
     );
     tool.initSelect(
       d3.select("#backgroundRepresentation"),
-      ["rope", "cartoon", "ball+stick"],
+      ["spacefill", "surface", "cartoon", "rope", "ball+stick"],
       tool.backgroundRepresentation
     );
     tool.initSelect(
