@@ -97,6 +97,9 @@ function setUpJsonFileUploadListeners() {
 
     // Clear the URL input element
     document.getElementById("url-json-file").value = "";
+
+    // Trigger a resize event
+    window.dispatchEvent(new Event("resize"));
   });
 
   d3.select("#url-json-file").on("keyup", async function (event) {
@@ -149,6 +152,9 @@ function setUpJsonFileUploadListeners() {
       // Update the tool's state
       State.data = data;
       State.initTool();
+
+      // Trigger a resize event
+      window.dispatchEvent(new Event("resize"));
 
       // Clear the local input element
       document.getElementById("local-json-file").value = "";
