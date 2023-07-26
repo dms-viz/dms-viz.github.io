@@ -316,9 +316,17 @@ export class Tool {
     tool.chart.updateVis();
     tool.legend.updateLegend();
 
-    // Only update the protein if the structure has changed
+    // Only update the protein if the structure has changed or the chains have changed
+    console.log(tool.data[tool.dataset]);
     if (tool.data[tool.dataset].pdb !== tool.protein.config.pdbID) {
       tool.protein.config.pdbID = tool.data[tool.dataset].pdb;
+      tool.protein.clear();
+      tool.protein.load();
+    } else if (
+      JSON.stringify(tool.data[tool.dataset].dataChains) !==
+      JSON.stringify(tool.protein.config.dataChains)
+    ) {
+      // If pdb is the same but dataChains are different, just reload
       tool.protein.clear();
       tool.protein.load();
     }
