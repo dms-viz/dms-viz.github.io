@@ -102,7 +102,7 @@ export class Protein {
     // Make the selection of chains to include in the protein structure
     if (dataChains != "polymer") {
       protein.dataChainSelection = `:${dataChains.join(" or :")}`;
-      protein.backgroundChainSelection = `not :${dataChains.join(
+      protein.backgroundChainSelection = `protein and not :${dataChains.join(
         " and not :"
       )}`;
       if (excludeChains != "none") {
@@ -151,6 +151,7 @@ export class Protein {
       smoothSheet: true,
       side: "front",
     });
+    console.log(protein.backgroundChainSelection);
     protein.stage.getRepresentationsByName("backgroundChains").dispose();
     if (protein.backgroundChainSelection != "none") {
       protein.component.addRepresentation(
