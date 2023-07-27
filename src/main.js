@@ -13,15 +13,15 @@ fetchData().then((data) => {
   // Add data to the tool
   State = new Tool(data, new UI());
 
-  // Trigger a resize event
-  window.dispatchEvent(new Event("resize"));
-
   // Set up the event listeners
   setUpJsonFileUploadListeners();
   setUpChartOptionListeners();
   setUpProteinOptionListeners();
   setUpDownloadButtonListeners();
   setUpWindowResizeListener();
+
+  // Trigger a resize event
+  window.dispatchEvent(new Event("resize"));
 });
 
 // Get data from remote URL or local JSON file
