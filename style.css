@@ -379,6 +379,12 @@ kbd {
   border-color: #b8daff;
 }
 
+.alert.warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
 .alert span {
   font-weight: bold;
 }

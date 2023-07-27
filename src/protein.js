@@ -142,6 +142,25 @@ export class Protein {
   updateRepresentation() {
     let protein = this;
 
+    if (protein.config.proteinRepresentation === "surface") {
+      // Print a warning message
+      const alert = new Alerts();
+      alert.showAlert(
+        `If the protein representation is a surface, the selection may not be visible without toggling the opacity.`,
+        "warning"
+      );
+    } else if (
+      protein.config.proteinRepresentation ===
+      protein.config.selectionRepresentation
+    ) {
+      // Print a warning message
+      const alert = new Alerts();
+      alert.showAlert(
+        `If the protein representation and selection representation are the same, the selection may not be visible without toggling the opacity.`,
+        "warning"
+      );
+    }
+
     protein.stage.getRepresentationsByName("dataChains").dispose();
     protein.component.addRepresentation(protein.config.proteinRepresentation, {
       sele: protein.dataChainSelection,

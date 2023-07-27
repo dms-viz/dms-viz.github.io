@@ -163,7 +163,7 @@ export class Alerts {
   // Function to show the alert banner with a specific message and color
   showAlert(message, type = "error") {
     this.alertMessage.textContent = message;
-    this.alertBanner.classList.remove("error", "info");
+    this.alertBanner.classList.remove("error", "info", "warning");
     this.alertBanner.classList.remove("hidden");
     this.alertBanner.classList.add(type);
   }
