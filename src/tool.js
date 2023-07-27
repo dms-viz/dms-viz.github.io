@@ -3,6 +3,7 @@ import { isEqual, cloneDeep } from "lodash";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
 import { Legend } from "./legend.js";
+import { Alerts } from "./ui.js";
 
 // Write a class to handle the state of the tool
 export class Tool {
@@ -367,6 +368,37 @@ export class Tool {
     const selection = d3.select(node);
     const id = selection.attr("id");
     const value = selection.property(id == "showGlycans" ? "checked" : "value");
+
+    // If the `id` is the protein selection check if it conflicts with the selection
+    if (id === "proteinRepresentation") {
+      // Representations that conflict with one another
+      const conflictingRepresentations = new Map([
+        [
+          "surface",
+          new Set(["spacefill", "surface", "cartoon", "rope", "ball+stick"]),
+        ],
+        [
+          "spacefill",
+          new Set(["spacefill", "surface", "cartoon", "rope", "ball+stick"]),
+        ],
+        ["cartoon", new Set(["cartoon", "rope"])],
+        ["rope", new Set(["cartoon", "rope"])],
+        ["ball+stick", new Set(["ball+stick"])],
+      ]);
+
+      const conflicts = conflictingRepresentations.get(value);
+
+      if (
+        conflicts &&
+        conflicts.has(tool.protein.config.selectionRepresentation)
+      ) {
+        const alert = new Alerts();
+        alert.showAlert(
+          `The current representation of the selection (${tool.protein.config.selectionRepresentation}) may be obscured by the ${tool.protein.config.proteinRepresentation} representation of the protein. Consider toggling the opacity of the protein representation.`,
+          "warning"
+        );
+      }
+    }
 
     // Update the config
     tool[id] = value;
