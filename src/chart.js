@@ -25,7 +25,7 @@ export class Chart {
       width: 1100,
       height: 300,
       scaling: {
-        top: 0.025,
+        top: 0.08,
         left: 0.1,
         bottom: 0.15,
         right: 0.06,
@@ -116,6 +116,20 @@ export class Chart {
         "transform",
         `translate(${vis.margin.left}px, ${vis.margin.top}px)`
       );
+
+    // Set up the title
+    const titleX = boundedWidth / 2; // X position - half of the entire width
+    const titleY = -8; // Y position - a little above the top, adjust as needed
+
+    // Add an element for the title
+    vis.title = vis.boundedArea
+      .append("text")
+      .attr("class", "chart-title")
+      .attr("x", titleX)
+      .attr("y", titleY)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "16px")
+      .attr("font-weight", "bold");
 
     // Define the elements of the CONTEXT
     vis.contextPlot = vis.boundedArea.append("g").attr("class", "context");
@@ -845,6 +859,14 @@ export class Chart {
     vis.brushG.call(vis.brush).call(vis.brush.move, vis.brushSelection);
 
     vis.focusBrushG.call(vis.focusBrush);
+
+    // Add the title if there is one
+    const title = vis.data[vis.config.dataset].title;
+    if (title) {
+      vis.title.text(title);
+    } else {
+      vis.title.text("");
+    }
   }
   /**
    * React to brush events in the context plot.
