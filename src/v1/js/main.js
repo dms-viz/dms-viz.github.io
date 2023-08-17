@@ -1,4 +1,4 @@
-import "../style.css";
+import "../css/style.css";
 import { UI, Alerts } from "./ui.js";
 import { validateSpecification } from "./utils.js";
 import * as d3 from "d3";

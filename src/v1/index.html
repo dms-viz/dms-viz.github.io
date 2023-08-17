@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Header of the Document -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/flavicorn.ico" type="image/x-icon" />
+    <title>dms-viz</title>
+    <!-- Link to the svg boxicons -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <!-- Body Contents -->
+  <body>
+    <!-- Wrap the main contents in a container -->
+    <div class="container">
+      <!-- Header contains the logo and name of the Application -->
+      <header class="header" id="header">
+        <nav>
+          <div class="controls">
+            <div class="sidebar-toggle">
+              <i class="bx bx-x bx-menu" id="sidebar-toggle"></i>
+            </div>
+            <button class="trigger glow">
+              <i class="bx bx-help-circle help active"></i>
+              <div id="help-message">Click here for instructions!</div>
+            </button>
+          </div>
+        </nav>
+      </header>
+      <!-- Modal with Instructions -->
+      <div class="modal">
+        <div class="modal-content">
+          <span class="close-button"><i class="bx bx-x"></i></span>
+          <h3>Instructions</h3>
+          <p>
+            <strong class="logo">dms-viz</strong> is an interactive tool
+            designed to visualize mutation-level data on an associated protein
+            structure. To use the tool, <strong>click</strong> on the sidebar to
+            the left and upload the data and protein structure that you want to
+            visualize. For details on how to format the input data and other
+            tool-related documentation,
+            <strong
+              >click
+              <a
+                href="https://github.com/dms-viz/configure_dms_viz"
+                style="text-decoration: none"
+                >here</a
+              ></strong
+            >.
+          </p>
+          <p>
+            To configure the visualization, you can open the menu to the left to
+            choose various aspects of the view including colors, summary
+            statistics, filters, and more. You can also switch between datasets
+            present in the same JSON file.
+          </p>
+          <p>
+            To use the visualization, you can zoom in and out of regions of your
+            data by <strong>brushing</strong> (<strong>click and drag</strong>)
+            over the <em>area</em> plot. You can select sites to see in the
+            <em>heatmap</em> by <strong>clicking</strong> on points in the
+            <em>line/point</em> plot. You can <strong>mouseover</strong> sites
+            on the <em>line/point</em> and mutations on the <em>heatmap</em> to
+            see details in a pop-up tooltip. Finally, you can select which sites
+            to highlight on the protein structure by
+            <strong>brushing</strong> (<strong>click and drag</strong>) over
+            points in the <em>line/point plot</em>. To deselect sites, you can
+            either <strong>double-click</strong> on the <em>line/point</em> plot
+            or hold down the option key <kbd>⌥</kbd> and
+            <strong>brush</strong> over the sites that you want to deselect. If
+            there is more than one condition in your data, an interactive legend
+            will appear in the <em>Chart Options</em>. You can select an
+            condition to color the protein structure with by
+            <strong>clicking</strong> on an condition in the legend. You can
+            remove or add conditions to the <em>line/point</em> plot by holding
+            down the option key <kbd>⌥</kbd> while <strong>clicking</strong>.
+            You can reorient and zoom into the protein structure by
+            <strong>clicking and dragging</strong> it around the window. You can
+            also reset the protein structure to its original orientation by
+            pressing the <kbd>R</kbd> button on your keyboard.
+          </p>
+        </div>
+      </div>
+      <!-- Sidebar contains plot configuration options -->
+      <div class="sidebar" , id="sidebar">
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Menu Title -->
+          <div class="header">
+            <h1 class="logo">
+              <img class="logo-img" src="/logo.png" alt="logo" />
+              <span>dms-viz</span>
+            </h1>
+          </div>
+          <!-- Upload Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bx-upload"></i>
+              </div>
+              <span class="title">Upload Data</span>
+            </button>
+            <div class="accordion-content" id="download-accordion">
+              <div class="accordion-option">
+                <div class="download-toggle">
+                  <button class="upload-method" id="local-file">Local</button>
+                  <button id="remote-file">Remote</button>
+                </div>
+              </div>
+              <div class="accordion-option" id="local-file-input">
+                <input type="file" id="local-json-file" accept=".json" />
+              </div>
+              <div
+                class="accordion-option"
+                id="remote-url-input"
+                style="display: none"
+              >
+                <input
+                  type="url"
+                  name="url"
+                  id="url-json-file"
+                  placeholder="https://example.com"
+                  pattern="https://.*"
+                  autocomplete="off"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <!-- Chart Options -->
+          <div class="submenu">
+            <button class="accordion" , id="chart-btn">
+              <div class="icon">
+                <i class="bx bx-scatter-chart"></i>
+              </div>
+              <span class="title">Chart Options</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <label for="Dataset"
+                  >Dataset
+                  <button id="dataset-info-button">
+                    <i class="bx bx-info-circle"></i>
+                  </button>
+                </label>
+                <select name="Dataset" id="dataset"></select>
+              </div>
+              <div class="accordion-option" id="condition-option">
+                <label>Condition</label>
+                <div class="legend" id="legend"></div>
+              </div>
+              <div class="accordion-option">
+                <label for="Summary">Summary Metric</label>
+                <select name="Summary" id="summary"></select>
+              </div>
+              <div class="accordion-option">
+                <label for="Floor"
+                  >Floor
+                  <input type="checkbox" name="Floor" id="floor" />
+                </label>
+              </div>
+              <div class="accordion-option">
+                <label for="Mutations"
+                  >Display Mutation Count
+                  <input type="checkbox" name="Mutations" id="mutations" />
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Protein Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bxs-virus"></i>
+              </div>
+              <span class="title">Protein Options</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <label for="ProteinRepr">Protein Representation</label>
+                <select name="ProteinRepr" id="proteinRepresentation"></select>
+              </div>
+              <div class="accordion-option">
+                <label for="SelectionRepr">Selection Representation</label>
+                <select
+                  name="SelectionRepr"
+                  id="selectionRepresentation"
+                ></select>
+              </div>
+              <div class="accordion-option">
+                <label for="BackgroundRepr">Peripheral Representation</label>
+                <select
+                  name="BackgroundRepr"
+                  id="backgroundRepresentation"
+                ></select>
+              </div>
+              <div class="accordion-option">
+                <label for="LignadRepr">Ligand Representation</label>
+                <select name="LignadRepr" id="ligandRepresentation"></select>
+              </div>
+              <div class="accordion-option color">
+                <label for="proteinColor">Protein Color </label>
+                <input type="color" id="proteinColor" />
+              </div>
+              <div class="accordion-option color">
+                <label for="backgroundColor">Peripheral Color </label>
+                <input type="color" id="backgroundColor" />
+              </div>
+              <div class="accordion-option color">
+                <label for="ligandColor">Ligand Color </label>
+                <input type="color" id="ligandColor" />
+              </div>
+              <div class="accordion-option">
+                <label for="proteinOpacity">Protein Opacity </label>
+                <input type="range" id="proteinOpacity" name="proteinOpacity" />
+              </div>
+              <div class="accordion-option">
+                <label for="selectionOpacity">Selection Opacity </label>
+                <input
+                  type="range"
+                  id="selectionOpacity"
+                  name="selectionOpacity"
+                />
+              </div>
+              <div class="accordion-option">
+                <label for="backgroundOpacity">Peripheral Opacity </label>
+                <input
+                  type="range"
+                  id="backgroundOpacity"
+                  name="backgroundOpacity"
+                />
+              </div>
+              <div class="accordion-option">
+                <label for="showGlycans"
+                  >Show Ligands
+                  <input type="checkbox" name="showGlycans" id="showGlycans" />
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Filter Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bx-slider-alt"></i>
+              </div>
+              <span class="title">Filter Sites</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <div id="filters"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Download Options -->
+          <div class="submenu">
+            <button class="accordion">
+              <div class="icon">
+                <i class="bx bx-download"></i>
+              </div>
+              <span class="title">Download Session</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-option">
+                <button id="downloadProtein">Download Protein Image</button>
+              </div>
+              <div class="accordion-option">
+                <button id="downloadPlot">Download Plot Image</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Github Link -->
+        <div class="github-link">
+          <a
+            href="https://github.com/dms-viz/dms-viz.github.io"
+            target="_blank"
+          >
+            <div class="icon">
+              <i class="bx bxl-github"></i>
+            </div>
+          </a>
+        </div>
+      </div>
+      <!-- Main container with plot and protein content -->
+      <div class="main" id="main">
+        <div id="alertBanner" class="alert hidden">
+          <span id="alertMessage">Default message</span>
+          <span id="alertClose" class="alert-close"
+            ><i class="bx bx-x"></i
+          ></span>
+        </div>
+        <!-- Chart contains the main D3 chart -->
+        <div class="chart" id="chart"></div>
+        <!-- Protein contains the protein(s) -->
+        <div class="protein" id="viewport"></div>
+      </div>
+    </div>
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
