@@ -3,7 +3,7 @@ export default {
     rollupOptions: {
       input: {
         index: "index.html",
-        v1: "v1/index.html",
+        v0: "v0/index.html",
       },
     },
   },
