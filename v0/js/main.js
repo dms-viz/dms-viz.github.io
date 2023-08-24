@@ -218,6 +218,10 @@ function setUpProteinOptionListeners() {
   d3.select("#ligandColor").on("change", function () {
     State.updateProteinOptions(this);
   });
+  d3.select("#ligandElement").on("change", function () {
+    this.value = this.checked ? "true" : "false";
+    State.updateProteinOptions(this);
+  });
   d3.select("#backgroundOpacity").on("input", function () {
     State.updateProteinOptions(this);
   });
@@ -228,6 +232,7 @@ function setUpProteinOptionListeners() {
     State.updateProteinOptions(this);
   });
   d3.select("#showGlycans").on("change", function () {
+    this.value = this.checked ? "true" : "false";
     State.updateProteinOptions(this);
   });
 }

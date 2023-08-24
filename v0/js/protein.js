@@ -171,7 +171,9 @@ export class Protein {
     if (protein.config.showGlycans) {
       protein.component.addRepresentation(protein.config.ligandRepresentation, {
         sele: "ligand and not protein",
-        color: protein.config.ligandColor,
+        color: protein.config.ligandElement
+          ? "element"
+          : protein.config.ligandColor,
         name: "ligands",
       });
     }

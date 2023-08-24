@@ -120,6 +120,7 @@ export class Tool {
         proteinColor: tool.proteinColor,
         backgroundColor: tool.backgroundColor,
         ligandColor: tool.ligandColor,
+        ligandElement: tool.ligandElement,
         backgroundOpacity: tool.backgroundOpacity,
         proteinOpacity: tool.proteinOpacity,
         selectionOpacity: tool.selectionOpacity,
@@ -167,6 +168,7 @@ export class Tool {
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
     tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
+    tool.initCheckbox(d3.select("#ligandElement"), tool.ligandElement);
     tool.initRange(d3.select("#proteinOpacity"), tool.proteinOpacity);
     tool.initRange(d3.select("#selectionOpacity"), tool.selectionOpacity);
     tool.initRange(d3.select("#backgroundOpacity"), tool.backgroundOpacity);
@@ -367,7 +369,12 @@ export class Tool {
     // Select the node
     const selection = d3.select(node);
     const id = selection.attr("id");
-    const value = selection.property(id == "showGlycans" ? "checked" : "value");
+    let value = selection.property("value");
+    if (value === "true") {
+      value = true;
+    } else if (value === "false") {
+      value = false;
+    }
 
     // If the `id` is the protein selection check if it conflicts with the selection
     if (id === "proteinRepresentation") {
@@ -497,6 +504,7 @@ export class Tool {
       proteinColor: { nabbrevame: "pc", default: "#d3d3d3", json: false },
       backgroundColor: { abbrev: "bc", default: "#d3d3d3", json: false },
       ligandColor: { abbrev: "lc", default: "#d3d3d3", json: false },
+      ligandElement: { abbrev: "le", default: false, json: false },
       proteinOpacity: { abbrev: "po", default: "1", json: false },
       selectionOpacity: { abbrev: "so", default: "1", json: false },
       backgroundOpacity: { abbrev: "bo", default: "1", json: false },

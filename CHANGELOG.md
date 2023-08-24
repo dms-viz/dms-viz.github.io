@@ -17,3 +17,21 @@
 ### Removed
 
 - N/A (This is the first release)
+
+## [0.1.1] - 2023-08-24
+
+### Added
+
+- Ligands can also be colored by the element identity of their atoms.
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
