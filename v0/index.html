@@ -133,6 +133,20 @@
                   required
                 />
               </div>
+              <label for="Markdown"
+                >Add Markdown Description
+                <div class="accordion-option" id="remote-markdown-input">
+                  <input
+                    type="url"
+                    name="url"
+                    id="url-markdown-file"
+                    placeholder="https://example.com"
+                    pattern="https://.*"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+              </label>
             </div>
           </div>
           <!-- Chart Options -->
@@ -312,6 +326,14 @@
         <div class="chart" id="chart"></div>
         <!-- Protein contains the protein(s) -->
         <div class="protein" id="viewport"></div>
+        <!-- Markdown description of the experiment -->
+        <div class="markdown" id="markdown" style="display: none">
+          <hr />
+          <details>
+            <summary>Click for Description</summary>
+            <div id="markdown-container"></div>
+          </details>
+        </div>
       </div>
     </div>
     <script type="module" src="./js/main.js"></script>

@@ -2,6 +2,7 @@ import "../css/style.css";
 import { UI, Alerts } from "./ui.js";
 import { validateSpecification } from "./utils.js";
 import * as d3 from "d3";
+import { marked } from "marked";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
@@ -14,7 +15,7 @@ fetchData().then((data) => {
   State = new Tool(data, new UI());
 
   // Set up the event listeners
-  setUpJsonFileUploadListeners();
+  setUpFileUploadListeners();
   setUpChartOptionListeners();
   setUpProteinOptionListeners();
   setUpDownloadButtonListeners();
@@ -57,7 +58,7 @@ async function fetchData() {
 }
 
 // Set up the event listener for the JSON file upload
-function setUpJsonFileUploadListeners() {
+function setUpFileUploadListeners() {
   d3.select("#local-json-file").on("change", function () {
     // Get the file input element
     const input = document.getElementById("local-json-file");
@@ -161,6 +162,57 @@ function setUpJsonFileUploadListeners() {
 
       // Clear the local input element
       document.getElementById("local-json-file").value = "";
+    } catch (error) {
+      alert.showAlert(`Fetch operation failed: ${error.message}`);
+    }
+  });
+
+  d3.select("#url-markdown-file").on("keyup", async function (event) {
+    // If the key pressed was not 'Enter', return
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    // Check if a URL was provided
+    if (!this.value) {
+      alert.showAlert("Please enter a URL.");
+      return;
+    }
+
+    // Check if the URL is valid
+    try {
+      new URL(this.value);
+    } catch (_) {
+      alert.showAlert("Please enter a valid URL.");
+      return;
+    }
+
+    try {
+      const response = await fetch(this.value);
+
+      if (!response.ok) {
+        alert.showAlert(
+          `There was an error fetching data from the URL. HTTP Status: ${response.status}`
+        );
+        return;
+      }
+
+      // Parse the response
+      const markdown = await response.text();
+
+      // Change the display of the markdown div to block
+      document.getElementById("markdown").style.display = "block";
+
+      // Insert the mardown into the textarea of the markdown div
+      document.getElementById("markdown-container").innerHTML =
+        marked.parse(markdown);
+
+      // Get the URL parameters
+      const urlParams = new URLSearchParams();
+
+      // Set the markdown parameter of the URL
+      urlParams.set("markdown", this.value);
+      window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
     } catch (error) {
       alert.showAlert(`Fetch operation failed: ${error.message}`);
     }
