@@ -124,6 +124,9 @@ export class UI {
   }
 
   toggleDownload({ target: element }) {
+    const accordianButton =
+      element.parentNode.parentNode.parentNode.previousElementSibling;
+    const accordianContent = element.parentNode.parentNode.parentNode;
     const buttons = Array.from(element.parentNode.querySelectorAll("button"));
     buttons.forEach((button) => button.classList.remove("upload-method"));
 
@@ -133,9 +136,19 @@ export class UI {
     if (element.id === "local-file") {
       document.getElementById("local-file-input").style.display = "block";
       document.getElementById("remote-url-input").style.display = "none";
+      document.getElementById("remote-markdown-input").style.display = "none";
+      // If the accordion button has the class 'is-open', then the accordion is open
+      if (accordianButton.classList.contains("is-open")) {
+        accordianContent.style.maxHeight = accordianContent.scrollHeight + "px";
+      }
     } else if (element.id === "remote-file") {
       document.getElementById("remote-url-input").style.display = "block";
+      document.getElementById("remote-markdown-input").style.display = "block";
       document.getElementById("local-file-input").style.display = "none";
+      // If the accordion button has the class 'is-open', then the accordion is open
+      if (accordianButton.classList.contains("is-open")) {
+        accordianContent.style.maxHeight = accordianContent.scrollHeight + "px";
+      }
     }
   }
 

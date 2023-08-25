@@ -2,6 +2,7 @@ import "../css/style.css";
 import { UI, Alerts } from "./ui.js";
 import { validateSpecification } from "./utils.js";
 import * as d3 from "d3";
+import { marked } from "marked";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
@@ -9,12 +10,13 @@ import exampleData from "../data/example.json";
 const alert = new Alerts();
 // Initialize the tool and it's state
 let State;
+let sessionUI = new UI();
 fetchData().then((data) => {
   // Add data to the tool
-  State = new Tool(data, new UI());
+  State = new Tool(data, sessionUI);
 
   // Set up the event listeners
-  setUpJsonFileUploadListeners();
+  setUpFileUploadListeners();
   setUpChartOptionListeners();
   setUpProteinOptionListeners();
   setUpDownloadButtonListeners();
@@ -28,6 +30,7 @@ fetchData().then((data) => {
 async function fetchData() {
   const urlParams = new URLSearchParams(window.location.search);
   const dataUrl = urlParams.get("data");
+  const markdownUrl = urlParams.get("markdown");
 
   if (dataUrl) {
     try {
@@ -45,6 +48,44 @@ async function fetchData() {
           alert.showAlert(error.message);
           return exampleData; // return example data as fallback
         }
+
+        // If there is data provided from the remote, check if there is also a markdown description
+        if (markdownUrl) {
+          try {
+            const response = await fetch(markdownUrl);
+
+            if (!response.ok) {
+              alert.showAlert(
+                `There was an error fetching the markdown from the URL. HTTP Status: ${response.status}`
+              );
+              return;
+            }
+            // Parse the response
+            const markdown = await response.text();
+            // Change the display of the markdown div to block
+            document.getElementById("markdown").style.display = "block";
+            // Insert the markdown
+            document.getElementById("markdown-container").innerHTML =
+              marked.parse(markdown);
+          } catch (error) {
+            alert.showAlert(`Fetch operation failed: ${error.message}`);
+          }
+        } else {
+          // If there is no markdown provided, hide and clear the markdown div
+          document.getElementById("markdown").style.display = "none";
+          document.getElementById("markdown-container").innerHTML = "";
+        }
+        // Tigger click without exapanding the accoridan
+        document.getElementById("remote-file").click(function (event) {
+          event.stopPropagation();
+        });
+        // Show the remote URL
+        document.getElementById("url-json-file").value = dataUrl;
+        // Show the remote markdown URL
+        document.getElementById("url-markdown-file").value = markdownUrl;
+        // Enable the input element for the markdown URL and set the value to empty
+        document.getElementById("url-markdown-file").disabled = false;
+
         return data;
       }
     } catch (error) {
@@ -57,7 +98,7 @@ async function fetchData() {
 }
 
 // Set up the event listener for the JSON file upload
-function setUpJsonFileUploadListeners() {
+function setUpFileUploadListeners() {
   d3.select("#local-json-file").on("change", function () {
     // Get the file input element
     const input = document.getElementById("local-json-file");
@@ -100,6 +141,10 @@ function setUpJsonFileUploadListeners() {
 
     // Clear the URL input element
     document.getElementById("url-json-file").value = "";
+    document.getElementById("url-markdown-file").value = "";
+    document.getElementById("url-markdown-file").disabled = true;
+    document.getElementById("markdown-container").innerHTML = "";
+    document.getElementById("markdown").style.display = "none";
 
     // Trigger a resize event
     window.dispatchEvent(new Event("resize"));
@@ -145,6 +190,9 @@ function setUpJsonFileUploadListeners() {
         return;
       }
 
+      // Enable the user to add markdown
+      document.getElementById("url-markdown-file").disabled = false;
+
       // Get the URL parameters
       const urlParams = new URLSearchParams();
 
@@ -161,6 +209,57 @@ function setUpJsonFileUploadListeners() {
 
       // Clear the local input element
       document.getElementById("local-json-file").value = "";
+    } catch (error) {
+      alert.showAlert(`Fetch operation failed: ${error.message}`);
+    }
+  });
+
+  d3.select("#url-markdown-file").on("keyup", async function (event) {
+    // If the key pressed was not 'Enter', return
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    // Check if a URL was provided
+    if (!this.value) {
+      alert.showAlert("Please enter a URL.");
+      return;
+    }
+
+    // Check if the URL is valid
+    try {
+      new URL(this.value);
+    } catch (_) {
+      alert.showAlert("Please enter a valid URL.");
+      return;
+    }
+
+    try {
+      const response = await fetch(this.value);
+
+      if (!response.ok) {
+        alert.showAlert(
+          `There was an error fetching data from the URL. HTTP Status: ${response.status}`
+        );
+        return;
+      }
+
+      // Parse the response
+      const markdown = await response.text();
+
+      // Change the display of the markdown div to block
+      document.getElementById("markdown").style.display = "block";
+
+      // Insert the mardown into the textarea of the markdown div
+      document.getElementById("markdown-container").innerHTML =
+        marked.parse(markdown);
+
+      // Get the URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Set the markdown parameter of the URL
+      urlParams.set("markdown", this.value);
+      window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
     } catch (error) {
       alert.showAlert(`Fetch operation failed: ${error.message}`);
     }

@@ -35,3 +35,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.0] - 2023-08-25
+
+### Added
+
+- Users can provide a URL to automatically load a markdown description file.
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
