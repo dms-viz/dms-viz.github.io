@@ -134,21 +134,23 @@
                   required
                 />
               </div>
-              <label for="Markdown"
-                >Upload Description
-                <div class="accordion-option" id="remote-markdown-input">
-                  <input
-                    type="url"
-                    name="url"
-                    id="url-markdown-file"
-                    placeholder="https://example.com"
-                    pattern="https://.*"
-                    autocomplete="off"
-                    required
-                    disabled
-                  />
-                </div>
-              </label>
+              <div
+                class="accordion-option"
+                id="remote-markdown-input"
+                style="display: none"
+              >
+                <label for="url-markdown-file">Upload Description</label>
+                <input
+                  type="url"
+                  name="url"
+                  id="url-markdown-file"
+                  placeholder="https://example.com"
+                  pattern="https://.*"
+                  autocomplete="off"
+                  required
+                  disabled
+                />
+              </div>
             </div>
           </div>
           <!-- Chart Options -->

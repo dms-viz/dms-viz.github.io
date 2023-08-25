@@ -10,9 +10,10 @@ import exampleData from "../data/example.json";
 const alert = new Alerts();
 // Initialize the tool and it's state
 let State;
+let sessionUI = new UI();
 fetchData().then((data) => {
   // Add data to the tool
-  State = new Tool(data, new UI());
+  State = new Tool(data, sessionUI);
 
   // Set up the event listeners
   setUpFileUploadListeners();
@@ -73,9 +74,18 @@ async function fetchData() {
           // If there is no markdown provided, hide and clear the markdown div
           document.getElementById("markdown").style.display = "none";
           document.getElementById("markdown-container").innerHTML = "";
-          // Enable the input element for the markdown URL and set the value to empty
-          document.getElementById("url-markdown-file").disabled = false;
         }
+        // Tigger click without exapanding the accoridan
+        document.getElementById("remote-file").click(function (event) {
+          event.stopPropagation();
+        });
+        // Show the remote URL
+        document.getElementById("url-json-file").value = dataUrl;
+        // Show the remote markdown URL
+        document.getElementById("url-markdown-file").value = markdownUrl;
+        // Enable the input element for the markdown URL and set the value to empty
+        document.getElementById("url-markdown-file").disabled = false;
+
         return data;
       }
     } catch (error) {
@@ -120,10 +130,6 @@ function setUpFileUploadListeners() {
         alert.showAlert(error.message);
         return;
       }
-      // Clear and hide the markdown div
-      document.getElementById("markdown-container").innerHTML = "";
-      document.getElementById("markdown").style.display = "none";
-
       // Update the tool's state
       State.data = data;
       State.initTool();
@@ -135,6 +141,10 @@ function setUpFileUploadListeners() {
 
     // Clear the URL input element
     document.getElementById("url-json-file").value = "";
+    document.getElementById("url-markdown-file").value = "";
+    document.getElementById("url-markdown-file").disabled = true;
+    document.getElementById("markdown-container").innerHTML = "";
+    document.getElementById("markdown").style.display = "none";
 
     // Trigger a resize event
     window.dispatchEvent(new Event("resize"));
