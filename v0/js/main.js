@@ -29,6 +29,7 @@ fetchData().then((data) => {
 async function fetchData() {
   const urlParams = new URLSearchParams(window.location.search);
   const dataUrl = urlParams.get("data");
+  const markdownUrl = urlParams.get("markdown");
 
   if (dataUrl) {
     try {
@@ -45,6 +46,35 @@ async function fetchData() {
         } catch (error) {
           alert.showAlert(error.message);
           return exampleData; // return example data as fallback
+        }
+
+        // If there is data provided from the remote, check if there is also a markdown description
+        if (markdownUrl) {
+          try {
+            const response = await fetch(markdownUrl);
+
+            if (!response.ok) {
+              alert.showAlert(
+                `There was an error fetching the markdown from the URL. HTTP Status: ${response.status}`
+              );
+              return;
+            }
+            // Parse the response
+            const markdown = await response.text();
+            // Change the display of the markdown div to block
+            document.getElementById("markdown").style.display = "block";
+            // Insert the markdown
+            document.getElementById("markdown-container").innerHTML =
+              marked.parse(markdown);
+          } catch (error) {
+            alert.showAlert(`Fetch operation failed: ${error.message}`);
+          }
+        } else {
+          // If there is no markdown provided, hide and clear the markdown div
+          document.getElementById("markdown").style.display = "none";
+          document.getElementById("markdown-container").innerHTML = "";
+          // Enable the input element for the markdown URL and set the value to empty
+          document.getElementById("url-markdown-file").disabled = false;
         }
         return data;
       }
@@ -90,6 +120,10 @@ function setUpFileUploadListeners() {
         alert.showAlert(error.message);
         return;
       }
+      // Clear and hide the markdown div
+      document.getElementById("markdown-container").innerHTML = "";
+      document.getElementById("markdown").style.display = "none";
+
       // Update the tool's state
       State.data = data;
       State.initTool();
@@ -145,6 +179,9 @@ function setUpFileUploadListeners() {
         alert.showAlert(error.message);
         return;
       }
+
+      // Enable the user to add markdown
+      document.getElementById("url-markdown-file").disabled = false;
 
       // Get the URL parameters
       const urlParams = new URLSearchParams();
@@ -208,7 +245,7 @@ function setUpFileUploadListeners() {
         marked.parse(markdown);
 
       // Get the URL parameters
-      const urlParams = new URLSearchParams();
+      const urlParams = new URLSearchParams(window.location.search);
 
       // Set the markdown parameter of the URL
       urlParams.set("markdown", this.value);
