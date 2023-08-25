@@ -16,8 +16,8 @@
       rel="stylesheet"
     />
     
-    <script type="module" crossorigin src="/assets/v0.bdd355f8.js"></script>
-    <link rel="stylesheet" href="/assets/index.0fa2603b.css">
+    <script type="module" crossorigin src="/assets/v0.191de320.js"></script>
+    <link rel="stylesheet" href="/assets/index.128f1f5c.css">
   </head>
   <!-- Body Contents -->
   <body>
@@ -117,6 +117,7 @@
                   <button id="remote-file">Remote</button>
                 </div>
               </div>
+              <label for="local-file-input">Upload Data</label>
               <div class="accordion-option" id="local-file-input">
                 <input type="file" id="local-json-file" accept=".json" />
               </div>
@@ -133,6 +134,23 @@
                   pattern="https://.*"
                   autocomplete="off"
                   required
+                />
+              </div>
+              <div
+                class="accordion-option"
+                id="remote-markdown-input"
+                style="display: none"
+              >
+                <label for="url-markdown-file">Upload Description</label>
+                <input
+                  type="url"
+                  name="url"
+                  id="url-markdown-file"
+                  placeholder="https://example.com"
+                  pattern="https://.*"
+                  autocomplete="off"
+                  required
+                  disabled
                 />
               </div>
             </div>
@@ -314,6 +332,14 @@
         <div class="chart" id="chart"></div>
         <!-- Protein contains the protein(s) -->
         <div class="protein" id="viewport"></div>
+        <!-- Markdown description of the experiment -->
+        <div class="markdown" id="markdown" style="display: none">
+          <hr />
+          <details>
+            <summary>Click for Description</summary>
+            <div id="markdown-container"></div>
+          </details>
+        </div>
       </div>
     </div>
     
