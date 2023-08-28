@@ -214,7 +214,16 @@ export class Protein {
       protein.data[protein.config.dataset].condition_colors[
         protein.config.proteinCondition
       ];
-    const negativeColor = invertColor(positiveColor);
+    // If negative colors are defined, use them
+    let negativeColor;
+    if (protein.data[protein.config.dataset].negative_condition_colors) {
+      negativeColor =
+        protein.data[protein.config.dataset].negative_condition_colors[
+          protein.config.proteinCondition
+        ];
+    } else {
+      negativeColor = invertColor(positiveColor);
+    }
     const metricExtent = d3
       .extent(protein.mutMetricSummary, protein.colorAccessor)
       .map(Math.abs);

@@ -53,3 +53,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.1] - 2023-08-28
+
+### Added
+
+- Accommodate an option for specifying the negative end of the color scale for each condtion.
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

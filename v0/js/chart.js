@@ -496,7 +496,14 @@ export class Chart {
     // Make the color scheme for the plots
     vis.positiveColor =
       vis.data[vis.config.dataset].condition_colors[vis.initConditionSelection];
-    vis.negativeColor = invertColor(vis.positiveColor);
+    if (vis.data[vis.config.dataset].negative_condition_colors) {
+      vis.negativeColor =
+        vis.data[vis.config.dataset].negative_condition_colors[
+          vis.initConditionSelection
+        ];
+    } else {
+      vis.negativeColor = invertColor(vis.positiveColor);
+    }
     // Get the amino acid alphabet for the dataset
     vis.alphabet = vis.data[vis.config.dataset].alphabet;
 
@@ -1045,7 +1052,12 @@ export class Chart {
     const condition = datum.condition;
     vis.positiveColor =
       vis.data[vis.config.dataset].condition_colors[condition];
-    vis.negativeColor = invertColor(vis.positiveColor);
+    if (vis.data[vis.config.dataset].negative_condition_colors) {
+      vis.negativeColor =
+        vis.data[vis.config.dataset].negative_condition_colors[condition];
+    } else {
+      vis.negativeColor = invertColor(vis.positiveColor);
+    }
     vis.wildtype = datum.wildtype;
 
     // Remove the previously selected site from the focus plot
