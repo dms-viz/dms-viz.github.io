@@ -3,8 +3,26 @@ import { UI, Alerts } from "./ui.js";
 import { validateSpecification } from "./utils.js";
 import * as d3 from "d3";
 import { marked } from "marked";
+import katex from "katex";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
+
+// Initialize a markdown renderer that supports KaTeX
+const renderer = new marked.Renderer();
+function replaceMathExpressions(text) {
+  return text
+    .replace(/\$\$([\s\S]+?)\$\$/g, (match, p1) => {
+      return katex.renderToString(p1, { displayMode: true });
+    })
+    .replace(/\$([\s\S]+?)\$/g, (match, p1) => {
+      return katex.renderToString(p1, { displayMode: false });
+    });
+}
+const rendererText = renderer.text;
+renderer.text = function (text) {
+  const mathReplacedText = replaceMathExpressions(text);
+  return rendererText(mathReplacedText);
+};
 
 // Initialize the UI
 const alert = new Alerts();
@@ -66,7 +84,7 @@ async function fetchData() {
             document.getElementById("markdown").style.display = "block";
             // Insert the markdown
             document.getElementById("markdown-container").innerHTML =
-              marked.parse(markdown);
+              marked.parse(markdown, { renderer: renderer });
           } catch (error) {
             alert.showAlert(`Fetch operation failed: ${error.message}`);
           }
@@ -251,8 +269,10 @@ function setUpFileUploadListeners() {
       document.getElementById("markdown").style.display = "block";
 
       // Insert the mardown into the textarea of the markdown div
-      document.getElementById("markdown-container").innerHTML =
-        marked.parse(markdown);
+      document.getElementById("markdown-container").innerHTML = marked.parse(
+        markdown,
+        { renderer: renderer }
+      );
 
       // Get the URL parameters
       const urlParams = new URLSearchParams(window.location.search);

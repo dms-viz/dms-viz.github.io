@@ -89,3 +89,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.3] - 2023-08-29
+
+### Added
+
+- Add LaTeX support to markdown rendering using katex.
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
