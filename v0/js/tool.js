@@ -177,12 +177,24 @@ export class Tool {
     d3.select("#filters").html("");
     if (tool.data[tool.dataset].filter_cols) {
       Object.keys(tool.data[tool.dataset].filter_cols).forEach((col) => {
+        let minVal, maxVal;
+        const filterLimits = tool.data[tool.dataset].filter_limits;
+
+        // If filter_limits exists, and has the necessary range for the current col
+        if (filterLimits && filterLimits[col]) {
+          [minVal, maxVal] = filterLimits[col];
+        } else {
+          // Compute min and max from data if not provided in filter_limits
+          minVal = d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
+          maxVal = d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
+        }
+
         // Add the filter to the page
         tool.initFilter(
           col,
           tool.data[tool.dataset].filter_cols[col],
-          d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
-          d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
+          minVal,
+          maxVal,
           tool.filters[col]
         );
       });
@@ -299,15 +311,28 @@ export class Tool {
         {}
       );
     }
+    // Populate Filter Sites
     d3.select("#filters").html("");
     if (tool.data[tool.dataset].filter_cols) {
       Object.keys(tool.data[tool.dataset].filter_cols).forEach((col) => {
+        let minVal, maxVal;
+        const filterLimits = tool.data[tool.dataset].filter_limits;
+
+        // If filter_limits exists, and has the necessary range for the current col
+        if (filterLimits && filterLimits[col]) {
+          [minVal, maxVal] = filterLimits[col];
+        } else {
+          // Compute min and max from data if not provided in filter_limits
+          minVal = d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
+          maxVal = d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
+        }
+
         // Add the filter to the page
         tool.initFilter(
           col,
           tool.data[tool.dataset].filter_cols[col],
-          d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
-          d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]),
+          minVal,
+          maxVal,
           tool.filters[col]
         );
       });

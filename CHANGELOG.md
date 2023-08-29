@@ -71,3 +71,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.2] - 2023-08-29
+
+### Added
+
+- Accommodate an option for specifying the minimum and maximum range on filter slides.
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
