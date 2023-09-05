@@ -107,3 +107,22 @@
 ### Removed
 
 - N/A
+
+## [0.2.4] - 2023-09-05
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fix the color scale of the protein to show only white when the domain of the data is [0, 0].
+- Set the default value of `floor` to `false`.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
