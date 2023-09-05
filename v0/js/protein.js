@@ -227,18 +227,24 @@ export class Protein {
     const metricExtent = d3
       .extent(protein.mutMetricSummary, protein.colorAccessor)
       .map(Math.abs);
-    if (!protein.config.floor) {
+    if (metricExtent[0] === 0 && metricExtent[1] === 0) {
       protein.colorScale = d3
         .scaleLinear()
-        .domain([-d3.max(metricExtent), 0, d3.max(metricExtent)])
-        .range([negativeColor, "white", positiveColor]);
+        .domain([0, 0])
+        .range(["white", "white"]);
     } else {
-      protein.colorScale = d3
-        .scaleLinear()
-        .domain([0, d3.max(protein.mutMetricSummary, protein.colorAccessor)])
-        .range(["white", positiveColor]);
+      if (!protein.config.floor) {
+        protein.colorScale = d3
+          .scaleLinear()
+          .domain([-d3.max(metricExtent), 0, d3.max(metricExtent)])
+          .range([negativeColor, "white", positiveColor]);
+      } else {
+        protein.colorScale = d3
+          .scaleLinear()
+          .domain([0, d3.max(protein.mutMetricSummary, protein.colorAccessor)])
+          .range(["white", positiveColor]);
+      }
     }
-
     // Use the scale function to map site data to a color
     protein.colorMap = new Map(
       protein.mutMetricSummary.map((d) => {
