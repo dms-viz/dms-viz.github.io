@@ -126,3 +126,22 @@
 ### Removed
 
 - N/A
+
+## [0.2.5] - 2023-09-15
+
+### Added
+
+- N/A
+
+### Changed
+
+- Add link to documentation website
+- Change the plot sizing to be more consistent in `<iframes>`
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
