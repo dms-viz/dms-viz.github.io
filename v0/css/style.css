@@ -428,37 +428,16 @@ kbd {
   transition: 0.5s;
 }
 
-@media (min-width: 1400px) {
-  .body-pad {
-    padding: 0 4em 0 calc(var(--nav-icon-width) + 4em) !important;
-  }
-  .main {
-    padding: 0 4em 0 calc(var(--nav-width) + 4em);
-  }
-}
-
 .chart {  
   max-width: 1200px; 
-  min-width: 750px;
+  min-width: 300px;
 }
 
 .protein {
   max-width: 1080px; 
-  min-width: 750px;
+  min-width: 300px;
   min-height: 300px;
   max-height: 600px;
-}
-
-
-@media (max-width: 500px) {
-  .chart {  
-    min-width: 300px;
-  }
-  
-  .protein {
-    min-width: 300px;
-  }
-  
 }
 
 .heatmap-tooltip,
@@ -499,6 +478,15 @@ kbd {
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
   z-index: var(--z-fixed);
+}
+
+@media (min-width: 1400px) {
+  .body-pad {
+    padding: 0 4em 0 calc(var(--nav-icon-width) + 4em) !important;
+  }
+  .main {
+    padding: 0 4em 0 calc(var(--nav-width) + 4em);
+  }
 }
 
 @media (max-width: 1000px) {
