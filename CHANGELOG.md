@@ -145,3 +145,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.6] - 2023-09-27
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fix a bug that cuases the size of the plot to be stochasitc due to the timing of the sidebar collapsing when the window is sufficently small.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

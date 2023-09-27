@@ -90,7 +90,7 @@ export class UI {
     window.addEventListener("load", () => {
       const mediaQuery = window.matchMedia("(max-width: 1000px)");
       if (mediaQuery.matches) {
-        this.toggleSidebar();
+        this.handleSidebarToggle();
       } else {
         window.dispatchEvent(new Event("resize"));
       }
@@ -153,15 +153,18 @@ export class UI {
   }
 
   handleSidebarToggle() {
-    this.toggleSidebar().then(() => {
-      window.dispatchEvent(new Event("resize"));
-      const accordions = document.querySelectorAll(".accordion");
-      accordions.forEach((accordion) => {
-        accordion.classList.remove("is-open");
-        let content = accordion.nextElementSibling;
-        content.style.maxHeight = null;
+    this.toggleSidebar()
+      .then(() => {
+        const accordions = document.querySelectorAll(".accordion");
+        accordions.forEach((accordion) => {
+          accordion.classList.remove("is-open");
+          let content = accordion.nextElementSibling;
+          content.style.maxHeight = null;
+        });
+      })
+      .then(() => {
+        window.dispatchEvent(new Event("resize"));
       });
-    });
   }
 }
 
