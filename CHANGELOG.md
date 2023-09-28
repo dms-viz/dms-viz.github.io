@@ -163,3 +163,22 @@
 ### Removed
 
 - N/A
+
+## [0.2.7] - 2023-09-27
+
+### Added
+
+- Add bond order to ball+stick structure for the ligands.
+- Add the ability to show nucleotides.
+
+### Changed
+
+- Be more selective when showing data chains or background chains to only show the protein.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

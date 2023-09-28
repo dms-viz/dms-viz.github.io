@@ -101,7 +101,7 @@ export class Protein {
 
     // Make the selection of chains to include in the protein structure
     if (dataChains != "polymer") {
-      protein.dataChainSelection = `:${dataChains.join(" or :")}`;
+      protein.dataChainSelection = `protein and :${dataChains.join(" or :")}`;
       protein.backgroundChainSelection = `protein and not :${dataChains.join(
         " and not :"
       )}`;
@@ -111,7 +111,7 @@ export class Protein {
         )}`;
       }
     } else {
-      protein.dataChainSelection = "polymer";
+      protein.dataChainSelection = "protein";
       protein.backgroundChainSelection = "none";
     }
 
@@ -175,6 +175,21 @@ export class Protein {
           ? "element"
           : protein.config.ligandColor,
         name: "ligands",
+        multipleBond: "symmetric",
+      });
+    }
+    protein.stage.getRepresentationsByName("nucleotide_cartoon").dispose();
+    protein.stage.getRepresentationsByName("nucleotide_bases").dispose();
+    if (protein.config.showNucleotides) {
+      protein.component.addRepresentation("cartoon", {
+        sele: "nucleic or rna or dna",
+        color: "resname",
+        name: "nucleotide_cartoon",
+      });
+      protein.component.addRepresentation("base", {
+        sele: "nucleic or rna or dna",
+        color: "resname",
+        name: "nucleotide_bases",
       });
     }
     if (protein.currentSelectionSiteString !== undefined) {
