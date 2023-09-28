@@ -125,6 +125,7 @@ export class Tool {
         proteinOpacity: tool.proteinOpacity,
         selectionOpacity: tool.selectionOpacity,
         showGlycans: tool.showGlycans,
+        showNucleotides: tool.showNucleotides,
       },
       tool.data
     );
@@ -165,6 +166,7 @@ export class Tool {
       tool.ligandRepresentation
     );
     tool.initCheckbox(d3.select("#showGlycans"), tool.showGlycans);
+    tool.initCheckbox(d3.select("#showNucleotides"), tool.showNucleotides);
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
     tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
@@ -534,6 +536,7 @@ export class Tool {
       selectionOpacity: { abbrev: "so", default: "1", json: false },
       backgroundOpacity: { abbrev: "bo", default: "1", json: false },
       showGlycans: { abbrev: "g", default: false, json: false },
+      showNucleotides: { abbrev: "n", default: false, json: false },
       filters: {
         abbrev: "fi",
         default: tool.data[tool.dataset].filter_cols
