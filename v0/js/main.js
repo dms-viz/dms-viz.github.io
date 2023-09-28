@@ -341,6 +341,10 @@ function setUpProteinOptionListeners() {
     this.value = this.checked ? "true" : "false";
     State.updateProteinOptions(this);
   });
+  d3.select("#proteinElement").on("change", function () {
+    this.value = this.checked ? "true" : "false";
+    State.updateProteinOptions(this);
+  });
   d3.select("#backgroundOpacity").on("input", function () {
     State.updateProteinOptions(this);
   });

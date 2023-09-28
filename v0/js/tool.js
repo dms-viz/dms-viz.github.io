@@ -121,6 +121,7 @@ export class Tool {
         backgroundColor: tool.backgroundColor,
         ligandColor: tool.ligandColor,
         ligandElement: tool.ligandElement,
+        proteinElement: tool.proteinElement,
         backgroundOpacity: tool.backgroundOpacity,
         proteinOpacity: tool.proteinOpacity,
         selectionOpacity: tool.selectionOpacity,
@@ -176,6 +177,7 @@ export class Tool {
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
     tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
     tool.initCheckbox(d3.select("#ligandElement"), tool.ligandElement);
+    tool.initCheckbox(d3.select("#proteinElement"), tool.proteinElement);
     tool.initRange(d3.select("#proteinOpacity"), tool.proteinOpacity);
     tool.initRange(d3.select("#selectionOpacity"), tool.selectionOpacity);
     tool.initRange(d3.select("#backgroundOpacity"), tool.backgroundOpacity);
@@ -537,6 +539,7 @@ export class Tool {
       backgroundColor: { abbrev: "bc", default: "#d3d3d3", json: false },
       ligandColor: { abbrev: "lc", default: "#d3d3d3", json: false },
       ligandElement: { abbrev: "le", default: false, json: false },
+      proteinElement: { abbrev: "pce", default: false, json: false },
       proteinOpacity: { abbrev: "po", default: "1", json: false },
       selectionOpacity: { abbrev: "so", default: "1", json: false },
       backgroundOpacity: { abbrev: "bo", default: "1", json: false },

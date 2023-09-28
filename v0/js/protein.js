@@ -162,7 +162,9 @@ export class Protein {
         ? `(${protein.dataChainSelection} and not hydrogen)` +
           protein.#makeNonCarbonHydrogenSelection(protein.dataChainSelection)
         : `(${protein.dataChainSelection} and not hydrogen)`,
-      color: protein.config.proteinColor,
+      color: protein.config.proteinElement
+        ? "element"
+        : protein.config.proteinColor,
       opacity: protein.config.proteinOpacity,
       name: "dataChains",
       smoothSheet: true,
@@ -198,6 +200,8 @@ export class Protein {
           : protein.config.ligandColor,
         name: "ligands",
         multipleBond: "symmetric",
+        radiusScale:
+          protein.config.ligandRepresentation == "ball+stick" ? 1.5 : 1,
       });
     }
     protein.stage.getRepresentationsByName("nucleotide_cartoon").dispose();

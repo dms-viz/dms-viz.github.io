@@ -188,11 +188,12 @@
 ### Added
 
 - Added the ability to show non-carbon bonded hydrogens.
+- Added the ability to color the protein by element color.
 
 ### Changed
 
 - Don't show hydrogens by default in the structure.
-- Increased the default radiusSize for ball+stick on ligands
+- Increased the default radiusScale for ball+stick on ligands to make them more visible
 
 ### Deprecated
 
