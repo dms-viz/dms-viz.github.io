@@ -182,3 +182,23 @@
 ### Removed
 
 - N/A
+
+## [0.2.8] - 2023-09-28
+
+### Added
+
+- Added the ability to show non-carbon bonded hydrogens.
+- Added the ability to color the protein by element color.
+
+### Changed
+
+- Don't show hydrogens by default in the structure.
+- Increased the default radiusScale for ball+stick on ligands to make them more visible
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
