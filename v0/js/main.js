@@ -358,6 +358,10 @@ function setUpProteinOptionListeners() {
     this.value = this.checked ? "true" : "false";
     State.updateProteinOptions(this);
   });
+  d3.select("#showNonCarbonHydrogens").on("change", function () {
+    this.value = this.checked ? "true" : "false";
+    State.updateProteinOptions(this);
+  });
 }
 
 // Set up the event listeners for the download buttons

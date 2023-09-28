@@ -101,14 +101,14 @@ export class Protein {
 
     // Make the selection of chains to include in the protein structure
     if (dataChains != "polymer") {
-      protein.dataChainSelection = `protein and :${dataChains.join(" or :")}`;
-      protein.backgroundChainSelection = `protein and not :${dataChains.join(
+      protein.dataChainSelection = `protein and (:${dataChains.join(" or :")})`;
+      protein.backgroundChainSelection = `protein and (not :${dataChains.join(
         " and not :"
-      )}`;
+      )})`;
       if (excludeChains != "none") {
-        protein.backgroundChainSelection += ` and not :${excludeChains.join(
+        protein.backgroundChainSelection += ` and (not :${excludeChains.join(
           " and not :"
-        )}`;
+        )})`;
       }
     } else {
       protein.dataChainSelection = "protein";
@@ -121,6 +121,20 @@ export class Protein {
       .then(function (component) {
         // Save the loaded protein structure
         protein.component = component;
+        // Identify the non-carbon hydrogen atoms
+        protein.nonCarbonHydrogens = [];
+        protein.component.structure.eachAtom(function (atom) {
+          if (atom.element == "H") {
+            let bondedAtoms = [];
+            atom.eachBondedAtom(function (bondedAtom) {
+              bondedAtoms.push(bondedAtom.element);
+            });
+            // Check if bondedAtoms contains any element other than "C"
+            if (bondedAtoms.some((e) => e !== "C")) {
+              protein.nonCarbonHydrogens.push(atom.index);
+            }
+          }
+        });
         // Attach the chart's site selection
         protein.config.dispatch.on("updateSites", (d) => {
           protein.selectSites(d);
@@ -144,7 +158,10 @@ export class Protein {
 
     protein.stage.getRepresentationsByName("dataChains").dispose();
     protein.component.addRepresentation(protein.config.proteinRepresentation, {
-      sele: protein.dataChainSelection,
+      sele: protein.config.showNonCarbonHydrogens
+        ? `(${protein.dataChainSelection} and not hydrogen)` +
+          protein.#makeNonCarbonHydrogenSelection(protein.dataChainSelection)
+        : `(${protein.dataChainSelection} and not hydrogen)`,
       color: protein.config.proteinColor,
       opacity: protein.config.proteinOpacity,
       name: "dataChains",
@@ -157,7 +174,12 @@ export class Protein {
       protein.component.addRepresentation(
         protein.config.backgroundRepresentation,
         {
-          sele: protein.backgroundChainSelection,
+          sele: protein.config.showNonCarbonHydrogens
+            ? `(${protein.backgroundChainSelection} and not hydrogen)` +
+              protein.#makeNonCarbonHydrogenSelection(
+                protein.backgroundChainSelection
+              )
+            : `(${protein.backgroundChainSelection} and not hydrogen)`,
           color: protein.config.backgroundColor,
           opacity: protein.config.backgroundOpacity,
           name: "backgroundChains",
@@ -182,12 +204,12 @@ export class Protein {
     protein.stage.getRepresentationsByName("nucleotide_bases").dispose();
     if (protein.config.showNucleotides) {
       protein.component.addRepresentation("cartoon", {
-        sele: "nucleic or rna or dna",
+        sele: "(nucleic or rna or dna)",
         color: "resname",
         name: "nucleotide_cartoon",
       });
       protein.component.addRepresentation("base", {
-        sele: "nucleic or rna or dna",
+        sele: "(nucleic or rna or dna)",
         color: "resname",
         name: "nucleotide_bases",
       });
@@ -196,6 +218,16 @@ export class Protein {
       protein.stage.getRepresentationsByName("currentSelection").setParameters({
         opacity: protein.config.selectionOpacity,
       });
+      protein.stage
+        .getRepresentationsByName("currentSelection")
+        .setSelection(
+          protein.config.showNonCarbonHydrogens
+            ? `(${protein.currentSelectionSiteString} and not hydrogen)` +
+                protein.#makeNonCarbonHydrogenSelection(
+                  protein.currentSelectionSiteString
+                )
+            : `(${protein.currentSelectionSiteString} and not hydrogen)`
+        );
       if (
         protein.config.selectionRepresentation !==
         protein.stage.getRepresentationsByName("currentSelection")["list"][0]
@@ -316,7 +348,7 @@ export class Protein {
       }
     });
     protein.currentSelectionSiteString = selectedSitesStrings.length
-      ? selectedSitesStrings.join(" or ")
+      ? `protein and (${selectedSitesStrings.join(" or ")})`
       : undefined;
 
     // Create a representation of the selected sites on the protein structure
@@ -332,7 +364,14 @@ export class Protein {
           side: "front",
           useWorker: true,
         })
-        .setSelection(protein.currentSelectionSiteString);
+        .setSelection(
+          protein.config.showNonCarbonHydrogens
+            ? `(${protein.currentSelectionSiteString} and not hydrogen)` +
+                protein.#makeNonCarbonHydrogenSelection(
+                  protein.currentSelectionSiteString
+                )
+            : `(${protein.currentSelectionSiteString} and not hydrogen)`
+        );
     } else {
       protein.stage.getRepresentationsByName("currentSelection").dispose();
     }
@@ -424,6 +463,21 @@ export class Protein {
    * @param {String}
    */
   #makeSiteString(site, chain) {
-    return `${chain != "polymer" ? ":" : ""}${chain} and ${site} and protein`;
+    return `(${chain != "polymer" ? ":" : ""}${chain} and ${site})`;
+  }
+  /**
+   * Format the selection string for non-carbon hydrogen atoms
+   * @param {String}
+   */
+  #makeNonCarbonHydrogenSelection(selection) {
+    let protein = this;
+
+    if (protein.nonCarbonHydrogens.length) {
+      return ` or (@${protein.nonCarbonHydrogens.join(
+        ","
+      )} and (${selection}))`;
+    } else {
+      return "";
+    }
   }
 }

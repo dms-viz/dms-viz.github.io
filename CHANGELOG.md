@@ -182,3 +182,22 @@
 ### Removed
 
 - N/A
+
+## [0.2.8] - 2023-09-28
+
+### Added
+
+- Added the ability to show non-carbon bonded hydrogens.
+
+### Changed
+
+- Don't show hydrogens by default in the structure.
+- Increased the default radiusSize for ball+stick on ligands
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

@@ -126,6 +126,7 @@ export class Tool {
         selectionOpacity: tool.selectionOpacity,
         showGlycans: tool.showGlycans,
         showNucleotides: tool.showNucleotides,
+        showNonCarbonHydrogens: tool.showNonCarbonHydrogens,
       },
       tool.data
     );
@@ -167,6 +168,10 @@ export class Tool {
     );
     tool.initCheckbox(d3.select("#showGlycans"), tool.showGlycans);
     tool.initCheckbox(d3.select("#showNucleotides"), tool.showNucleotides);
+    tool.initCheckbox(
+      d3.select("#showNonCarbonHydrogens"),
+      tool.showNonCarbonHydrogens
+    );
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
     tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
@@ -537,6 +542,7 @@ export class Tool {
       backgroundOpacity: { abbrev: "bo", default: "1", json: false },
       showGlycans: { abbrev: "g", default: false, json: false },
       showNucleotides: { abbrev: "n", default: false, json: false },
+      showNonCarbonHydrogens: { abbrev: "h", default: false, json: false },
       filters: {
         abbrev: "fi",
         default: tool.data[tool.dataset].filter_cols
