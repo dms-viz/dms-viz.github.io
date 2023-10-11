@@ -202,3 +202,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.9] - 2023-10-11
+
+### Added
+
+- N/A
+
+### Changed
+
+- Changed the default example dataset to antibody escape data with antibodies in the structure.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
