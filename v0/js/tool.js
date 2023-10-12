@@ -113,6 +113,7 @@ export class Tool {
         floor: tool.floor,
         pdbID: tool.data[tool.dataset].pdb,
         dispatch: tool.chart.dispatch,
+        filters: tool.filters,
         proteinRepresentation: tool.proteinRepresentation,
         selectionRepresentation: tool.selectionRepresentation,
         backgroundRepresentation: tool.backgroundRepresentation,
