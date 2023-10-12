@@ -525,7 +525,7 @@ export class Tool {
         default: tool.data[tool.dataset].conditions,
         json: true,
       },
-      summary: { abbrev: "s", default: "sum", json: false },
+      summary: { abbrev: "s", default: "mean", json: false },
       floor: { abbrev: "f", default: false, json: false },
       mutations: { abbrev: "m", default: false, json: false },
       proteinRepresentation: { abbrev: "pr", default: "cartoon", json: false },
