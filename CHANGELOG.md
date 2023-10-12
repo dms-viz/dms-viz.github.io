@@ -220,3 +220,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.10] - 2023-10-12
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fixed a bug where the structure wouldn't recolor when the filters were used.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

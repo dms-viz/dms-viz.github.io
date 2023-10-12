@@ -247,11 +247,36 @@ export class Protein {
   updateData() {
     let protein = this;
 
-    // Summarize the data
-    protein.mutMetric = protein.data[protein.config.dataset].mut_metric_df;
-    protein.mutMetricSummary = summarizeMetricData(protein.mutMetric).filter(
-      (e) => e.condition === protein.config.proteinCondition
-    );
+    // Get the data for the selected dataset
+    protein.originalMutMetric =
+      protein.data[protein.config.dataset].mut_metric_df;
+
+    // Mask the data based on the filters
+    protein.mutMetric = protein.originalMutMetric.map((d) => {
+      let newRow = { ...d }; // make a copy of the original object
+      // Loop through each filter in chart.config.filters
+      for (let filterKey in protein.config.filters) {
+        let filterValue = protein.config.filters[filterKey];
+        // Set the value of metric to null if the row doesn't pass the filter
+        if (newRow[filterKey] < filterValue) {
+          newRow.metric = null;
+          break;
+        }
+      }
+      return newRow;
+    });
+
+    // Get the excluded amino acids for the dataset
+    protein.excludedAminoAcids =
+      protein.data[protein.config.dataset].excludedAminoAcids;
+
+    // Summarize and filter the datasets based on the selections and conditions
+    protein.mutMetricSummary = summarizeMetricData(
+      protein.mutMetric,
+      protein.excludedAminoAcids
+    )
+      .filter((e) => e.condition === protein.config.proteinCondition)
+      .filter((e) => e[protein.config.summary] !== null);
 
     // Set up the accessor function
     protein.colorAccessor = (d) => {
