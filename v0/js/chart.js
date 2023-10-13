@@ -991,6 +991,9 @@ export class Chart {
       // Dispatch an event with the selected sites to the protein structure
       this.dispatch.call("updateSites", this, vis.selection);
     } else {
+      // Uncheck the 'selectAll' checkbox element
+      d3.select("#selectAll").property("checked", true);
+
       // Select all points in the focus plot
       vis.focusPlot
         .selectAll("circle")
@@ -1010,6 +1013,9 @@ export class Chart {
    */
   deselectSites(selectedSites = null) {
     let vis = this;
+
+    // Uncheck the 'selectAll' checkbox element
+    d3.select("#selectAll").property("checked", false);
 
     if (selectedSites) {
       // Remove the 'selected' class from points in the brush
