@@ -377,11 +377,7 @@ export class Chart {
       ])
       .on("end", function (event) {
         if (event.selection) {
-          if (event.sourceEvent.altKey) {
-            vis.deselectSites(event.selection);
-          } else {
-            vis.brushedPoints(event.selection);
-          }
+          vis.handleBrushedPoints(event);
         }
       })
       .keyModifiers(false);
@@ -944,32 +940,43 @@ export class Chart {
   /**
    * React to brush events in the focus plot
    */
-  brushedPoints(selection) {
+  handleBrushedPoints(event) {
     let vis = this;
+    console.log("Called handleBrushedPoints");
 
     // Clear the brush
     vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
 
-    if (selection) {
-      // Destructure the selection bounds
-      const [[x0, y0], [x1, y1]] = selection;
+    // Destructure the selection bounds
+    const [[x0, y0], [x1, y1]] = event.selection;
+    // Get the selected points
+    let brushedPoints = vis.focusPlot
+      .selectAll("circle")
+      .filter(
+        (d) =>
+          x0 <= vis.xScaleFocus(vis.xAccessorFocus(d)) &&
+          vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
+          y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
+          vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
+      );
+    if (event.sourceEvent.altKey) {
+      vis.deselectSites(brushedPoints);
+    } else {
+      vis.selectSites(brushedPoints);
+    }
+  }
+  /**
+   * Select sites on the protein structure
+   */
+  selectSites(selectedSites = null) {
+    let vis = this;
 
-      // Get the selected points
-      let selectedPoints = vis.focusPlot
-        .selectAll("circle")
-        .filter(
-          (d) =>
-            x0 <= vis.xScaleFocus(vis.xAccessorFocus(d)) &&
-            vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
-            y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
-            vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
-        );
-
+    if (selectedSites) {
       // Color in all sites that were selected
       vis.focusPlot
         .selectAll("circle")
         .filter((d) =>
-          selectedPoints
+          selectedSites
             .data()
             .map((d) => d.site)
             .includes(d.site)
@@ -979,65 +986,59 @@ export class Chart {
           "fill",
           (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
         );
-
       // Add the selected points to the selection
-      vis.selection.push(...selectedPoints.data());
-
-      // Dispatch an event with the selected sites
+      vis.selection.push(...selectedSites.data());
+      // Dispatch an event with the selected sites to the protein structure
+      this.dispatch.call("updateSites", this, vis.selection);
+    } else {
+      // Select all points in the focus plot
+      vis.focusPlot
+        .selectAll("circle")
+        .classed("selected", true)
+        .attr(
+          "fill",
+          (d) => vis.data[vis.config.dataset].condition_colors[d.condition]
+        );
+      // Get the data for all selected sites
+      vis.selection = vis.focusPlot.selectAll(".selected").data();
+      // Send all selected sites to the protein structure
       this.dispatch.call("updateSites", this, vis.selection);
     }
   }
   /**
-   * Deselect all points in the focus plot
+   * Deselect sites on the protein structure
    */
-  deselectSites(selection = null) {
+  deselectSites(selectedSites = null) {
     let vis = this;
 
-    if (selection) {
-      // Clear the brush
-      vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
-
-      // Destructure the selection bounds
-      const [[x0, y0], [x1, y1]] = selection;
-
-      // Get the deselected points
-      let deselectedPoints = vis.focusPlot
-        .selectAll("circle")
-        .filter(
-          (d) =>
-            x0 <= vis.xScaleFocus(vis.xAccessorFocus(d)) &&
-            vis.xScaleFocus(vis.xAccessorFocus(d)) < x1 &&
-            y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
-            vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
-        );
-
+    if (selectedSites) {
       // Remove the 'selected' class from points in the brush
       vis.focusPlot
         .selectAll("circle")
         .filter((d) =>
-          deselectedPoints
+          selectedSites
             .data()
             .map((d) => d.site)
             .includes(d.site)
         )
         .classed("selected", false)
         .attr("fill", "white");
-
       // Update the selection with the selected points removed
       vis.selection = vis.selection.filter((d) => {
-        let deslectedSites = deselectedPoints.data().map((d) => d.site);
+        let deslectedSites = selectedSites.data().map((d) => d.site);
         return !deslectedSites.includes(d.site);
       });
-
+      // Update the protein structure with the new selection
       this.dispatch.call("updateSites", this, vis.selection);
     } else {
+      // Deselect all points in the focus plot
       vis.focusPlot
         .selectAll(".selected")
         .classed("selected", false)
         .attr("fill", "white");
-
+      // Empty the selection
       vis.selection = [];
-
+      // Deselect all sites to the protein structure
       this.dispatch.call("updateSites", this, vis.selection);
     }
   }

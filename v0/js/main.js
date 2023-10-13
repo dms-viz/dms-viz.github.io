@@ -312,6 +312,13 @@ function setUpChartOptionListeners() {
   d3.select("#mutations").on("change", function () {
     State.updateChartOptions(this);
   });
+  d3.select("#selectAll").on("change", function () {
+    if (this.checked) {
+      State.chart.selectSites();
+    } else {
+      State.chart.deselectSites();
+    }
+  });
 }
 
 // Set up the event listeners for the protein options

@@ -379,10 +379,12 @@ export class Tool {
 
     // Select the node
     const selection = d3.select(node);
+    const type = selection.attr("type");
+    const value =
+      type === "checkbox"
+        ? selection.property("checked")
+        : selection.property("value");
     const id = selection.attr("id");
-    const value = selection.property(
-      id == "floor" || id == "mutations" ? "checked" : "value"
-    );
 
     // Update the config
     tool[id] = value;
