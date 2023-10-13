@@ -3,13 +3,14 @@ import * as d3 from "d3";
 import { summarizeMetricData, invertColor } from "./utils.js";
 import { Alerts } from "./ui.js";
 
-export class Protein {
+export class Protein extends EventTarget {
   /**
    * Class constructor with initial configuration
    * @param {Object}
    * @param {Object}
    */
   constructor(_config, _data) {
+    super();
     this.config = _config;
     this.config = {
       ..._config,
@@ -96,17 +97,19 @@ export class Protein {
     }
 
     // Get the chain selections for the protein structure
-    let dataChains = protein.data[protein.config.dataset].dataChains;
-    let excludeChains = protein.data[protein.config.dataset].excludeChains;
+    protein.dataChains = protein.data[protein.config.dataset].dataChains;
+    protein.excludeChains = protein.data[protein.config.dataset].excludeChains;
 
     // Make the selection of chains to include in the protein structure
-    if (dataChains != "polymer") {
-      protein.dataChainSelection = `protein and (:${dataChains.join(" or :")})`;
-      protein.backgroundChainSelection = `protein and (not :${dataChains.join(
+    if (protein.dataChains != "polymer") {
+      protein.dataChainSelection = `protein and (:${protein.dataChains.join(
+        " or :"
+      )})`;
+      protein.backgroundChainSelection = `protein and (not :${protein.dataChains.join(
         " and not :"
       )})`;
-      if (excludeChains != "none") {
-        protein.backgroundChainSelection += ` and (not :${excludeChains.join(
+      if (protein.excludeChains != "none") {
+        protein.backgroundChainSelection += ` and (not :${protein.excludeChains.join(
           " and not :"
         )})`;
       }
@@ -144,6 +147,9 @@ export class Protein {
         protein.updateData();
         // Set the initial zoom
         protein.stage.autoView();
+        // Finish by emitting an event that the protein has loaded
+        const event = new Event("proteinloaded");
+        protein.dispatchEvent(event);
       })
       .catch(function (error) {
         const alert = new Alerts();
