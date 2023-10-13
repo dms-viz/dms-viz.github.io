@@ -259,3 +259,21 @@
 ### Removed
 
 - N/A
+
+## [0.2.12] - 2023-10-13
+
+### Added
+
+- N/A
+
+### Changed
+
+- Sites on the protein can now be selected or deselected by clicking on points in the focus plot.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
