@@ -355,13 +355,13 @@ export class Chart {
         [0, 0],
         [vis.bounds.context.width, vis.bounds.context.height],
       ])
-      .on("brush", function (event) {
+      .on("brush", function (evt) {
         // DEBUG MESSAGE
-        if (event.selection) vis.brushed(event.selection);
+        if (evt.selection) vis.brushed(evt.selection);
       })
-      .on("end", function (event) {
+      .on("end", function (evt) {
         // DEBUG MESSAGE
-        if (!event.selection) vis.brushed(null);
+        if (!evt.selection) vis.brushed(null);
       });
 
     // Initialize FOCUS BRUSH component
@@ -375,9 +375,9 @@ export class Chart {
         [0, 0],
         [vis.bounds.focus.width, vis.bounds.focus.height + 5], // There needs to be y-padding if you floor the values
       ])
-      .on("end", function (event) {
-        if (event.selection) {
-          vis.handleBrushedPoints(event);
+      .on("end", function (evt) {
+        if (evt.selection) {
+          vis.handleBrushedPoints(evt);
         }
       })
       .keyModifiers(false);
@@ -724,6 +724,11 @@ export class Chart {
       })
       .on("click", function (evt, d) {
         vis.updateHeatmap(d);
+        if (evt.altKey) {
+          vis.deselectSites(d3.select(this));
+        } else {
+          vis.selectSites(d3.select(this));
+        }
       });
 
     // Color in the selected points
@@ -940,15 +945,14 @@ export class Chart {
   /**
    * React to brush events in the focus plot
    */
-  handleBrushedPoints(event) {
+  handleBrushedPoints(evt) {
     let vis = this;
-    console.log("Called handleBrushedPoints");
 
     // Clear the brush
     vis.focusPlot.select(".focus-brush").call(vis.focusBrush.move, null);
 
     // Destructure the selection bounds
-    const [[x0, y0], [x1, y1]] = event.selection;
+    const [[x0, y0], [x1, y1]] = evt.selection;
     // Get the selected points
     let brushedPoints = vis.focusPlot
       .selectAll("circle")
@@ -959,7 +963,7 @@ export class Chart {
           y0 <= vis.yScaleFocus(vis.yAccessorFocus(d)) &&
           vis.yScaleFocus(vis.yAccessorFocus(d)) < y1
       );
-    if (event.sourceEvent.altKey) {
+    if (evt.sourceEvent.altKey) {
       vis.deselectSites(brushedPoints);
     } else {
       vis.selectSites(brushedPoints);
