@@ -238,3 +238,24 @@
 ### Removed
 
 - N/A
+
+
+## [0.2.11] - 2023-10-12
+
+### Added
+
+- Added a button to select all sites in the protein and set selection as the default.
+
+### Changed
+
+- Refactored how selection works in the chart object.
+- Made the protein object emit an even on successful loading
+- Stopped redundant protein loading when the dataset is changed but the protein is the same
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

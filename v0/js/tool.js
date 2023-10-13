@@ -146,6 +146,7 @@ export class Tool {
     );
     tool.initCheckbox(d3.select("#floor"), tool.floor);
     tool.initCheckbox(d3.select("#mutations"), tool.mutations);
+    tool.initCheckbox(d3.select("#selectAll"), tool.selectAll);
 
     // Populate Protein Options
     tool.initSelect(
@@ -179,6 +180,7 @@ export class Tool {
     tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
     tool.initCheckbox(d3.select("#ligandElement"), tool.ligandElement);
     tool.initCheckbox(d3.select("#proteinElement"), tool.proteinElement);
+    tool.initCheckbox(d3.select("#proteinElement"), tool.proteinElement);
     tool.initRange(d3.select("#proteinOpacity"), tool.proteinOpacity);
     tool.initRange(d3.select("#selectionOpacity"), tool.selectionOpacity);
     tool.initRange(d3.select("#backgroundOpacity"), tool.backgroundOpacity);
@@ -209,6 +211,13 @@ export class Tool {
         );
       });
     }
+
+    // Select all sites if the selectAll checkbox is checked after the protein loads
+    tool.protein.addEventListener("proteinloaded", () => {
+      if (tool.selectAll) {
+        tool.selectAllSites(true);
+      }
+    });
   }
   /**
    * Initialize and populate a select element
@@ -289,11 +298,24 @@ export class Tool {
    */
   updateSelectedDataset(node) {
     let tool = this;
-    // Update the dataset selection in the chart, protein, and legend
+
+    // Get the new dataset from thet selection
     tool.dataset = d3.select(node).property("value");
+
+    // Check if the sites between the datasets are different
+    const currentSites = new Set(
+      tool.chart.data[tool.dataset].mut_metric_df.map((e) => e.site_reference)
+    );
+    const newSites = new Set(
+      tool.data[tool.dataset].mut_metric_df.map((e) => e.site_reference)
+    );
+    const sitesEqual = isEqual(currentSites, newSites);
+
+    // Update the chart and protein with the new datasets
     tool.chart.config.dataset = tool.dataset;
     tool.protein.config.dataset = tool.dataset;
     tool.legend.config.dataset = tool.dataset;
+
     // Update the condition selection because datasets have different conditions
     tool.chartConditions = tool.data[tool.dataset].conditions;
     tool.proteinCondition = tool.chartConditions[0];
@@ -301,6 +323,7 @@ export class Tool {
     tool.legend.config.chartConditions = tool.chartConditions;
     tool.protein.config.proteinCondition = tool.proteinCondition;
     tool.legend.config.proteinCondition = tool.proteinCondition;
+
     // Update the description in the UI based on the dataset
     tool.datasetDescription =
       tool.data[tool.dataset].description ||
@@ -310,6 +333,7 @@ export class Tool {
     if (!d3.select("#alertBanner").classed("hidden")) {
       d3.select("#alertMessage").text(tool.datasetDescription);
     }
+
     // Update the filters
     tool.filters = {};
     if (tool.data[tool.dataset].filter_cols) {
@@ -336,7 +360,6 @@ export class Tool {
           minVal = d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
           maxVal = d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
         }
-
         // Add the filter to the page
         tool.initFilter(
           col,
@@ -349,22 +372,38 @@ export class Tool {
     }
     tool.chart.config.filters = tool.filters;
 
-    // Update the chart and deselect all sites
-    tool.chart.deselectSites();
-    tool.chart.updateVis();
-    tool.legend.updateLegend();
-
     // Only update the protein if the structure has changed or the chains have changed
-    console.log(tool.data[tool.dataset]);
     if (tool.data[tool.dataset].pdb !== tool.protein.config.pdbID) {
+      // Update the chart and deselect all sites
+      tool.chart.deselectSites();
+      tool.chart.updateVis();
+      tool.legend.updateLegend();
+      // Update the protein
       tool.protein.config.pdbID = tool.data[tool.dataset].pdb;
       tool.protein.clear();
       tool.protein.load();
     } else if (
       JSON.stringify(tool.data[tool.dataset].dataChains) !==
-      JSON.stringify(tool.protein.config.dataChains)
+      JSON.stringify(tool.protein.dataChains)
     ) {
-      // If pdb is the same but dataChains are different, just reload
+      // Update the chart and deselect all sites
+      tool.chart.deselectSites();
+      tool.chart.updateVis();
+      tool.legend.updateLegend();
+      // Update the protein
+      tool.protein.clear();
+      tool.protein.load();
+    } else if (sitesEqual) {
+      // Update the chart and protein
+      tool.chart.updateVis();
+      tool.legend.updateLegend();
+      tool.protein.updateData();
+    } else {
+      // Update the chart and deselect all sites
+      tool.chart.deselectSites();
+      tool.chart.updateVis();
+      tool.legend.updateLegend();
+      // Update the protein
       tool.protein.clear();
       tool.protein.load();
     }
@@ -509,6 +548,20 @@ export class Tool {
     tool.updateURLParams();
   }
   /**
+   * Select all sites in the chart and protein
+   */
+  selectAllSites(checked) {
+    let tool = this;
+    if (checked) {
+      tool.selectAll = true;
+      tool.chart.selectSites();
+    } else {
+      tool.selectAll = false;
+      tool.chart.deselectSites();
+    }
+    tool.updateURLParams();
+  }
+  /**
    * Get the state from the URL
    */
   setState() {
@@ -530,6 +583,7 @@ export class Tool {
       summary: { abbrev: "s", default: "mean", json: false },
       floor: { abbrev: "f", default: false, json: false },
       mutations: { abbrev: "m", default: false, json: false },
+      selectAll: { abbrev: "sa", default: true, json: false },
       proteinRepresentation: { abbrev: "pr", default: "cartoon", json: false },
       selectionRepresentation: {
         abbrev: "sr",

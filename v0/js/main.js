@@ -313,11 +313,7 @@ function setUpChartOptionListeners() {
     State.updateChartOptions(this);
   });
   d3.select("#selectAll").on("change", function () {
-    if (this.checked) {
-      State.chart.selectSites();
-    } else {
-      State.chart.deselectSites();
-    }
+    State.selectAllSites(this.checked);
   });
 }
 
