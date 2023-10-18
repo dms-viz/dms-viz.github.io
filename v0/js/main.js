@@ -1,34 +1,21 @@
 import "../css/style.css";
 import { UI, Alerts } from "./ui.js";
 import { validateSpecification } from "./utils.js";
-import * as d3 from "d3";
+import { MarkdownRenderer } from "./utils.js";
 import { marked } from "marked";
-import katex from "katex";
+import * as d3 from "d3";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
-// Initialize a markdown renderer that supports KaTeX
-const renderer = new marked.Renderer();
-function replaceMathExpressions(text) {
-  return text
-    .replace(/\$\$([\s\S]+?)\$\$/g, (match, p1) => {
-      return katex.renderToString(p1, { displayMode: true });
-    })
-    .replace(/\$([\s\S]+?)\$/g, (match, p1) => {
-      return katex.renderToString(p1, { displayMode: false });
-    });
-}
-const rendererText = renderer.text;
-renderer.text = function (text) {
-  const mathReplacedText = replaceMathExpressions(text);
-  return rendererText(mathReplacedText);
-};
-
-// Initialize the UI
-const alert = new Alerts();
 // Initialize the tool and it's state
 let State;
+// Initialize the UI
 let sessionUI = new UI();
+// Initialize the Alerts
+const alert = new Alerts();
+// Initialize a markdown renderer that supports KaTeX
+const renderer = new MarkdownRenderer();
+
 fetchData().then((data) => {
   // Add data to the tool
   State = new Tool(data, sessionUI);
