@@ -67,18 +67,20 @@ async function initializeTool() {
 
     // If a markdown description is provided in the URL, render it
     if (markdownUrl) {
-      const markdown = await fetchFromURL(markdownUrl);
+      const markdown = await fetchFromURL(markdownUrl, "markdown");
       renderMarkdown(markdown);
       document.getElementById("url-markdown-file").value = markdownUrl;
-    }
-
-    // Check if there is a markdown description in the data
-    if (data.markdown_description && !markdownUrl) {
-      // Only render the markdown description if there is no markdown description in the URL
+      // If there is also a description in the file, warn the user that it's being overwritten by the remote
+      if (data.markdown_description) {
+        alert.showAlert(
+          "The remote markdown description is being used instead of the one in the JSON file.",
+          "warning"
+        );
+      }
+    } else if (data.markdown_description) {
       renderMarkdown(data.markdown_description);
     } else {
-      // Warn the user that the markdown description in the data will be ignored
-      alert.showAlert("The markdown description in the data was be ignored.");
+      hideMarkdown();
     }
   } else {
     // Render the markdown in the example data
@@ -87,27 +89,48 @@ async function initializeTool() {
   return data;
 }
 
-// Function to fetch data from a URL
-async function fetchFromURL(URL) {
+/**
+ * Fetch data from a URL and parse based on the specified format.
+ *
+ * @param {string} URL - The URL to fetch data from.
+ * @param {'json'|'markdown'} format - The desired data format. Accepts 'json' or 'markdown'.
+ * @returns {Object|string|null} - Returns parsed data or null in case of an error.
+ */
+async function fetchFromURL(URL, format = "json") {
+  let data = null;
   try {
     const response = await fetch(URL);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+    switch (format) {
+      case "json":
+        data = await response.json();
+        break;
+      case "markdown":
+        data = await response.text();
+        break;
+      default:
+        throw new Error(`Unsupported format: ${format}`);
+    }
   } catch (error) {
     alert.showAlert(`Fetch operation failed: ${error.message}`);
-    return null;
+    console.error(`Fetch operation failed: ${error.message}`);
   }
+  return data;
 }
 
 // Function to render markdown
 function renderMarkdown(markdown) {
-  document.getElementById("markdown").style.display = "block";
-  document.getElementById("markdown-container").innerHTML = marked.parse(
-    markdown,
-    { renderer: renderer }
-  );
+  try {
+    document.getElementById("markdown").style.display = "block";
+    document.getElementById("markdown-container").innerHTML = marked.parse(
+      markdown,
+      { renderer: renderer }
+    );
+  } catch (error) {
+    alert.showAlert(error);
+  }
 }
 
 // Function to hide the markdown
@@ -252,7 +275,7 @@ function setUpFileUploadListeners() {
     }
 
     // Parse the response
-    const markdown = await fetchFromURL(this.value);
+    const markdown = await fetchFromURL(this.value, "markdown");
 
     // Render the markdown description
     renderMarkdown(markdown);
