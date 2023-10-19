@@ -121,21 +121,7 @@ export function invertColor(hexColor) {
 
 // Validate the specification object
 export function validateSpecification(plotSpec) {
-  const requiredKeys = [
-    "mut_metric_df",
-    "sitemap",
-    "metric_col",
-    "condition_col",
-    "conditions",
-    "condition_colors",
-    "alphabet",
-    "pdb",
-    "dataChains",
-    "excludeChains",
-    "filter_cols",
-    "tooltip_cols",
-    "excludedAminoAcids",
-  ];
+  const requiredKeys = ["mut_metric_df", "sitemap", "metric_col", "pdb"];
 
   for (const dataset in plotSpec) {
     const missingKeys = requiredKeys.filter(

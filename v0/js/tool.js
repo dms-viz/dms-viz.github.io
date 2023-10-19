@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { isEqual, cloneDeep } from "lodash";
+import { validateSpecification } from "./utils.js";
 import { Chart } from "./chart.js";
 import { Protein } from "./protein.js";
 import { Legend } from "./legend.js";
@@ -12,6 +13,13 @@ export class Tool {
    * @param {Object}
    */
   constructor(_data, ui) {
+    try {
+      validateSpecification(_data);
+    } catch (error) {
+      alert.showAlert(error.message);
+      console.error(error.message);
+      throw error;
+    }
     this.data = _data;
     this.uiInstance = ui;
     this.initTool();

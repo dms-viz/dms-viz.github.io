@@ -1,6 +1,5 @@
 import "../css/style.css";
 import { UI, Alerts } from "./ui.js";
-import { validateSpecification } from "./utils.js";
 import { MarkdownRenderer } from "./utils.js";
 import { marked } from "marked";
 import * as d3 from "d3";
@@ -20,7 +19,7 @@ const renderer = new MarkdownRenderer();
 initializeTool()
   .then((data) => {
     // Add data to the tool
-    State = new Tool(data, sessionUI);
+    State = new Tool(removeMarkdown(data), sessionUI);
 
     // Initialize the event listeners here
     setUpFileUploadListeners();
@@ -48,15 +47,6 @@ async function initializeTool() {
   if (dataUrl) {
     // Fetch the data from the URL
     data = (await fetchFromURL(dataUrl)) || exampleData;
-    // If the data is not the example data, validate it
-    if (data !== exampleData) {
-      try {
-        validateSpecification(data);
-      } catch (error) {
-        alert.showAlert(error.message);
-        data = exampleData;
-      }
-    }
 
     // Update the UI to reflect that the data is remote
     document.getElementById("remote-file").click(function (event) {
@@ -129,7 +119,9 @@ function renderMarkdown(markdown) {
       { renderer: renderer }
     );
   } catch (error) {
-    alert.showAlert(error);
+    alert.showAlert(
+      "Markdown rendering failed. Please check that the markdown is properly formatted."
+    );
   }
 }
 
@@ -137,6 +129,13 @@ function renderMarkdown(markdown) {
 function hideMarkdown() {
   document.getElementById("markdown").style.display = "none";
   document.getElementById("markdown-container").innerHTML = "";
+}
+
+// Function to return a copy of the data object without the markdown description
+function removeMarkdown(data) {
+  const dataCopy = JSON.parse(JSON.stringify(data));
+  delete dataCopy.markdown_description;
+  return dataCopy;
 }
 
 // Set up the event listeners for the file upload buttons
@@ -163,11 +162,8 @@ function setUpFileUploadListeners() {
         // Parse the JSON file into an object
         const data = JSON.parse(reader.result);
 
-        // Validate the data
-        validateSpecification(data);
-
         // Update the tool's state
-        State.data = data;
+        State.data = removeMarkdown(data);
         State.initTool();
 
         // Clear the URL parameters and remote UI input elements
@@ -217,14 +213,6 @@ function setUpFileUploadListeners() {
     // Fetch a response from the URL
     const data = await fetchFromURL(this.value);
 
-    // Validate the data
-    try {
-      validateSpecification(data);
-    } catch (error) {
-      alert.showAlert(error.message);
-      return;
-    }
-
     // Enable the user to add markdown
     document.getElementById("url-markdown-file").disabled = false;
 
@@ -236,7 +224,7 @@ function setUpFileUploadListeners() {
     window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
 
     // Update the tool's state
-    State.data = data;
+    State.data = removeMarkdown(data);
     State.initTool();
 
     // Check if there is a markdown description in the data
