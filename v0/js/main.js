@@ -7,7 +7,7 @@ import * as d3 from "d3";
 import { Tool } from "./tool.js";
 import exampleData from "../data/example.json";
 
-// Initialize the tool and it's state
+// Initialize the state variable
 let State;
 // Initialize the UI
 let sessionUI = new UI();
@@ -16,145 +16,161 @@ const alert = new Alerts();
 // Initialize a markdown renderer that supports KaTeX
 const renderer = new MarkdownRenderer();
 
-fetchData().then((data) => {
-  // Add data to the tool
-  State = new Tool(data, sessionUI);
+// Initialize the tool
+initializeTool()
+  .then((data) => {
+    // Add data to the tool
+    State = new Tool(data, sessionUI);
 
-  // Set up the event listeners
-  setUpFileUploadListeners();
-  setUpChartOptionListeners();
-  setUpProteinOptionListeners();
-  setUpDownloadButtonListeners();
-  setUpWindowResizeListener();
+    // Initialize the event listeners here
+    setUpFileUploadListeners();
+    setUpChartOptionListeners();
+    setUpProteinOptionListeners();
+    setUpDownloadButtonListeners();
+    setUpWindowResizeListener();
+  })
+  .then(() => {
+    // Trigger a resize event after everything is done
+    window.dispatchEvent(new Event("resize"));
+  })
+  .catch((error) => {
+    alert.showAlert(error.message);
+  });
 
-  // Trigger a resize event
-  window.dispatchEvent(new Event("resize"));
-});
-
-// Get data from remote URL or local JSON file
-async function fetchData() {
+async function initializeTool() {
   const urlParams = new URLSearchParams(window.location.search);
   const dataUrl = urlParams.get("data");
   const markdownUrl = urlParams.get("markdown");
 
+  let data = exampleData;
+
+  // Initialize the tool using remote data if it is provided
   if (dataUrl) {
-    try {
-      const response = await fetch(dataUrl);
-
-      if (!response.ok) {
-        alert.showAlert(`HTTP error! status: ${response.status}`);
-        return exampleData; // return example data as fallback
-      } else {
-        const data = await response.json();
-        // Validate the data
-        try {
-          validateSpecification(data);
-        } catch (error) {
-          alert.showAlert(error.message);
-          return exampleData; // return example data as fallback
-        }
-
-        // If there is data provided from the remote, check if there is also a markdown description
-        if (markdownUrl) {
-          try {
-            const response = await fetch(markdownUrl);
-
-            if (!response.ok) {
-              alert.showAlert(
-                `There was an error fetching the markdown from the URL. HTTP Status: ${response.status}`
-              );
-              return;
-            }
-            // Parse the response
-            const markdown = await response.text();
-            // Change the display of the markdown div to block
-            document.getElementById("markdown").style.display = "block";
-            // Insert the markdown
-            document.getElementById("markdown-container").innerHTML =
-              marked.parse(markdown, { renderer: renderer });
-          } catch (error) {
-            alert.showAlert(`Fetch operation failed: ${error.message}`);
-          }
-        } else {
-          // If there is no markdown provided, hide and clear the markdown div
-          document.getElementById("markdown").style.display = "none";
-          document.getElementById("markdown-container").innerHTML = "";
-        }
-        // Tigger click without exapanding the accoridan
-        document.getElementById("remote-file").click(function (event) {
-          event.stopPropagation();
-        });
-        // Show the remote URL
-        document.getElementById("url-json-file").value = dataUrl;
-        // Show the remote markdown URL
-        document.getElementById("url-markdown-file").value = markdownUrl;
-        // Enable the input element for the markdown URL and set the value to empty
-        document.getElementById("url-markdown-file").disabled = false;
-
-        return data;
+    // Fetch the data from the URL
+    data = (await fetchFromURL(dataUrl)) || exampleData;
+    // If the data is not the example data, validate it
+    if (data !== exampleData) {
+      try {
+        validateSpecification(data);
+      } catch (error) {
+        alert.showAlert(error.message);
+        data = exampleData;
       }
-    } catch (error) {
-      alert.showAlert(`Fetch operation failed: ${error.message}`);
-      return exampleData; // return example data as fallback
+    }
+
+    // Update the UI to reflect that the data is remote
+    document.getElementById("remote-file").click(function (event) {
+      event.stopPropagation();
+    });
+    document.getElementById("url-json-file").value = dataUrl;
+    document.getElementById("url-markdown-file").disabled = false;
+
+    // If a markdown description is provided in the URL, render it
+    if (markdownUrl) {
+      const markdown = await fetchFromURL(markdownUrl);
+      renderMarkdown(markdown);
+      document.getElementById("url-markdown-file").value = markdownUrl;
+    }
+
+    // Check if there is a markdown description in the data
+    if (data.markdown_description && !markdownUrl) {
+      // Only render the markdown description if there is no markdown description in the URL
+      renderMarkdown(data.markdown_description);
+    } else {
+      // Warn the user that the markdown description in the data will be ignored
+      alert.showAlert("The markdown description in the data was be ignored.");
     }
   } else {
-    return exampleData; // no dataUrl parameter, return example data
+    // Render the markdown in the example data
+    renderMarkdown(data.markdown_description);
+  }
+  return data;
+}
+
+// Function to fetch data from a URL
+async function fetchFromURL(URL) {
+  try {
+    const response = await fetch(URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    alert.showAlert(`Fetch operation failed: ${error.message}`);
+    return null;
   }
 }
 
-// Set up the event listener for the JSON file upload
+// Function to render markdown
+function renderMarkdown(markdown) {
+  document.getElementById("markdown").style.display = "block";
+  document.getElementById("markdown-container").innerHTML = marked.parse(
+    markdown,
+    { renderer: renderer }
+  );
+}
+
+// Function to hide the markdown
+function hideMarkdown() {
+  document.getElementById("markdown").style.display = "none";
+  document.getElementById("markdown-container").innerHTML = "";
+}
+
+// Set up the event listeners for the file upload buttons
 function setUpFileUploadListeners() {
+  // Load in the JSON from a local file
   d3.select("#local-json-file").on("change", function () {
-    // Get the file input element
     const input = document.getElementById("local-json-file");
 
-    // Check if a file was selected
     if (input.files.length === 0) {
       alert.showAlert("Please select a JSON file to upload.");
       return;
     }
 
-    // Get the selected file
     const file = input.files[0];
 
-    // Check if the selected file is a JSON file
     if (file.type !== "application/json") {
       alert.showAlert("Please select a valid JSON file.");
       return;
     }
 
-    // Use the FileReader API to read the contents of the JSON file
     const reader = new FileReader();
     reader.onload = function () {
-      // Parse the JSON file into an object and write it to data
-      const data = JSON.parse(reader.result);
-      // Validate the data
       try {
+        // Parse the JSON file into an object
+        const data = JSON.parse(reader.result);
+
+        // Validate the data
         validateSpecification(data);
+
+        // Update the tool's state
+        State.data = data;
+        State.initTool();
+
+        // Clear the URL parameters and remote UI input elements
+        window.history.replaceState({}, "", `${location.pathname}`);
+        document.getElementById("url-json-file").value = "";
+        document.getElementById("url-markdown-file").value = "";
+        document.getElementById("url-markdown-file").disabled = true;
+
+        // Check if there is a markdown description in the data
+        if (data.markdown_description) {
+          renderMarkdown(data.markdown_description);
+        } else {
+          hideMarkdown();
+        }
+
+        // Trigger a resize event
+        window.dispatchEvent(new Event("resize"));
       } catch (error) {
         alert.showAlert(error.message);
-        return;
       }
-      // Update the tool's state
-      State.data = data;
-      State.initTool();
     };
+
     reader.readAsText(file);
-
-    // Get the URL parameters
-    window.history.replaceState({}, "", `${location.pathname}`);
-
-    // Clear the URL input element
-    document.getElementById("url-json-file").value = "";
-    document.getElementById("url-markdown-file").value = "";
-    document.getElementById("url-markdown-file").disabled = true;
-    document.getElementById("markdown-container").innerHTML = "";
-    document.getElementById("markdown").style.display = "none";
-
-    // Trigger a resize event
-    window.dispatchEvent(new Event("resize"));
   });
 
+  // Load in the JSON from a remote URL
   d3.select("#url-json-file").on("keyup", async function (event) {
     // If the key pressed was not 'Enter', return
     if (event.key !== "Enter") {
@@ -175,50 +191,46 @@ function setUpFileUploadListeners() {
       return;
     }
 
+    // Fetch a response from the URL
+    const data = await fetchFromURL(this.value);
+
+    // Validate the data
     try {
-      const response = await fetch(this.value);
-
-      if (!response.ok) {
-        alert.showAlert(
-          `There was an error fetching data from the URL. HTTP Status: ${response.status}`
-        );
-        return;
-      }
-
-      // Parse the response into a JSON object
-      const data = await response.json();
-      // Validate the data
-      try {
-        validateSpecification(data);
-      } catch (error) {
-        alert.showAlert(error.message);
-        return;
-      }
-
-      // Enable the user to add markdown
-      document.getElementById("url-markdown-file").disabled = false;
-
-      // Get the URL parameters
-      const urlParams = new URLSearchParams();
-
-      // Set the data parameter of the URL
-      urlParams.set("data", this.value);
-      window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
-
-      // Update the tool's state
-      State.data = data;
-      State.initTool();
-
-      // Trigger a resize event
-      window.dispatchEvent(new Event("resize"));
-
-      // Clear the local input element
-      document.getElementById("local-json-file").value = "";
+      validateSpecification(data);
     } catch (error) {
-      alert.showAlert(`Fetch operation failed: ${error.message}`);
+      alert.showAlert(error.message);
+      return;
     }
+
+    // Enable the user to add markdown
+    document.getElementById("url-markdown-file").disabled = false;
+
+    // Get the URL parameters
+    const urlParams = new URLSearchParams();
+
+    // Set the data parameter of the URL
+    urlParams.set("data", this.value);
+    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+
+    // Update the tool's state
+    State.data = data;
+    State.initTool();
+
+    // Check if there is a markdown description in the data
+    if (data.markdown_description) {
+      renderMarkdown(data.markdown_description);
+    } else {
+      hideMarkdown();
+    }
+
+    // Trigger a resize event
+    window.dispatchEvent(new Event("resize"));
+
+    // Clear the local input element
+    document.getElementById("local-json-file").value = "";
   });
 
+  // Load in the markdown from a remote URL
   d3.select("#url-markdown-file").on("keyup", async function (event) {
     // If the key pressed was not 'Enter', return
     if (event.key !== "Enter") {
@@ -239,37 +251,18 @@ function setUpFileUploadListeners() {
       return;
     }
 
-    try {
-      const response = await fetch(this.value);
+    // Parse the response
+    const markdown = await fetchFromURL(this.value);
 
-      if (!response.ok) {
-        alert.showAlert(
-          `There was an error fetching data from the URL. HTTP Status: ${response.status}`
-        );
-        return;
-      }
+    // Render the markdown description
+    renderMarkdown(markdown);
 
-      // Parse the response
-      const markdown = await response.text();
+    // Get the URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
 
-      // Change the display of the markdown div to block
-      document.getElementById("markdown").style.display = "block";
-
-      // Insert the mardown into the textarea of the markdown div
-      document.getElementById("markdown-container").innerHTML = marked.parse(
-        markdown,
-        { renderer: renderer }
-      );
-
-      // Get the URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-
-      // Set the markdown parameter of the URL
-      urlParams.set("markdown", this.value);
-      window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
-    } catch (error) {
-      alert.showAlert(`Fetch operation failed: ${error.message}`);
-    }
+    // Set the markdown parameter of the URL
+    urlParams.set("markdown", this.value);
+    window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
   });
 }
 
