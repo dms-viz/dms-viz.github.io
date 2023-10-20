@@ -15,6 +15,9 @@ const alert = new Alerts();
 // Initialize a markdown renderer that supports KaTeX
 const renderer = new MarkdownRenderer();
 
+// Show the loading screen
+document.getElementById("loadingScreen").style.display = "flex";
+
 // Initialize the tool
 initializeTool()
   .then((data) => {
@@ -31,8 +34,12 @@ initializeTool()
   .then(() => {
     // Trigger a resize event after everything is done
     window.dispatchEvent(new Event("resize"));
+    // Hide the loading screen when everything is done
+    document.getElementById("loadingScreen").style.display = "none";
   })
   .catch((error) => {
+    // Hide the loading screen when everything is done
+    document.getElementById("loadingScreen").style.display = "none";
     alert.showAlert(error.message);
   });
 
