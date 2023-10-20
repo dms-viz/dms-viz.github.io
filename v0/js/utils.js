@@ -1,4 +1,6 @@
 import * as d3 from "d3";
+import { marked } from "marked";
+import katex from "katex";
 
 // Summarize metric data
 export function summarizeMetricData(data, excludedAminoAcids = null) {
@@ -119,21 +121,7 @@ export function invertColor(hexColor) {
 
 // Validate the specification object
 export function validateSpecification(plotSpec) {
-  const requiredKeys = [
-    "mut_metric_df",
-    "sitemap",
-    "metric_col",
-    "condition_col",
-    "conditions",
-    "condition_colors",
-    "alphabet",
-    "pdb",
-    "dataChains",
-    "excludeChains",
-    "filter_cols",
-    "tooltip_cols",
-    "excludedAminoAcids",
-  ];
+  const requiredKeys = ["mut_metric_df", "sitemap", "metric_col", "pdb"];
 
   for (const dataset in plotSpec) {
     const missingKeys = requiredKeys.filter(
@@ -147,5 +135,30 @@ export function validateSpecification(plotSpec) {
         )}.`
       );
     }
+  }
+}
+
+// Class to render markdown with KaTeX support
+export class MarkdownRenderer extends marked.Renderer {
+  constructor() {
+    super();
+
+    const originalRendererText = this.text;
+    // Override the text function to add the KaTeX functionality
+    this.text = (text) => {
+      const mathReplacedText = this._replaceMathExpressions(text);
+      return originalRendererText.call(this, mathReplacedText);
+    };
+  }
+
+  // Replace math expressions
+  _replaceMathExpressions(text) {
+    return text
+      .replace(/\$\$([\s\S]+?)\$\$/g, (match, p1) => {
+        return katex.renderToString(p1, { displayMode: true });
+      })
+      .replace(/\$([\s\S]+?)\$/g, (match, p1) => {
+        return katex.renderToString(p1, { displayMode: false });
+      });
   }
 }

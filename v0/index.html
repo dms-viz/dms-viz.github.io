@@ -368,6 +368,25 @@
             ><i class="bx bx-x"></i
           ></span>
         </div>
+        <!-- Add this somewhere in your body -->
+        <div
+          id="loadingScreen"
+          style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+          "
+        >
+          <div class="spinner"></div>
+          <!-- You can use any loading spinner or gif here -->
+        </div>
         <!-- Chart contains the main D3 chart -->
         <div class="chart" id="chart"></div>
         <!-- Protein contains the protein(s) -->

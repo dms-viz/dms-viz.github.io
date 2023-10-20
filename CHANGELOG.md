@@ -277,3 +277,21 @@
 ### Removed
 
 - N/A
+
+## [0.3.0] - 2023-10-19
+
+### Added
+
+- Markdown can now be rendered from both a URL and a local JSON file.
+
+### Changed
+
+- Refactored Main.js entrypoint to the application to be a bit simpler.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
