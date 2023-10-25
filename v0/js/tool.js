@@ -591,7 +591,7 @@ export class Tool {
       summary: { abbrev: "s", default: "mean", json: false },
       floor: { abbrev: "f", default: false, json: false },
       mutations: { abbrev: "m", default: false, json: false },
-      selectAll: { abbrev: "sa", default: true, json: false },
+      selectAll: { abbrev: "sa", default: false, json: false },
       proteinRepresentation: { abbrev: "pr", default: "cartoon", json: false },
       selectionRepresentation: {
         abbrev: "sr",
