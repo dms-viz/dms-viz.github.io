@@ -96,6 +96,21 @@ See how `dms-viz` can provide this dataset as an interactive resource [here](htt
 
 We designed `dms-viz`  as a practical and user-friendly approach to visualizing mutation-associated data in the context of protein structures.  Because `dms-viz` is capable of handling various data types and has options for both sharing and privacy, it should be applicable to visualization of a wide range of datasets.
 
+## Code Availability
+
+- `dms-viz` is available at <https://dms-viz.github.io/>
+- The documentation and information about developing `dms-viz` is available at <https://dms-viz.github.io/dms-viz-docs/>
+- The source code for `dms-viz.github.io` is available at <https://github.com/dms-viz/dms-viz.github.io>
+- The source code for `configure-dms-viz` is available at <https://github.com/dms-viz/configure_dms_viz>
+
+## Acknowledgements
+
+This project was envisioned as the successor to the awesome tool `dms-view`. Thank you to Dr. Sarah Hilton and Dr. John Huddleston for laying this groundwork and for their incredibly helpful input on `dms-viz`. Thank you to members of the Bloom lab for providing data and guidance that was instrumental in developing `dms-viz`. Research reported here was supported in part by NIAID of the National Institutes of Health under award number U19AI171399. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health. The work of JDB was supported in part by the NIH/NIAID under grants R01AI141707 and contract 75N93021C00015. JDB is an Investigator of the Howard Hughes Medical Institute.
+
+## Disclosures
+
+JDB is on the scientific advisory boards of Apriori Bio, Aerium Therapeutics, Invivyd, and the Vaccine Company. JDB receives royalty payments as an inventor on Fred Hutch licensed patents related to deep mutational scanning of viral proteins.
+
 \newpage
 
 ## Figures
@@ -114,3 +129,5 @@ We designed `dms-viz`  as a practical and user-friendly approach to visualizing 
 **Figure 3**: *`dms-viz` provides a compact interface for exploring mutation-associated data*. The visual component of  `dms-viz` contains a line/point plot that shows a summary of the mutation-metric at all sites, in this case, mutation-escape from the constituents of a therapeutic antibody cocktail measured by DMS of the SARS-CoV-2 receptor binding domain (RBD) [@starrProspectiveMappingViral2021]. The user can zoom into specific regions of interest while maintaining context of the whole dataset using the context plot. Additionally, users can click on points in the focus plot to get details on every mutation for each site in the detail plot. Finally, sites that are selected on the focus plot by dragging are shown on the interactive protein structure colored by the summary statistic. In this example, the structure shown is the SARS-CoV-2 RBD bound to both antibodies in the therapeutic cocktail (PDB: 6XDG). A collapsible sidebar is used to configure the visualization and select the condition on the interactive protein structure. By collapsing out of view, the sidebar makes the visualization an optimal size for integrating into online platforms like websites and HTML presentation slides.
 
 \newpage
+
+## References
