@@ -26,8 +26,6 @@ date: 26 October 2023
 bibliography: paper.bib
 ---
 
-# Chapter 3: *dms-viz*: Structure-informed visualizations for deep mutational scanning and other mutation-based datasets
-
 ## Summary and Purpose
 
 Understanding how mutations impact a protein's functions is valuable for many types of biological questions. High-throughput techniques such as deep-mutational scanning (DMS) have greatly expanded the number of mutation-function datasets. For instance, DMS has been used to determine how mutations to viral proteins affect antibody escape [@dadonaitePseudovirusSystemEnables2023], receptor affinity [@starrDeepMutationalScanning2020], and essential functions such as viral genome transcription and replication [@liDeepMutationalScanning2023]. With the growth of sequence databases, in some cases the effects of mutations can also be inferred from phylogenies of natural sequences [@bloomFitnessEffectsMutations2023] (**Figure 1**).
