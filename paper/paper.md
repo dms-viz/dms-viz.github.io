@@ -115,18 +115,15 @@ JDB is on the scientific advisory boards of Apriori Bio, Aerium Therapeutics, In
 
 ## Figures
 
-![Figure 1 \label{fig:figure1}](figures/figure-1.png)
-**Figure 1**: *Large mutation-associated datasets are used in a variety of experimental contexts*. They can be used to map antibody footprints on viral glycoproteins, assess the impact of mutations on protein function in a laboratory setting, and identify patterns of selection from natural mutation frequencies.
+![Large mutation-associated datasets are used in a variety of experimental contexts. They can be used to map antibody footprints on viral glycoproteins, assess the impact of mutations on protein function in a laboratory setting, and identify patterns of selection from natural mutation frequencies.\label{fig:figure1}](figures/figure-1.png)
 
 \newpage
 
-![Figure 2 \label{fig:figure2}](figures/figure-2.png)
-**Figure 2**: *Using `dms-viz` involves three components*. (1) The user formats their data using the command line tool `configure-dms-viz`. (2) The user takes the resulting `JSON` specification file and uploads it to `dms-viz.github.io`. (3) The user can choose to either share the `JSON` file, host the `JSON` file and generate a shareable URL link, or export static images.
+![Using `dms-viz` involves three components. (1) The user formats their data using the command line tool `configure-dms-viz`. (2) The user takes the resulting `JSON` specification file and uploads it to `dms-viz.github.io`. (3) The user can choose to either share the `JSON` file, host the `JSON` file and generate a shareable URL link, or export static images.\label{fig:figure2}](figures/figure-2.png)
 
 \newpage
 
-![Figure 3 \label{fig:figure3}](figures/figure-3.png)
-**Figure 3**: *`dms-viz` provides a compact interface for exploring mutation-associated data*. The visual component of  `dms-viz` contains a line/point plot that shows a summary of the mutation-metric at all sites, in this case, mutation-escape from the constituents of a therapeutic antibody cocktail measured by DMS of the SARS-CoV-2 receptor binding domain (RBD) [@starrProspectiveMappingViral2021]. The user can zoom into specific regions of interest while maintaining context of the whole dataset using the context plot. Additionally, users can click on points in the focus plot to get details on every mutation for each site in the detail plot. Finally, sites that are selected on the focus plot by dragging are shown on the interactive protein structure colored by the summary statistic. In this example, the structure shown is the SARS-CoV-2 RBD bound to both antibodies in the therapeutic cocktail (PDB: 6XDG). A collapsible sidebar is used to configure the visualization and select the condition on the interactive protein structure. By collapsing out of view, the sidebar makes the visualization an optimal size for integrating into online platforms like websites and HTML presentation slides.
+![`dms-viz` provides a compact interface for exploring mutation-associated data. The visual component of  `dms-viz` contains a line/point plot that shows a summary of the mutation-metric at all sites, in this case, mutation-escape from the constituents of a therapeutic antibody cocktail measured by DMS of the SARS-CoV-2 receptor binding domain (RBD) [@starrProspectiveMappingViral2021]. The user can zoom into specific regions of interest while maintaining context of the whole dataset using the context plot. Additionally, users can click on points in the focus plot to get details on every mutation for each site in the detail plot. Finally, sites that are selected on the focus plot by dragging are shown on the interactive protein structure colored by the summary statistic. In this example, the structure shown is the SARS-CoV-2 RBD bound to both antibodies in the therapeutic cocktail (PDB: 6XDG). A collapsible sidebar is used to configure the visualization and select the condition on the interactive protein structure. By collapsing out of view, the sidebar makes the visualization an optimal size for integrating into online platforms like websites and HTML presentation slides.\label{fig:figure3}](figures/figure-3.png)
 
 \newpage
 
