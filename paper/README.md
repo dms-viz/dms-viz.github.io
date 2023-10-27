@@ -12,12 +12,15 @@ The manuscript is formatted for submission to JOSS on push events via [this gith
 
 ### For bioarXiv
 
-The manuscript is formatted for bioarXiv as a plain PDF using the following Pandoc command:
+The manuscript is formatted for bioarXiv as a 'plain' PDF file using the following Pandoc command:
 
 ```bash
 pandoc -s paper.md --citeproc \
 --pdf-engine=xelatex \
 --template=template.tex \
 -V linkcolor=blue \
+-V geometry:margin=1in \
 -o paper.pdf
 ```
+
+The format is dictated by the `template.tex` file, which is a spliced together combo of the default Pandoc template with some additions to deal with authors and affiliations in the metadata format JOSS requires.

@@ -1,5 +1,6 @@
 ---
 title: '*dms-viz*: Structure-informed visualizations for deep mutational scanning and other mutation-based datasets'
+papersize: a4
 tags:
   - javascript
   - data visualization
