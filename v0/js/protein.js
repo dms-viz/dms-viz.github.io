@@ -41,7 +41,19 @@ export class Protein extends EventTarget {
     // Make a map from the structure numbering to the reference numbering
     const refMap = protein.data[protein.config.dataset].mut_metric_df.reduce(
       (acc, current) => {
-        acc[current.site_protein] = current.site_reference;
+        if (!acc[current.site_protein]) {
+          acc[current.site_protein] = {};
+        }
+
+        if (current.site_chain === "polymer") {
+          acc[current.site_protein].polymer = current.site_reference;
+        } else {
+          const chains = current.site_chain.split(" "); // Split by space
+          chains.forEach((chain) => {
+            acc[current.site_protein][chain] = current.site_reference;
+          });
+        }
+
         return acc;
       },
       {}
@@ -55,13 +67,19 @@ export class Protein extends EventTarget {
     protein.stage.signals.hovered.add(function (pickingProxy) {
       if (pickingProxy && pickingProxy.atom) {
         let atom = pickingProxy.atom;
-        tooltip.innerHTML = `<strong>Site:</strong> ${[
-          refMap[atom.resno],
-        ]} </br > <strong>Residue:</strong> ${
+
+        // Get the correct site_reference using atom.resno and atom.chainname
+        let siteReference =
+          refMap[atom.resno]?.polymer ||
+          refMap[atom.resno]?.[atom.chainname] ||
+          "N/A";
+
+        tooltip.innerHTML = `<strong>Reference Site:</strong> ${siteReference} </br>
+          <strong>Residue:</strong> ${atom.resname}${protein.#getOneLetterCode(
           atom.resname
-        }${protein.#getOneLetterCode(
-          atom.resname
-        )} </br > <strong>Chain:</strong> ${atom.chainname}`;
+        )} </br>
+          <strong>Residue #:</strong> ${atom.resno}  </br>
+          <strong>Chain:</strong> ${atom.chainname}`;
         tooltip.style.display = "block";
       } else {
         tooltip.style.display = "none";
@@ -337,15 +355,38 @@ export class Protein extends EventTarget {
       })
     );
 
+    // Make a map from the atom residue numbering to the color scale
+    protein.colorMap2 = protein.mutMetricSummary.reduce((acc, current) => {
+      if (!acc[current.site_protein]) {
+        acc[current.site_protein] = {};
+      }
+      if (current.site_chain === "polymer") {
+        acc[current.site_protein].polymer = protein.colorScale(
+          current[protein.config.summary]
+        );
+      } else {
+        const chains = current.site_chain.split(" ");
+        chains.forEach((chain) => {
+          acc[current.site_protein][chain] = protein.colorScale(
+            current[protein.config.summary]
+          );
+        });
+      }
+      return acc;
+    }, {});
+
     // Add the schemeId with the color registry for this data combination
     protein.schemeId = NGL.ColormakerRegistry.addScheme(function () {
       this.atomColor = (atom) => {
-        if (protein.colorMap.has(atom.resno)) {
+        // Get the value from the color scale map
+        let colorScaleValue =
+          protein.colorMap2[atom.resno]?.polymer ||
+          protein.colorMap2[atom.resno]?.[atom.chainname] ||
+          undefined;
+
+        if (colorScaleValue) {
           // Color by array of metric summary - must be hexbase integer
-          return parseInt(
-            d3.color(protein.colorMap.get(atom.resno)).formatHex().slice(1),
-            16
-          );
+          return parseInt(d3.color(colorScaleValue).formatHex().slice(1), 16);
         } else {
           // Use the background color for the rest of the protein
           return parseInt(protein.config.proteinColor.slice(1), 16);

@@ -295,3 +295,22 @@
 ### Removed
 
 - N/A
+
+
+## [0.3.1] - 2023-10-28
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fixed a bug in the Protein class that improperly labels and colors sites over discontinuous chains (i.e. if there are more than one measurement for the same 'protein_site'.)
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
