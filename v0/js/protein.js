@@ -39,7 +39,7 @@ export class Protein extends EventTarget {
     protein.resize();
 
     // Make a map from the structure numbering to the reference numbering
-    const refMap = protein.data[protein.config.dataset].mut_metric_df.reduce(
+    protein.refMap = protein.data[protein.config.dataset].mut_metric_df.reduce(
       (acc, current) => {
         if (!acc[current.site_protein]) {
           acc[current.site_protein] = {};
@@ -70,8 +70,8 @@ export class Protein extends EventTarget {
 
         // Get the correct site_reference using atom.resno and atom.chainname
         let siteReference =
-          refMap[atom.resno]?.polymer ||
-          refMap[atom.resno]?.[atom.chainname] ||
+          protein.refMap[atom.resno]?.polymer ||
+          protein.refMap[atom.resno]?.[atom.chainname] ||
           "N/A";
 
         tooltip.innerHTML = `<strong>Reference Site:</strong> ${siteReference} </br>
@@ -345,18 +345,9 @@ export class Protein extends EventTarget {
           .range(["white", positiveColor]);
       }
     }
-    // Use the scale function to map site data to a color
-    protein.colorMap = new Map(
-      protein.mutMetricSummary.map((d) => {
-        return [
-          parseInt(d.site_protein),
-          protein.colorScale(d[protein.config.summary]),
-        ];
-      })
-    );
 
     // Make a map from the atom residue numbering to the color scale
-    protein.colorMap2 = protein.mutMetricSummary.reduce((acc, current) => {
+    protein.colorMap = protein.mutMetricSummary.reduce((acc, current) => {
       if (!acc[current.site_protein]) {
         acc[current.site_protein] = {};
       }
@@ -380,8 +371,8 @@ export class Protein extends EventTarget {
       this.atomColor = (atom) => {
         // Get the value from the color scale map
         let colorScaleValue =
-          protein.colorMap2[atom.resno]?.polymer ||
-          protein.colorMap2[atom.resno]?.[atom.chainname] ||
+          protein.colorMap[atom.resno]?.polymer ||
+          protein.colorMap[atom.resno]?.[atom.chainname] ||
           undefined;
 
         if (colorScaleValue) {
@@ -400,6 +391,27 @@ export class Protein extends EventTarget {
         color: protein.schemeId,
       });
     }
+
+    // Update the reference mapping of the tooltip
+    protein.refMap = protein.data[protein.config.dataset].mut_metric_df.reduce(
+      (acc, current) => {
+        if (!acc[current.site_protein]) {
+          acc[current.site_protein] = {};
+        }
+
+        if (current.site_chain === "polymer") {
+          acc[current.site_protein].polymer = current.site_reference;
+        } else {
+          const chains = current.site_chain.split(" "); // Split by space
+          chains.forEach((chain) => {
+            acc[current.site_protein][chain] = current.site_reference;
+          });
+        }
+
+        return acc;
+      },
+      {}
+    );
   }
   /**
    * Select sites on the protein structure based on the chart selection
