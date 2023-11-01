@@ -314,3 +314,22 @@
 ### Removed
 
 - N/A
+
+
+## [0.3.2] - 2023-11-01
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fixed a bug in the Protein class that improperly labeled reference sites on the structure when the data changed. Now the tooltip is updated when the data changes.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
