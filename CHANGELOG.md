@@ -333,3 +333,21 @@
 ### Removed
 
 - N/A
+
+## [0.3.3] - 2023-11-03
+
+### Added
+
+- N/A
+
+### Changed
+
+- Accommodate an additional value in the filter columns that lets you specify a default value for the slider in the json dataset.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

@@ -77,69 +77,11 @@ export class Tool {
       "A description wasn't provided for this dataset.";
     tool.uiInstance.datasetDescription = tool.datasetDescription;
 
-    // Get the detils from the data
+    // Get the details from the data
     tool.setState();
 
     // Update the URL parameters
     tool.updateURLParams();
-
-    // Set up the initial chart
-    tool.chart = new Chart(
-      {
-        parentElement: "#chart",
-        dataset: tool.dataset,
-        chartConditions: tool.chartConditions,
-        summary: tool.summary,
-        floor: tool.floor,
-        mutations: tool.mutations,
-        metric: tool.data[tool.dataset].metric_col,
-        tooltips: tool.data[tool.dataset].tooltip_cols,
-        filters: tool.filters,
-      },
-      tool.data
-    );
-
-    // Set up the inital chart legend
-    tool.legend = new Legend(
-      {
-        parentElement: "#legend",
-        dataset: tool.dataset,
-        proteinCondition: tool.proteinCondition,
-        chartConditions: tool.chartConditions,
-        label: tool.data[tool.dataset].condition_col,
-      },
-      tool.data
-    );
-
-    // Set up the initial protein viewport
-    tool.protein = new Protein(
-      {
-        parentElement: "viewport",
-        dataset: tool.dataset,
-        proteinCondition: tool.proteinCondition,
-        summary: tool.summary,
-        floor: tool.floor,
-        pdbID: tool.data[tool.dataset].pdb,
-        dispatch: tool.chart.dispatch,
-        filters: tool.filters,
-        proteinRepresentation: tool.proteinRepresentation,
-        selectionRepresentation: tool.selectionRepresentation,
-        backgroundRepresentation: tool.backgroundRepresentation,
-        ligandRepresentation: tool.ligandRepresentation,
-        proteinColor: tool.proteinColor,
-        backgroundColor: tool.backgroundColor,
-        ligandColor: tool.ligandColor,
-        ligandElement: tool.ligandElement,
-        proteinElement: tool.proteinElement,
-        backgroundOpacity: tool.backgroundOpacity,
-        proteinOpacity: tool.proteinOpacity,
-        selectionOpacity: tool.selectionOpacity,
-        showGlycans: tool.showGlycans,
-        showNucleotides: tool.showNucleotides,
-        showNonCarbonHydrogens: tool.showNonCarbonHydrogens,
-      },
-      tool.data
-    );
 
     // Populate Chart Options
     tool.initSelect(
@@ -193,21 +135,29 @@ export class Tool {
     tool.initRange(d3.select("#selectionOpacity"), tool.selectionOpacity);
     tool.initRange(d3.select("#backgroundOpacity"), tool.backgroundOpacity);
 
-    // Populate Filter Sites
+    // Populate Filter Options
     d3.select("#filters").html("");
     if (tool.data[tool.dataset].filter_cols) {
       Object.keys(tool.data[tool.dataset].filter_cols).forEach((col) => {
-        let minVal, maxVal;
+        let minVal, maxVal, defaultVal;
         const filterLimits = tool.data[tool.dataset].filter_limits;
 
         // If filter_limits exists, and has the necessary range for the current col
         if (filterLimits && filterLimits[col]) {
-          [minVal, maxVal] = filterLimits[col];
+          // If there are three values in the array, the second is the default
+          if (filterLimits[col].length === 3) {
+            [minVal, defaultVal, maxVal] = filterLimits[col];
+          } else {
+            [minVal, maxVal] = filterLimits[col];
+            defaultVal = minVal;
+          }
         } else {
           // Compute min and max from data if not provided in filter_limits
           minVal = d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
           maxVal = d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
+          defaultVal = minVal;
         }
+        tool.filters[col] = defaultVal;
 
         // Add the filter to the page
         tool.initFilter(
@@ -219,6 +169,64 @@ export class Tool {
         );
       });
     }
+
+    // Set up the initial chart
+    tool.chart = new Chart(
+      {
+        parentElement: "#chart",
+        dataset: tool.dataset,
+        chartConditions: tool.chartConditions,
+        summary: tool.summary,
+        floor: tool.floor,
+        mutations: tool.mutations,
+        metric: tool.data[tool.dataset].metric_col,
+        tooltips: tool.data[tool.dataset].tooltip_cols,
+        filters: tool.filters,
+      },
+      tool.data
+    );
+
+    // Set up the initial chart legend
+    tool.legend = new Legend(
+      {
+        parentElement: "#legend",
+        dataset: tool.dataset,
+        proteinCondition: tool.proteinCondition,
+        chartConditions: tool.chartConditions,
+        label: tool.data[tool.dataset].condition_col,
+      },
+      tool.data
+    );
+
+    // Set up the initial protein viewport
+    tool.protein = new Protein(
+      {
+        parentElement: "viewport",
+        dataset: tool.dataset,
+        proteinCondition: tool.proteinCondition,
+        summary: tool.summary,
+        floor: tool.floor,
+        pdbID: tool.data[tool.dataset].pdb,
+        dispatch: tool.chart.dispatch,
+        filters: tool.filters,
+        proteinRepresentation: tool.proteinRepresentation,
+        selectionRepresentation: tool.selectionRepresentation,
+        backgroundRepresentation: tool.backgroundRepresentation,
+        ligandRepresentation: tool.ligandRepresentation,
+        proteinColor: tool.proteinColor,
+        backgroundColor: tool.backgroundColor,
+        ligandColor: tool.ligandColor,
+        ligandElement: tool.ligandElement,
+        proteinElement: tool.proteinElement,
+        backgroundOpacity: tool.backgroundOpacity,
+        proteinOpacity: tool.proteinOpacity,
+        selectionOpacity: tool.selectionOpacity,
+        showGlycans: tool.showGlycans,
+        showNucleotides: tool.showNucleotides,
+        showNonCarbonHydrogens: tool.showNonCarbonHydrogens,
+      },
+      tool.data
+    );
 
     // Select all sites if the selectAll checkbox is checked after the protein loads
     tool.protein.addEventListener("proteinloaded", () => {
@@ -342,32 +350,31 @@ export class Tool {
       d3.select("#alertMessage").text(tool.datasetDescription);
     }
 
-    // Update the filters
-    tool.filters = {};
-    if (tool.data[tool.dataset].filter_cols) {
-      tool.filters = Object.keys(tool.data[tool.dataset].filter_cols).reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: d3.min(tool.data[tool.dataset].mut_metric_df, (e) => e[key]),
-        }),
-        {}
-      );
-    }
     // Populate Filter Sites
+    tool.filters = {};
     d3.select("#filters").html("");
     if (tool.data[tool.dataset].filter_cols) {
       Object.keys(tool.data[tool.dataset].filter_cols).forEach((col) => {
-        let minVal, maxVal;
+        let minVal, maxVal, defaultVal;
         const filterLimits = tool.data[tool.dataset].filter_limits;
 
         // If filter_limits exists, and has the necessary range for the current col
         if (filterLimits && filterLimits[col]) {
-          [minVal, maxVal] = filterLimits[col];
+          // If there are three values in the array, the second is the default
+          if (filterLimits[col].length === 3) {
+            [minVal, defaultVal, maxVal] = filterLimits[col];
+          } else {
+            [minVal, maxVal] = filterLimits[col];
+            defaultVal = minVal;
+          }
         } else {
           // Compute min and max from data if not provided in filter_limits
           minVal = d3.min(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
           maxVal = d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
+          defaultVal = minVal;
         }
+        // Set the value of the filter to the default
+        tool.filters[col] = defaultVal;
         // Add the filter to the page
         tool.initFilter(
           col,
@@ -617,10 +624,7 @@ export class Tool {
           ? Object.keys(tool.data[tool.dataset].filter_cols).reduce(
               (acc, key) => ({
                 ...acc,
-                [key]: d3.min(
-                  tool.data[tool.dataset].mut_metric_df,
-                  (e) => e[key]
-                ),
+                [key]: undefined,
               }),
               {}
             )
