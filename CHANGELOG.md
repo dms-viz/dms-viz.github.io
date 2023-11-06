@@ -351,3 +351,21 @@
 ### Removed
 
 - N/A
+
+## [0.3.4] - 2023-11-05
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fix a bug where the filter values in the URL were getting overwritten by a default no matter what.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

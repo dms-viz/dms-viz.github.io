@@ -157,7 +157,11 @@ export class Tool {
           maxVal = d3.max(tool.data[tool.dataset].mut_metric_df, (d) => d[col]);
           defaultVal = minVal;
         }
-        tool.filters[col] = defaultVal;
+
+        // Check if tool.filters[col] has already been set, if not, use defaultVal
+        if (tool.filters[col] === undefined) {
+          tool.filters[col] = defaultVal;
+        }
 
         // Add the filter to the page
         tool.initFilter(
