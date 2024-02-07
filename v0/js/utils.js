@@ -19,6 +19,7 @@ export function summarizeMetricData(data, excludedAminoAcids = null) {
           sum: null,
           min: null,
           max: null,
+          median: null,
         };
       }
       return {
@@ -27,6 +28,7 @@ export function summarizeMetricData(data, excludedAminoAcids = null) {
         sum: d3.sum(v, (d) => d.metric),
         min: d3.min(v, (d) => d.metric),
         max: d3.max(v, (d) => d.metric),
+        median: d3.median(v, (d) => d.metric),
       };
     },
     (d) => d.site,

@@ -91,7 +91,7 @@ export class Tool {
     );
     tool.initSelect(
       d3.select("#summary"),
-      ["sum", "mean", "max", "min"],
+      ["sum", "mean", "max", "min", "median"],
       tool.summary
     );
     tool.initCheckbox(d3.select("#floor"), tool.floor);
