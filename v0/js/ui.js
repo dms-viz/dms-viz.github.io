@@ -55,7 +55,6 @@ export class UI {
   }
 
   expandAccordionContent(btn) {
-    console.log(btn);
     btn.classList.toggle("is-open");
     let content = btn.nextElementSibling;
 

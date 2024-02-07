@@ -310,8 +310,13 @@ function setUpChartOptionListeners() {
   d3.select("#mutations").on("change", function () {
     State.updateChartOptions(this);
   });
-  d3.select("#selectAll").on("change", function () {
-    State.selectAllSites(this.checked);
+  d3.select("#selectAll").on("click", function () {
+    State.selectAllSites();
+  });
+  document.addEventListener("sitesDeselected", () => {
+    console.log("sitesDeselected");
+    State.selectAll = false;
+    State.updateURLParams();
   });
 }
 
