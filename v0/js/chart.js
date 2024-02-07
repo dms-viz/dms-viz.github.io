@@ -1051,6 +1051,9 @@ export class Chart {
       // Deselect all sites to the protein structure
       this.dispatch.call("updateSites", this, vis.selection);
     }
+    // Emit an event to the tool to remove select all sites from the URL parameters
+    const event = new CustomEvent("sitesDeselected", { detail: {} });
+    document.dispatchEvent(event);
   }
   /**
    * React to click events on focus points

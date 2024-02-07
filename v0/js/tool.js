@@ -96,7 +96,6 @@ export class Tool {
     );
     tool.initCheckbox(d3.select("#floor"), tool.floor);
     tool.initCheckbox(d3.select("#mutations"), tool.mutations);
-    tool.initCheckbox(d3.select("#selectAll"), tool.selectAll);
 
     // Populate Protein Options
     tool.initSelect(
@@ -235,7 +234,7 @@ export class Tool {
     // Select all sites if the selectAll checkbox is checked after the protein loads
     tool.protein.addEventListener("proteinloaded", () => {
       if (tool.selectAll) {
-        tool.selectAllSites(true);
+        tool.selectAllSites();
       }
     });
   }
@@ -569,15 +568,10 @@ export class Tool {
   /**
    * Select all sites in the chart and protein
    */
-  selectAllSites(checked) {
+  selectAllSites() {
     let tool = this;
-    if (checked) {
-      tool.selectAll = true;
-      tool.chart.selectSites();
-    } else {
-      tool.selectAll = false;
-      tool.chart.deselectSites();
-    }
+    tool.selectAll = true;
+    tool.chart.selectSites();
     tool.updateURLParams();
   }
   /**
