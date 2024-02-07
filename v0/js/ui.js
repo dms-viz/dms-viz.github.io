@@ -55,6 +55,7 @@ export class UI {
   }
 
   expandAccordionContent(btn) {
+    console.log(btn);
     btn.classList.toggle("is-open");
     let content = btn.nextElementSibling;
 
@@ -93,6 +94,9 @@ export class UI {
         this.handleSidebarToggle();
       } else {
         window.dispatchEvent(new Event("resize"));
+        // Expand the chart accordion on load by default if the screen is big enough
+        const chartBtn = document.getElementById("chart-btn");
+        this.expandAccordionContent(chartBtn);
       }
     });
 
