@@ -356,11 +356,32 @@ kbd {
   background-color: var(--primary-bg-color);
 }
 
+.github-link .icon {
+  width: 30px;
+  height: 30px;
+}
+
 .github-link a {
   display: flex;
   align-items: center;
   text-decoration: none;
   color: rgba(0, 0, 0, 0.75);
+}
+
+.software-version {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px;
+  box-sizing: border-box;
+  background-color: var(--primary-bg-color);
+}
+
+.software-version span {
+  display: flex;
+  color: rgba(44, 44, 44, 0.75);
+  font-size: small;
 }
 
 .alert {
