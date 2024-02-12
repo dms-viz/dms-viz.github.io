@@ -56,8 +56,6 @@ export function summarizeMetricData(data, excludedAminoAcids = null) {
         )
     );
 
-  console.log(metricDataSummary);
-
   return metricDataSummary;
 }
 
