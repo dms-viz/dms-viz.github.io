@@ -67,18 +67,20 @@ export class Protein extends EventTarget {
     protein.stage.signals.hovered.add(function (pickingProxy) {
       if (pickingProxy && pickingProxy.atom) {
         let atom = pickingProxy.atom;
+        // Take into account the insertion code
+        let resno = String(atom.resno) + atom.inscode;
 
         // Get the correct site_reference using atom.resno and atom.chainname
         let siteReference =
-          protein.refMap[atom.resno]?.polymer ||
-          protein.refMap[atom.resno]?.[atom.chainname] ||
+          protein.refMap[resno]?.polymer ||
+          protein.refMap[resno]?.[atom.chainname] ||
           "N/A";
 
         tooltip.innerHTML = `<strong>Reference Site:</strong> ${siteReference} </br>
           <strong>Residue:</strong> ${atom.resname}${protein.#getOneLetterCode(
           atom.resname
         )} </br>
-          <strong>Residue #:</strong> ${atom.resno}  </br>
+          <strong>Residue #:</strong> ${resno}  </br>
           <strong>Chain:</strong> ${atom.chainname}`;
         tooltip.style.display = "block";
       } else {
