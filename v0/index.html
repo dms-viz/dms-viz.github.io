@@ -3,13 +3,20 @@
   <!-- Header of the Document -->
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/flavicorn.ico" type="image/x-icon" />
-    <title>dms-viz</title>
+    <meta name="title" content="dms-viz" />
+    <meta
+      name="description"
+      content="Tool for visualizing deep mutational scanning data on a 3D interactive protein structure."
+    />
+    <meta name="keywords" content="DMS, Protein" />
+    <meta name="author" content="Will Hannon" />
     <meta
       name="google-site-verification"
       content="ipynyUshS_xLGoTSYWVS7XNsauWcKo3tDXlRcD2i-Zc"
     />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/flavicorn.ico" type="image/x-icon" />
+    <title>dms-viz</title>
     <!-- Link to the svg boxicons -->
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -22,8 +29,8 @@
       crossorigin="anonymous"
     />
     
-    <script type="module" crossorigin src="/assets/v0.72007f97.js"></script>
-    <link rel="stylesheet" href="/assets/index.ffd455e3.css">
+    <script type="module" crossorigin src="/assets/v0.70e804b2.js"></script>
+    <link rel="stylesheet" href="/assets/index.cb63ef4a.css">
   </head>
   <!-- Body Contents -->
   <body>
@@ -91,8 +98,8 @@
             down the option key <kbd>⌥</kbd> while <strong>clicking</strong>.
             You can reorient and zoom into the protein structure by
             <strong>clicking and dragging</strong> it around the window. You can
-            also reset the protein structure to its original orientation by
-            pressing the <kbd>R</kbd> button on your keyboard.
+            also reset the protein structure to its original zoom and position
+            in the window by pressing the <kbd>r</kbd> button on your keyboard.
           </p>
         </div>
       </div>
@@ -199,10 +206,7 @@
                 </label>
               </div>
               <div class="accordion-option">
-                <label for="selectAll"
-                  >Select All Sites
-                  <input type="checkbox" name="selectAll" id="selectAll" />
-                </label>
+                <button id="selectAll">Select All Sites</button>
               </div>
             </div>
           </div>
@@ -361,6 +365,10 @@
             </div>
           </a>
         </div>
+        <!-- Software Version -->
+        <div class="software-version">
+          <span></span>
+        </div>
       </div>
       <!-- Main container with plot and protein content -->
       <div class="main" id="main">
@@ -403,6 +411,7 @@
         </div>
       </div>
     </div>
+    
     
   </body>
 </html>
