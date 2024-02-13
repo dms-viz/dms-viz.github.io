@@ -369,3 +369,25 @@
 ### Removed
 
 - N/A
+
+## [0.4.0] - 2023-02-13
+
+### Added
+
+- Support for insertion codes
+- The software version is dynamically displayed on the page
+- Meta tags for SEO
+- Add median as a summary statistic
+
+### Changed
+
+- Chart options are open by default
+- Select all sites is now a button
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

@@ -68,17 +68,20 @@ export class Protein extends EventTarget {
       if (pickingProxy && pickingProxy.atom) {
         let atom = pickingProxy.atom;
 
+        // Take into account the insertion code
+        let resno = String(atom.resno) + atom.inscode;
+
         // Get the correct site_reference using atom.resno and atom.chainname
         let siteReference =
-          protein.refMap[atom.resno]?.polymer ||
-          protein.refMap[atom.resno]?.[atom.chainname] ||
+          protein.refMap[resno]?.polymer ||
+          protein.refMap[resno]?.[atom.chainname] ||
           "N/A";
 
         tooltip.innerHTML = `<strong>Reference Site:</strong> ${siteReference} </br>
           <strong>Residue:</strong> ${atom.resname}${protein.#getOneLetterCode(
           atom.resname
         )} </br>
-          <strong>Residue #:</strong> ${atom.resno}  </br>
+          <strong>Residue #:</strong> ${resno}  </br>
           <strong>Chain:</strong> ${atom.chainname}`;
         tooltip.style.display = "block";
       } else {
@@ -422,23 +425,21 @@ export class Protein extends EventTarget {
 
     // Make an NGL selection string for the selected sites
     let selectedSitesStrings = [];
+
     sites.forEach((d) => {
-      const site = d.site_protein;
+      const site = protein.#formatSiteCode(d.site_protein);
       const chains = d.site_chain.split(" ");
-      // If the site isn't a number, it's not in the protein structure
-      if (isNaN(parseInt(site))) {
-        return;
-      } else {
-        const siteStrings = chains
-          .map((chain) => protein.#makeSiteString(site, chain))
-          .join(" or ");
-        selectedSitesStrings.push(siteStrings);
-      }
+      const siteStrings = chains
+        .map((chain) => protein.#makeSiteString(site, chain))
+        .join(" or ");
+      selectedSitesStrings.push(siteStrings);
     });
+
     protein.currentSelectionSiteString = selectedSitesStrings.length
       ? `protein and (${selectedSitesStrings.join(" or ")})`
       : undefined;
 
+    console.log(protein.currentSelectionSiteString);
     // Create a representation of the selected sites on the protein structure
     if (protein.currentSelectionSiteString !== undefined) {
       protein.stage.getRepresentationsByName("currentSelection").dispose();
@@ -552,6 +553,26 @@ export class Protein extends EventTarget {
    */
   #makeSiteString(site, chain) {
     return `(${chain != "polymer" ? ":" : ""}${chain} and ${site})`;
+  }
+  /**
+   * Format sites to handle insertion codes
+   * @param {String}
+   */
+
+  #formatSiteCode(site) {
+    // Attempt to convert the site string into a number
+    const numberPart = parseFloat(site);
+
+    // Check if the full site string was numeric or if it had an insertion code
+    if (!isNaN(numberPart) && numberPart.toString().length < site.length) {
+      // The site has an insertion code; extract it
+      const insertionCode = site.substring(numberPart.toString().length);
+      // Reconnect them with a '^' character
+      return numberPart + "^" + insertionCode.toUpperCase();
+    }
+
+    // If no insertion code is present or conversion was unsuccessful, return original site
+    return numberPart + "^";
   }
   /**
    * Format the selection string for non-carbon hydrogen atoms

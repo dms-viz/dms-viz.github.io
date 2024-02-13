@@ -42,7 +42,7 @@ export function summarizeMetricData(data, excludedAminoAcids = null) {
         condition: e.condition,
         site: e.site,
         site_reference: e.site_reference,
-        site_protein: e.site_protein,
+        site_protein: String(e.site_protein),
         site_chain: e.site_chain,
         wildtype: e.wildtype,
         ...metricDataRollup.get(e.site).get(e.condition),
