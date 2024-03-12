@@ -17,7 +17,6 @@ export class UI {
     this.remoteFile = document.getElementById("remote-file");
     this.accordionParent = document.getElementById("sidebar");
     this.infoButton = document.getElementById("dataset-info-button");
-    this.highlightHelp = once(this.highlightHelp.bind(this));
     this.registerEventListeners();
     this.registerTooltips();
   }
@@ -98,8 +97,6 @@ export class UI {
         this.expandAccordionContent(chartBtn);
       }
     });
-
-    document.addEventListener("mousedown", () => this.highlightHelp());
   }
 
   registerTooltips() {
@@ -116,14 +113,6 @@ export class UI {
     // Show the alert banner with a dataset description
     const alert = new Alerts();
     alert.showAlert(ui.datasetDescription, "info");
-  }
-
-  highlightHelp() {
-    const message = document.getElementById("help-message");
-    const help = document.querySelector(".help");
-    this.trigger.classList.remove("glow");
-    help.classList.remove("active");
-    message.remove();
   }
 
   toggleDownload({ target: element }) {
