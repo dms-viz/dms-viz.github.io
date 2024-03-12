@@ -1,4 +1,3 @@
-import { once } from "lodash";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 
@@ -170,8 +169,8 @@ export class Alerts {
 
   // Function to show the alert banner with a specific message and color
   showAlert(message, type = "error") {
-    this.alertMessage.textContent = message;
-    this.alertBanner.classList.remove("error", "info", "warning");
+    this.alertMessage.innerHTML = message;
+    this.alertBanner.classList.remove("error", "info", "warning", "instruct");
     this.alertBanner.classList.remove("hidden");
     this.alertBanner.classList.add(type);
   }

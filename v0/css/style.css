@@ -400,24 +400,30 @@ kbd {
   border-color: #ffeeba;
 }
 
-.alert span {
-  font-weight: bold;
+.alert.instruct {
+  color: #015b31;
+  background-color: #d1e7dd;
+  border-color: #d1e7dd;
 }
 
 .alert.hidden {
   display: none;
 }
 
+.alert a {
+  color: inherit;
+  font-weight: bold
+}
+
 .alert-close {
   position: absolute;
   right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 15px;
   cursor: pointer;
 }
 
 .alert-close i {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
 }
 
 .tippy-box[data-theme~='select-info'] {
