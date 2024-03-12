@@ -1,6 +1,6 @@
 # `dms-viz`
 
-[`dms-viz`](https://dms-viz.github.io/) is an interactive web tool for visualizing site-level data on a protein structure that extends the capabilities of `dms-view` for complex scenarios like multiple epitopes.
+[`dms-viz`](https://dms-viz.github.io/) is an interactive web tool for visualizing site-level data on a protein structure with the capability of handling complex scenarios like multiple epitopes.
 
 Check out the preprint [here](https://www.biorxiv.org/content/10.1101/2023.10.29.564578v1).
 
