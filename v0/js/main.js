@@ -39,7 +39,7 @@ initializeTool()
     // Show a message that describes in the basic instructions
     alert.showAlert(
       `
-      Welcome to dms-viz! If you're new here, we suggest checking out
+      Welcome to <strong><code>dms-viz</code></strong>! If you're new here, we suggest checking out
       the <a href='https://dms-viz.github.io/dms-viz-docs/' target='_blank'>documentation</a>. 
       <br/>
       <br/>

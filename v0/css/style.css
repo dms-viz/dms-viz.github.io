@@ -552,4 +552,6 @@ kbd {
   100% { transform: rotate(360deg); }
 }
 
-
+code {
+  font-size: larger;
+}
