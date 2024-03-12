@@ -127,6 +127,7 @@ export class Tool {
     tool.initColorPicker(d3.select("#proteinColor"), tool.proteinColor);
     tool.initColorPicker(d3.select("#backgroundColor"), tool.backgroundColor);
     tool.initColorPicker(d3.select("#ligandColor"), tool.ligandColor);
+    tool.initColorPicker(d3.select("#screenColor"), tool.screenColor);
     tool.initCheckbox(d3.select("#ligandElement"), tool.ligandElement);
     tool.initCheckbox(d3.select("#proteinElement"), tool.proteinElement);
     tool.initCheckbox(d3.select("#proteinElement"), tool.proteinElement);
@@ -219,6 +220,7 @@ export class Tool {
         proteinColor: tool.proteinColor,
         backgroundColor: tool.backgroundColor,
         ligandColor: tool.ligandColor,
+        screenColor: tool.screenColor,
         ligandElement: tool.ligandElement,
         proteinElement: tool.proteinElement,
         backgroundOpacity: tool.backgroundOpacity,
@@ -608,6 +610,7 @@ export class Tool {
       proteinColor: { abbrev: "pc", default: "#c9c9c9", json: false },
       backgroundColor: { abbrev: "bc", default: "#c9c9c9", json: false },
       ligandColor: { abbrev: "lc", default: "#c9c9c9", json: false },
+      screenColor: { abbrev: "sc", default: "#FFFFFF", json: false },
       ligandElement: { abbrev: "le", default: false, json: false },
       proteinElement: { abbrev: "pce", default: false, json: false },
       proteinOpacity: { abbrev: "po", default: "1", json: false },

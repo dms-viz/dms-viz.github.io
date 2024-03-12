@@ -32,7 +32,7 @@ export class Protein extends EventTarget {
 
     // Initialize the stage object for the target element
     protein.stage = new NGL.Stage(protein.config.parentElement, {
-      backgroundColor: "#FFFFFF",
+      backgroundColor: protein.config.screenColor,
     });
 
     // Set the initial size of the stage
@@ -183,6 +183,10 @@ export class Protein extends EventTarget {
   updateRepresentation() {
     let protein = this;
 
+    // Set the background color of the stage
+    protein.stage.setParameters({
+      backgroundColor: protein.config.screenColor,
+    });
     protein.stage.getRepresentationsByName("dataChains").dispose();
     protein.component.addRepresentation(protein.config.proteinRepresentation, {
       sele: protein.config.showNonCarbonHydrogens
@@ -439,7 +443,6 @@ export class Protein extends EventTarget {
       ? `protein and (${selectedSitesStrings.join(" or ")})`
       : undefined;
 
-    console.log(protein.currentSelectionSiteString);
     // Create a representation of the selected sites on the protein structure
     if (protein.currentSelectionSiteString !== undefined) {
       protein.stage.getRepresentationsByName("currentSelection").dispose();

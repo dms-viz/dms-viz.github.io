@@ -343,6 +343,9 @@ function setUpProteinOptionListeners() {
   d3.select("#ligandColor").on("change", function () {
     State.updateProteinOptions(this);
   });
+  d3.select("#screenColor").on("change", function () {
+    State.updateProteinOptions(this);
+  });
   d3.select("#ligandElement").on("change", function () {
     this.value = this.checked ? "true" : "false";
     State.updateProteinOptions(this);

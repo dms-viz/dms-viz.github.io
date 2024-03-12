@@ -459,6 +459,7 @@ kbd {
   min-width: 300px;
   min-height: 300px;
   max-height: 600px;
+  border-radius: 10px
 }
 
 .heatmap-tooltip,
