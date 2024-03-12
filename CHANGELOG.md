@@ -239,7 +239,6 @@
 
 - N/A
 
-
 ## [0.2.11] - 2023-10-12
 
 ### Added
@@ -296,7 +295,6 @@
 
 - N/A
 
-
 ## [0.3.1] - 2023-10-28
 
 ### Added
@@ -314,7 +312,6 @@
 ### Removed
 
 - N/A
-
 
 ## [0.3.2] - 2023-11-01
 
@@ -370,7 +367,7 @@
 
 - N/A
 
-## [0.4.0] - 2023-02-13
+## [0.4.0] - 2024-02-13
 
 ### Added
 
@@ -383,6 +380,24 @@
 
 - Chart options are open by default
 - Select all sites is now a button
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
+
+## [0.5.0] - 2024-03-12
+
+### Added
+
+- Added a button to change the color of the protein background
+
+### Changed
+
+- N/A
 
 ### Deprecated
 
