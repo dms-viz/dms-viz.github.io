@@ -1,0 +1,85 @@
+/* CSS properties that apply to all elements of a particular type  */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.4;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: var(--primary-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--primary-txt-color);
+  background-color: var(--primary-bg-color);
+  font-synthesis: style;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+ol,
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+blockquote {
+  margin: 0;
+}
+
+pre,
+code,
+kbd,
+samp {
+  font-family: var(--mono-font-family);
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+kbd {
+  border: 1px solid;
+  box-shadow: 2px 2px;
+  font-size: 1.2em;
+  line-height: 0.8em;
+  display: inline-block;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 3px 5px;
+  white-space: nowrap;
+}

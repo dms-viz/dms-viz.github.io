@@ -1,0 +1,348 @@
+/* CSS for components on the website including the sidebar, navbar, and form elements  */
+
+/* Header Styles */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  background: white;
+  z-index: var(--z-index-nav);
+  padding: 0 3em 0 calc(var(--sidebar-width) + 3em);
+  transition: 0.5s;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--nav-height);
+}
+
+nav .controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav .trigger {
+  display: flex;
+  align-items: center;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 1.25em;
+}
+
+nav .sidebar-toggle {
+  font-size: 1.25em;
+  color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+nav .sidebar-toggle:hover {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-color: var(--sidebar-bg-color);
+  z-index: 100;
+  overflow: scroll;
+  transition: 0.5s;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar .main-content {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 3px);
+  overflow: auto;
+}
+
+.sidebar .header {
+  margin-bottom: 2.5rem;
+  height: var(--nav-height);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.sidebar .header .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Press Start 2P", monospace;
+  font-size: 1em;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+  white-space: nowrap;
+  transition: justify-content 0.5s ease;
+  width: 100%;
+  gap: 10px;
+}
+
+.logo-img {
+  width: var(--sidebar-icon-width);
+  height: auto;
+}
+
+.sidebar.sidebar--collapsed .header .logo {
+  justify-content: flex-start;
+}
+
+.sidebar .accordion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: none;
+  outline: none;
+  background: none;
+  color: rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.sidebar .accordion:hover {
+  background-color: #dddddd;
+}
+
+.sidebar .accordion-content {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  gap: 0.5em;
+  transition: max-height 0.2s ease-in-out;
+}
+
+.sidebar .accordion-content label {
+  font-size: 0.8rem;
+}
+
+.sidebar .accordion-content select {
+  width: 100%;
+  height: 2em;
+}
+.sidebar .accordion-content input[type="range"] {
+  width: 100%;
+}
+
+.sidebar .color {
+  display: flex;
+  justify-content: space-between;
+}
+.sidebar .accordion-option {
+  padding-bottom: 10px;
+}
+
+.sidebar .accordion-option .output {
+  float: right;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: #963c10;
+}
+
+.sidebar .icon {
+  width: var(--sidebar-icon-width);
+  height: var(--sidebar-icon-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.75rem;
+}
+.legend {
+  padding-top: 0.2em;
+}
+
+#url-json-file {
+  width: 100%;
+  height: 2em;
+}
+
+#url-markdown-file {
+  width: 100%;
+  height: 2em;
+}
+
+.sidebar--collapsed {
+  width: var(--sidebar-icon-width);
+  overflow-x: hidden;
+}
+
+.body-pad {
+  padding: 0 2.5em 0 calc(var(--sidebar-icon-width) + 2.5em) !important;
+}
+
+.download-toggle {
+  width: 100%;
+  height: 1.5em;
+  position: relative;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.75);
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.download-toggle button {
+  text-align: center;
+  line-height: 50px;
+  color: black;
+  flex: 1;
+  margin: 0;
+  border: none;
+  background: white;
+  border-radius: 25px 0 0 25px;
+}
+
+.download-toggle .upload-method {
+  color: white;
+  background: #007bff;
+}
+
+.download-toggle button:last-child {
+  border-radius: 0 25px 25px 0;
+}
+
+.github-link {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px;
+  box-sizing: border-box;
+  background-color: var(--sidebar-bg-color);
+}
+
+.github-link .icon {
+  width: 30px;
+  height: 30px;
+}
+
+.github-link a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.software-version {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px;
+  box-sizing: border-box;
+  background-color: var(--sidebar-bg-color);
+}
+
+.software-version span {
+  display: flex;
+  color: rgba(44, 44, 44, 0.75);
+  font-size: small;
+}
+
+/* Alert Styles */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  position: relative;
+  padding-right: 35px;
+}
+
+.alert.error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert.info {
+  color: #004085;
+  background-color: #cce5ff;
+  border-color: #b8daff;
+}
+
+.alert.warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
+.alert.instruct {
+  color: #015b31;
+  background-color: #d1e7dd;
+  border-color: #d1e7dd;
+}
+
+.alert.hidden {
+  display: none;
+}
+
+.alert a {
+  color: inherit;
+  font-weight: bold;
+}
+
+.alert-close {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+  cursor: pointer;
+}
+
+.alert-close i {
+  font-size: 1.5rem;
+}
+
+/* Info Tooltip Styles */
+.tippy-box[data-theme~="select-info"] {
+  color: rgb(222, 222, 222);
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+#dataset-info-button {
+  border: none;
+  outline: none;
+  background: none;
+  text-align: center;
+}
+
+/* Loading Spinner Styles */
+.spinner {
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 5px solid #000;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

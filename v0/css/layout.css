@@ -1,0 +1,29 @@
+/* CSS for the application layout and resizing  */
+
+.main {
+  margin-top: 3em;
+  padding: 0 2.5em 0 calc(var(--sidebar-width) + 2.5em);
+  transition: 0.5s;
+}
+
+.chart {
+  max-width: 1200px;
+  min-width: 300px;
+}
+
+.protein {
+  max-width: 1080px;
+  min-width: 300px;
+  min-height: 300px;
+  max-height: 600px;
+  border-radius: 10px;
+}
+
+@media (min-width: 1400px) {
+  .body-pad {
+    padding: 0 4em 0 calc(var(--sidebar-icon-width) + 4em) !important;
+  }
+  .main {
+    padding: 0 4em 0 calc(var(--sidebar-width) + 4em);
+  }
+}

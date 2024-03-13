@@ -1,4 +1,4 @@
-import "../css/style.css";
+import "../css/main.css";
 import { UI, Alerts } from "./ui.js";
 import { MarkdownRenderer } from "./utils.js";
 import { marked } from "marked";

@@ -1,0 +1,74 @@
+/* CSS for visualization components including the chart and protein  */
+
+/* Tooltip Styles */
+.heatmap-tooltip,
+.focus-tooltip {
+  padding: 8px 12px;
+  color: black;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  font-family: "Helvetica", sans-serif;
+  transition: 0.2s opacity ease-out, 0.1s border-color ease-out;
+  background: rgba(250, 240, 255, 0.2);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  z-index: var(--z-fixed);
+}
+
+.heatmap-tooltip {
+  transform: translate(-50%, 25%) !important;
+  font-size: 14px !important;
+}
+
+.protein-tooltip {
+  display: none;
+  position: absolute;
+  padding: 8px 12px;
+  color: black;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  font-family: "Helvetica", sans-serif;
+  transition: 0.2s opacity ease-out, 0.1s border-color ease-out;
+  background: rgba(250, 240, 255, 0.2);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  z-index: var(--z-fixed);
+}
+
+@media (max-width: 1000px) {
+  .focus-tooltip,
+  .protein-tooltip {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+  }
+  .heatmap-tooltip {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* Axis Styles */
+.axis {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 0.9rem;
+}
+
+.heatmap .y-axis text {
+  font-size: 0.8rem;
+  text-anchor: middle;
+  transform: translate(-0.4em, 0em);
+}
+
+.axis-label {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
