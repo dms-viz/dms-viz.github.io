@@ -53,7 +53,6 @@ export class UI {
     this.infoButton.addEventListener("click", () =>
       this.showDatasetDescription()
     );
-    window.addEventListener("click", (event) => this.windowOnClick(event));
     this.toggle.addEventListener("click", () => this.handleSidebarToggle());
     this.localFile.addEventListener("click", (event) =>
       this.toggleDownload(event)
