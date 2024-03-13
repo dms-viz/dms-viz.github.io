@@ -4,9 +4,6 @@ import "tippy.js/dist/tippy.css";
 export class UI {
   constructor() {
     // UI Elements
-    this.modal = document.querySelector(".modal");
-    this.trigger = document.querySelector(".trigger");
-    this.closeButton = document.querySelector(".close-button");
     this.infoButton = document.getElementById("dataset-info-button");
     this.sidebar = document.getElementById("sidebar");
     this.toggle = document.getElementById("sidebar-toggle");
@@ -15,22 +12,11 @@ export class UI {
     this.localFile = document.getElementById("local-file");
     this.remoteFile = document.getElementById("remote-file");
     this.accordionParent = document.getElementById("sidebar");
-    this.infoButton = document.getElementById("dataset-info-button");
     this.registerEventListeners();
     this.registerTooltips();
   }
 
   // UI functions to attach to event listeners
-  toggleModal() {
-    this.modal.classList.toggle("show-modal");
-  }
-
-  windowOnClick(event) {
-    if (event.target === this.modal) {
-      this.toggleModal();
-    }
-  }
-
   toggleSidebar() {
     return new Promise((resolve) => {
       this.sidebar.classList.toggle("sidebar--collapsed");
@@ -64,8 +50,6 @@ export class UI {
   }
 
   registerEventListeners() {
-    this.trigger.addEventListener("click", () => this.toggleModal());
-    this.closeButton.addEventListener("click", () => this.toggleModal());
     this.infoButton.addEventListener("click", () =>
       this.showDatasetDescription()
     );
