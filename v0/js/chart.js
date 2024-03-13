@@ -20,6 +20,7 @@ export class Chart {
       metric: _config.metric,
       tooltips: _config.tooltips,
       filters: _config.filters,
+      mutationCoverage: _config.mutationCoverage,
       parentElement: _config.parentElement,
       excludedAminoAcids: _config.excludedAminoAcids,
       width: 1100,
@@ -417,6 +418,13 @@ export class Chart {
       vis.mutMetric,
       vis.excludedAminoAcids
     ).filter((d) => vis.config.chartConditions.includes(d.condition));
+
+    // Filter site based on mutation coverage
+    if (vis.config.mutationCoverage) {
+      vis.mutMetricSummary = vis.mutMetricSummary.filter(
+        (d) => d.count >= vis.config.mutationCoverage
+      );
+    }
 
     // Group the data by condition
     vis.mutMetricSummaryPerCondition = Array.from(

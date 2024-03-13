@@ -174,6 +174,44 @@ export class Tool {
       });
     }
 
+    // Add the default filters
+    let defaultFilters = d3.select("#default-filters");
+    defaultFilters.html("");
+    // Add a filter for mutation coverage
+    defaultFilters
+      .append("label")
+      .attr("for", "mutationCoverage")
+      .style("display", "block")
+      .text("Mutation Coverage");
+    defaultFilters
+      .append("input")
+      .attr("type", "range")
+      .attr("id", "mutationCoverage")
+      .attr("min", 0)
+      .attr("max", tool.data[tool.dataset].alphabet.length)
+      .attr("value", tool.mutationCoverage)
+      .attr("step", 1)
+      .on("input", function () {
+        // Update the slider text when the slider is moved
+        const value = parseFloat(this.value);
+        d3.select(`#${"mutationCoverage"}-output`).text(d3.format("d")(value));
+        // Update the values in the tool
+        tool.mutationCoverage = value;
+        tool.chart.config.mutationCoverage = value;
+        tool.protein.config.mutationCoverage = value;
+        // Update the visualizations
+        tool.chart.updateVis();
+        tool.protein.updateData();
+        tool.protein.selectSites(d3.selectAll(".selected").data());
+        // Update the URL parameters
+        tool.updateURLParams();
+      });
+    defaultFilters
+      .append("span")
+      .attr("class", "output")
+      .attr("id", `${"mutationCoverage"}-output`)
+      .text(d3.format("d")(tool.mutationCoverage));
+
     // Set up the initial chart
     tool.chart = new Chart(
       {
@@ -186,6 +224,7 @@ export class Tool {
         metric: tool.data[tool.dataset].metric_col,
         tooltips: tool.data[tool.dataset].tooltip_cols,
         filters: tool.filters,
+        mutationCoverage: tool.mutationCoverage,
       },
       tool.data
     );
@@ -213,6 +252,7 @@ export class Tool {
         pdbID: tool.data[tool.dataset].pdb,
         dispatch: tool.chart.dispatch,
         filters: tool.filters,
+        mutationCoverage: tool.mutationCoverage,
         proteinRepresentation: tool.proteinRepresentation,
         selectionRepresentation: tool.selectionRepresentation,
         backgroundRepresentation: tool.backgroundRepresentation,
@@ -632,6 +672,7 @@ export class Tool {
           : {},
         json: true,
       },
+      mutationCoverage: { abbrev: "mc", default: 0, json: false },
     };
 
     // Get the URL parameters
