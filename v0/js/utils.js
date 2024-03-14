@@ -164,3 +164,7 @@ export class MarkdownRenderer extends marked.Renderer {
       });
   }
 }
+
+export function delay(duration) {
+  return new Promise((resolve) => setTimeout(resolve, duration));
+}

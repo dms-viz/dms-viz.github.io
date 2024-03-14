@@ -28,6 +28,7 @@
       integrity="sha384-pRsDYiLLocCzWnUN/YEr9TBTTaZOUi5x8adKfqi6Qt44lDaFkoP++x1j2ohSMtdf"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="css/main.css" />
   </head>
   <!-- Body Contents -->
   <body>
@@ -323,23 +324,8 @@
             ><i class="bx bx-x"></i
           ></span>
         </div>
-        <div
-          id="loadingScreen"
-          style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-          "
-        >
+        <div id="loadingScreen">
           <div class="spinner"></div>
-          <!-- You can use any loading spinner or gif here -->
         </div>
         <!-- Chart contains the main D3 chart -->
         <div class="chart" id="chart"></div>
