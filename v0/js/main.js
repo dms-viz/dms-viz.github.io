@@ -21,37 +21,41 @@ Promise.all([
     .then((data) => {
       // Show a message that describes in the basic instructions
       alert.showAlert(
-        `
-            Welcome to <strong><code>dms-viz</code></strong>! If you're new here, we suggest checking out
-            the <a href='https://dms-viz.github.io/dms-viz-docs/' target='_blank'>documentation</a>. 
-            <br/>
-            <br/>
-            To use the visualization, <em>zoom</em> into regions of the
-            <strong>focus plot</strong> (the central summary plot) by 
-            <em>brushing</em> (<em>click and drag</em>) over the <strong>context plot</strong> (the top area plot).
-            <br/>
-            <br/>
-            Select sites by <em>clicking</em> on points in the <strong>focus plot</strong>.
-            The mutations at these site will appear in a <strong>detail plot</strong> (the leftmost heatmap).
-            These sites will also appear on the <strong>protein structure</strong>.
-            <br/>
-            <br/>
-            To more efficiently select sites on the <strong>protein structure</strong>, 
-            <em>brush</em> over points in the <strong>focus plot</strong>.
-            To deselect sites, you can either <em>double-click</em> on the <strong>focus plot</strong>,
-            or hold down the option key <kbd>⌥</kbd> while <em>brushing</em> over points to deselect.
-            <br/>
-            <br/>
-            If there are multiple conditions in the data, an interactive <strong>legend</strong>
-            will appear in the <em>Chart Options</em> in the sidebar. <em>Click</em> on
-            the <strong>legend</strong> values to determine which condition will appear in the
-            <strong>protein structure</strong>. To remove or add conditions to the
-            <strong>focus plot</strong>, <em>click</em> while holding down the option key <kbd>⌥</kbd>.
-            <br/>
-            <br/>
-            Interact with the <strong>protein structure</strong> by zooming using two
-            fingers on your tackpad or mouse. Change the orientation by <em>clicking and dragging</em> 
-            the structure. Reset the initial zoom and position by pressing the <kbd>r</kbd> key.`,
+        `<details>
+        <summary><strong>Click for instructions!</strong></summary>
+        <p>
+          Welcome to <strong><code>dms-viz</code></strong>! If you're new here, we suggest checking out
+          the <a href='https://dms-viz.github.io/dms-viz-docs/' target='_blank'>documentation</a>. 
+          <br/>
+          <br/>
+          To use the visualization, <em>zoom</em> into regions of the
+          <strong>focus plot</strong> (the central summary plot) by 
+          <em>brushing</em> (<em>click and drag</em>) over the <strong>context plot</strong> (the top area plot).
+          <br/>
+          <br/>
+          Select sites by <em>clicking</em> on points in the <strong>focus plot</strong>.
+          The mutations at these site will appear in a <strong>detail plot</strong> (the leftmost heatmap).
+          These sites will also appear on the <strong>protein structure</strong>.
+          <br/>
+          <br/>
+          To more efficiently select sites on the <strong>protein structure</strong>, 
+          <em>brush</em> over points in the <strong>focus plot</strong>.
+          To deselect sites, you can either <em>double-click</em> on the <strong>focus plot</strong>,
+          or hold down the option key <kbd>⌥</kbd> while <em>brushing</em> over points to deselect.
+          <br/>
+          <br/>
+          If there are multiple conditions in the data, an interactive <strong>legend</strong>
+          will appear in the <em>Chart Options</em> in the sidebar. <em>Click</em> on
+          the <strong>legend</strong> values to determine which condition will appear in the
+          <strong>protein structure</strong>. To remove or add conditions to the
+          <strong>focus plot</strong>, <em>click</em> while holding down the option key <kbd>⌥</kbd>.
+          <br/>
+          <br/>
+          Interact with the <strong>protein structure</strong> by zooming using two
+          fingers on your tackpad or mouse. Change the orientation by <em>clicking and dragging</em> 
+          the structure. Reset the initial zoom and position by pressing the <kbd>r</kbd> key.
+        </p>
+        </details>`,
         "instruct"
       );
       // Add data to the tool
