@@ -443,6 +443,9 @@ export class Protein extends EventTarget {
       ? `protein and (${selectedSitesStrings.join(" or ")})`
       : undefined;
 
+    // Update the zoom of the protein structure to reflect the selection
+    protein.component.autoView(selectedSitesStrings.join(" or "));
+
     // Create a representation of the selected sites on the protein structure
     if (protein.currentSelectionSiteString !== undefined) {
       protein.stage.getRepresentationsByName("currentSelection").dispose();
