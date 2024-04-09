@@ -1,0 +1,93 @@
+/* CSS for the navigation bar component at the top of the application */
+
+.nav-bar {
+  background-color: transparent;
+  position: relative;
+  height: var(--nav-height);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.nav-bar .wrapper {
+  padding: 0;
+}
+
+.nav-bar .container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: calc(var(--layout-max-width) - var(--sidebar-width));
+  height: var(--nav-height);
+  pointer-events: none;
+}
+
+.nav-bar .container * {
+  pointer-events: auto;
+}
+
+.nav-bar.sidebar-collapsed .container {
+  max-width: calc(var(--layout-max-width) - var(--sidebar-icon-width));
+}
+
+.nav-bar .content {
+  position: relative;
+  z-index: 1;
+  padding-right: 32px;
+  padding-left: var(--sidebar-width);
+  flex-grow: 1;
+  pointer-events: none;
+}
+
+.nav-bar.sidebar-collapsed .content {
+  padding-left: var(--sidebar-icon-width);
+}
+
+.nav-bar .content-body {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: var(--nav-height);
+  background-color: var(--primary-bg-color);
+}
+
+.nav-bar .menu {
+  display: flex;
+}
+
+.nav-bar .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  line-height: var(--nav-height);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-txt-color);
+}
+
+.nav-bar .menu-item:hover {
+  color: rgb(72, 72, 230);
+}
+
+.nav-bar .sidebar-toggle {
+  flex-grow: 1;
+  padding-left: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-bar .divider {
+  padding-left: var(--sidebar-width);
+  width: 100%;
+  height: 1px;
+}
+
+.nav-bar.sidebar-collapsed .divider {
+  padding-left: var(--sidebar-icon-width);
+}
+
+.nav-bar .divider-line {
+  background-color: #e2e2e3;
+  width: 100%;
+  height: 1px;
+}

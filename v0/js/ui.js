@@ -6,6 +6,7 @@ export class UI {
     // UI Elements
     this.infoButton = document.getElementById("dataset-info-button");
     this.sidebar = document.getElementById("sidebar");
+    this.navbar = document.getElementById("nav-bar");
     this.toggle = document.getElementById("sidebar-toggle");
     this.headerpd = document.getElementById("header");
     this.mainpd = document.getElementById("main");
@@ -20,6 +21,8 @@ export class UI {
   toggleSidebar() {
     return new Promise((resolve) => {
       this.sidebar.classList.toggle("sidebar--collapsed");
+      this.navbar.classList.toggle("sidebar-collapsed");
+      this.mainpd.classList.toggle("sidebar-collapsed");
       this.toggle.classList.toggle("bx-x");
       this.headerpd.classList.toggle("body-pad");
       this.mainpd.classList.toggle("body-pad");
