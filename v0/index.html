@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!-- Header of the Document -->
   <head>
     <meta charset="UTF-8" />
     <meta name="title" content="dms-viz" />
@@ -17,7 +16,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/flavicorn.ico" type="image/x-icon" />
     <title>dms-viz</title>
-    <!-- Link to the svg boxicons -->
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
@@ -29,90 +27,60 @@
       crossorigin="anonymous"
     />
     
-    <script type="module" crossorigin src="/assets/v0.ff77f5c0.js"></script>
-    <link rel="stylesheet" href="/assets/index.bd1be66b.css">
+    <script type="module" crossorigin src="/assets/v0.e1e514b3.js"></script>
+    <link rel="stylesheet" href="/assets/index.5fe9541d.css">
   </head>
   <!-- Body Contents -->
   <body>
     <!-- Wrap the main contents in a container -->
-    <div class="container">
-      <!-- Header contains the logo and name of the Application -->
-      <header class="header" id="header">
-        <nav>
-          <div class="controls">
-            <div class="sidebar-toggle">
-              <i class="bx bx-x bx-menu" id="sidebar-toggle"></i>
+    <div class="app-container">
+      <!-- Header contains the logo and name -->
+      <header class="app-navbar" id="app-navbar">
+        <div class="wrapper">
+          <div class="container">
+            <div class="content">
+              <button class="sidebar-toggle" id="sidebar-toggle">
+                <i class="bx bx-horizontal-left"></i>
+                <span>Collapse Sidebar</span>
+              </button>
+              <div class="content-body">
+                <nav class="menu">
+                  <a
+                    class="menu-item"
+                    href="https://dms-viz.github.io/dms-viz-docs/"
+                    tabindex="0"
+                    target="_blank"
+                  >
+                    <span>Documentation</span>
+                  </a>
+                  <a
+                    class="menu-item"
+                    href="https://dms-viz.github.io/dms-viz-docs/visualizing-data/vignettes/"
+                    tabindex="0"
+                    target="_blank"
+                  >
+                    <span>Examples</span>
+                  </a>
+                </nav>
+              </div>
             </div>
-            <button class="trigger glow">
-              <i class="bx bx-help-circle help active"></i>
-              <div id="help-message">Click here for instructions!</div>
-            </button>
           </div>
-        </nav>
-      </header>
-      <!-- Modal with Instructions -->
-      <div class="modal">
-        <div class="modal-content">
-          <span class="close-button"><i class="bx bx-x"></i></span>
-          <h3>Instructions</h3>
-          <p>
-            <strong>dms-viz</strong> is an interactive tool designed to
-            visualize mutation-level data on an associated protein structure. To
-            use the tool, <strong>click</strong> on the sidebar to the left and
-            upload the data and protein structure that you want to visualize.
-            For comprehensive details on how to use this tool,
-            <strong
-              ><a
-                href="https://dms-viz.github.io/dms-viz-docs/"
-                target="_blank"
-                style="text-decoration: none"
-                >check out the documentation</a
-              ></strong
-            >.
-          </p>
-          <p>
-            To configure the visualization, you can open the menu to the left to
-            choose various aspects of the view including colors, summary
-            statistics, filters, and more. You can also switch between datasets
-            present in the same JSON file.
-          </p>
-          <p>
-            To use the visualization, you can zoom in and out of regions of your
-            data by <strong>brushing</strong> (<strong>click and drag</strong>)
-            over the <em>area</em> plot. You can select sites to see in the
-            <em>heatmap</em> by <strong>clicking</strong> on points in the
-            <em>line/point</em> plot. You can <strong>mouseover</strong> sites
-            on the <em>line/point</em> and mutations on the <em>heatmap</em> to
-            see details in a pop-up tooltip. Finally, you can select which sites
-            to highlight on the protein structure by
-            <strong>brushing</strong> (<strong>click and drag</strong>) over
-            points in the <em>line/point plot</em>. To deselect sites, you can
-            either <strong>double-click</strong> on the <em>line/point</em> plot
-            or hold down the option key <kbd>⌥</kbd> and
-            <strong>brush</strong> over the sites that you want to deselect. If
-            there is more than one condition in your data, an interactive legend
-            will appear in the <em>Chart Options</em>. You can select an
-            condition to color the protein structure with by
-            <strong>clicking</strong> on an condition in the legend. You can
-            remove or add conditions to the <em>line/point</em> plot by holding
-            down the option key <kbd>⌥</kbd> while <strong>clicking</strong>.
-            You can reorient and zoom into the protein structure by
-            <strong>clicking and dragging</strong> it around the window. You can
-            also reset the protein structure to its original zoom and position
-            in the window by pressing the <kbd>r</kbd> button on your keyboard.
-          </p>
         </div>
-      </div>
+        <div class="divider">
+          <div class="divider-line"></div>
+        </div>
+      </header>
+
       <!-- Sidebar contains plot configuration options -->
-      <div class="sidebar" , id="sidebar">
+      <div class="app-sidebar" , id="app-sidebar">
         <!-- Main Content -->
         <div class="main-content">
           <!-- Menu Title -->
-          <div class="header">
-            <h1 class="logo">
+          <div class="menu-title">
+            <div class="logo">
               <img class="logo-img" src="/logo.png" alt="logo" />
               <span>dms-viz</span>
-            </h1>
+            </div>
           </div>
           <!-- Upload Options -->
           <div class="submenu">
@@ -336,6 +304,7 @@
             </button>
             <div class="accordion-content">
               <div class="accordion-option">
+                <div id="default-filters"></div>
                 <div id="filters"></div>
               </div>
             </div>
@@ -375,46 +344,33 @@
         </div>
       </div>
       <!-- Main container with plot and protein content -->
-      <div class="main" id="main">
-        <div id="alertBanner" class="alert hidden">
-          <span id="alertMessage">Default message</span>
-          <span id="alertClose" class="alert-close"
-            ><i class="bx bx-x"></i
-          ></span>
-        </div>
-        <!-- Add this somewhere in your body -->
-        <div
-          id="loadingScreen"
-          style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-          "
-        >
-          <div class="spinner"></div>
-          <!-- You can use any loading spinner or gif here -->
-        </div>
-        <!-- Chart contains the main D3 chart -->
-        <div class="chart" id="chart"></div>
-        <!-- Protein contains the protein(s) -->
-        <div class="protein" id="viewport"></div>
-        <!-- Markdown description of the experiment -->
-        <div class="markdown" id="markdown" style="display: none">
-          <hr />
-          <details>
-            <summary>Click for Description</summary>
-            <div id="markdown-container"></div>
-          </details>
+      <div class="app-main" id="app-main">
+        <div class="container">
+          <div id="alertBanner" class="alert hidden">
+            <span id="alertMessage">Default message</span>
+            <span id="alertClose" class="alert-close"
+              ><i class="bx bx-x"></i
+            ></span>
+          </div>
+          <div id="loadingScreen">
+            <div class="spinner"></div>
+          </div>
+          <!-- Chart contains the main D3 chart -->
+          <div class="chart" id="chart"></div>
+          <!-- Protein contains the protein(s) -->
+          <div class="protein" id="viewport"></div>
+          <!-- Markdown description of the experiment -->
+          <div class="markdown" id="markdown" style="display: none">
+            <hr />
+            <details>
+              <summary>Click for Description</summary>
+              <div id="markdown-container"></div>
+            </details>
+          </div>
         </div>
       </div>
     </div>
+    <!-- Attach the code for `dms-viz` -->
     
     
   </body>
