@@ -406,3 +406,21 @@
 ### Removed
 
 - N/A
+
+## [0.6.0] - 2024-04-10
+
+### Added
+
+- N/A
+
+### Changed
+
+- Complete overhaul of CSS and UI components.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
