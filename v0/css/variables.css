@@ -19,6 +19,7 @@
 /* Layout */
 :root {
   --layout-max-width: 1440px;
+  --layout-min-width: 600px;
 }
 
 /* Navbar */

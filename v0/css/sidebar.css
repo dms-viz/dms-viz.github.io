@@ -7,7 +7,7 @@
   overflow: auto;
 }
 
-.app-sidebar .header {
+.app-sidebar .menu-title {
   margin-bottom: 2.5rem;
   height: var(--nav-height);
   font-size: 1.25rem;
@@ -15,7 +15,7 @@
   color: rgba(0, 0, 0, 0.75);
 }
 
-.app-sidebar .header .logo {
+.app-sidebar .menu-title .logo {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +24,6 @@
   font-weight: bold;
   color: rgba(0, 0, 0, 0.75);
   white-space: nowrap;
-  transition: justify-content 0.5s ease;
   width: 100%;
   gap: 10px;
 }
@@ -32,10 +31,6 @@
 .logo-img {
   width: var(--sidebar-icon-width);
   height: auto;
-}
-
-.app-sidebar.sidebar--collapsed .header .logo {
-  justify-content: flex-start;
 }
 
 .app-sidebar .accordion {
@@ -63,7 +58,6 @@
   max-height: 0;
   overflow: hidden;
   gap: 0.5em;
-  transition: max-height 0.2s ease-in-out;
 }
 
 .app-sidebar .accordion-content label {
@@ -114,11 +108,6 @@
 #url-markdown-file {
   width: 100%;
   height: 2em;
-}
-
-.sidebar--collapsed {
-  width: var(--sidebar-icon-width);
-  overflow-x: hidden;
 }
 
 .body-pad {
@@ -197,4 +186,15 @@
   display: flex;
   color: rgba(44, 44, 44, 0.75);
   font-size: small;
+}
+
+/* Collapse the Sidebar */
+
+.app-sidebar.sidebar-collapsed {
+  width: var(--sidebar-icon-width);
+  overflow-x: hidden;
+}
+
+.app-sidebar.sidebar-collapsed .menu-title .logo {
+  justify-content: flex-start;
 }

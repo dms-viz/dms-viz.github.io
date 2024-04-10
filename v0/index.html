@@ -33,48 +33,48 @@
     <!-- Wrap the main contents in a container -->
     <div class="app-container">
       <!-- Header contains the logo and name -->
-      <header class="app-header">
-        <div class="nav-bar" id="nav-bar">
-          <div class="wrapper">
-            <div class="container">
-              <div class="content">
-                <div class="content-body">
-                  <div class="sidebar-toggle">
-                    <i class="bx bx-x bx-menu" id="sidebar-toggle"></i>
-                  </div>
-                  <nav class="menu">
-                    <a
-                      class="menu-item"
-                      href="https://dms-viz.github.io/dms-viz-docs/"
-                      tabindex="0"
-                      target="_blank"
-                    >
-                      <span>Documentation</span>
-                    </a>
-                    <a
-                      class="menu-item"
-                      href="https://dms-viz.github.io/dms-viz-docs/visualizing-data/vignettes/"
-                      tabindex="0"
-                      target="_blank"
-                    >
-                      <span>Examples</span>
-                    </a>
-                  </nav>
-                </div>
+      <header class="app-navbar" id="app-navbar">
+        <div class="wrapper">
+          <div class="container">
+            <div class="content">
+              <button class="sidebar-toggle" id="sidebar-toggle">
+                <i class="bx bx-horizontal-left"></i>
+                <span>Collapse Sidebar</span>
+              </button>
+              <div class="content-body">
+                <nav class="menu">
+                  <a
+                    class="menu-item"
+                    href="https://dms-viz.github.io/dms-viz-docs/"
+                    tabindex="0"
+                    target="_blank"
+                  >
+                    <span>Documentation</span>
+                  </a>
+                  <a
+                    class="menu-item"
+                    href="https://dms-viz.github.io/dms-viz-docs/visualizing-data/vignettes/"
+                    tabindex="0"
+                    target="_blank"
+                  >
+                    <span>Examples</span>
+                  </a>
+                </nav>
               </div>
             </div>
           </div>
-          <div class="divider">
-            <div class="divider-line"></div>
-          </div>
+        </div>
+        <div class="divider">
+          <div class="divider-line"></div>
         </div>
       </header>
+
       <!-- Sidebar contains plot configuration options -->
-      <div class="app-sidebar" , id="sidebar">
+      <div class="app-sidebar" , id="app-sidebar">
         <!-- Main Content -->
         <div class="main-content">
           <!-- Menu Title -->
-          <div class="header">
+          <div class="menu-title">
             <div class="logo">
               <img class="logo-img" src="/logo.png" alt="logo" />
               <span>dms-viz</span>
@@ -342,7 +342,7 @@
         </div>
       </div>
       <!-- Main container with plot and protein content -->
-      <div class="app-main" id="main">
+      <div class="app-main" id="app-main">
         <div class="container">
           <div id="alertBanner" class="alert hidden">
             <span id="alertMessage">Default message</span>
