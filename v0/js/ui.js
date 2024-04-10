@@ -15,6 +15,9 @@ export class UI {
     this.localFile = document.getElementById("local-file");
     this.remoteFile = document.getElementById("remote-file");
 
+    /* Button to show dataset information */
+    this.infoButton = document.getElementById("dataset-info-button");
+
     /* Register event listeners */
     this.registerEventListeners();
     this.registerTooltips();
@@ -126,6 +129,10 @@ export class UI {
     );
     this.remoteFile.addEventListener("click", (event) =>
       this.toggleDownload(event)
+    );
+    // Show the dataset description alert when clicked
+    this.infoButton.addEventListener("click", () =>
+      this.showDatasetDescription()
     );
     // Toggle the sidebar if the window is too small
     window.addEventListener("load", () => {
