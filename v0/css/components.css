@@ -2,12 +2,13 @@
 
 /* Alert Styles */
 .alert {
-  padding: 15px;
+  padding: 10px;
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 4px;
   position: relative;
   padding-right: 35px;
+  font-size: 14px;
 }
 
 .alert.error {
@@ -46,7 +47,7 @@
 .alert-close {
   position: absolute;
   right: 10px;
-  top: 15px;
+  top: 10px;
   cursor: pointer;
 }
 
