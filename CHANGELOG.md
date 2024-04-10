@@ -424,3 +424,21 @@
 ### Removed
 
 - N/A
+
+## [0.6.1] - 2024-04-10
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fixed the padding around the plots to be the same as the navbar.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
