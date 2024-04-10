@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!-- Header of the Document -->
   <head>
     <meta charset="UTF-8" />
     <meta name="title" content="dms-viz" />
@@ -17,7 +16,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/flavicorn.ico" type="image/x-icon" />
     <title>dms-viz</title>
-    <!-- Link to the svg boxicons -->
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
@@ -33,27 +31,54 @@
   <!-- Body Contents -->
   <body>
     <!-- Wrap the main contents in a container -->
-    <div class="container">
-      <!-- Header contains the logo and name of the Application -->
-      <header class="header" id="header">
-        <nav>
-          <div class="controls">
-            <div class="sidebar-toggle">
-              <i class="bx bx-x bx-menu" id="sidebar-toggle"></i>
+    <div class="app-container">
+      <!-- Header contains the logo and name -->
+      <header class="app-navbar" id="app-navbar">
+        <div class="wrapper">
+          <div class="container">
+            <div class="content">
+              <button class="sidebar-toggle" id="sidebar-toggle">
+                <i class="bx bx-horizontal-left"></i>
+                <span>Collapse Sidebar</span>
+              </button>
+              <div class="content-body">
+                <nav class="menu">
+                  <a
+                    class="menu-item"
+                    href="https://dms-viz.github.io/dms-viz-docs/"
+                    tabindex="0"
+                    target="_blank"
+                  >
+                    <span>Documentation</span>
+                  </a>
+                  <a
+                    class="menu-item"
+                    href="https://dms-viz.github.io/dms-viz-docs/visualizing-data/vignettes/"
+                    tabindex="0"
+                    target="_blank"
+                  >
+                    <span>Examples</span>
+                  </a>
+                </nav>
+              </div>
             </div>
           </div>
-        </nav>
+        </div>
+        <div class="divider">
+          <div class="divider-line"></div>
+        </div>
       </header>
+
       <!-- Sidebar contains plot configuration options -->
-      <div class="sidebar" , id="sidebar">
+      <div class="app-sidebar" , id="app-sidebar">
         <!-- Main Content -->
         <div class="main-content">
           <!-- Menu Title -->
-          <div class="header">
-            <h1 class="logo">
+          <div class="menu-title">
+            <div class="logo">
               <img class="logo-img" src="/logo.png" alt="logo" />
               <span>dms-viz</span>
-            </h1>
+            </div>
           </div>
           <!-- Upload Options -->
           <div class="submenu">
@@ -317,30 +342,33 @@
         </div>
       </div>
       <!-- Main container with plot and protein content -->
-      <div class="main" id="main">
-        <div id="alertBanner" class="alert hidden">
-          <span id="alertMessage">Default message</span>
-          <span id="alertClose" class="alert-close"
-            ><i class="bx bx-x"></i
-          ></span>
-        </div>
-        <div id="loadingScreen">
-          <div class="spinner"></div>
-        </div>
-        <!-- Chart contains the main D3 chart -->
-        <div class="chart" id="chart"></div>
-        <!-- Protein contains the protein(s) -->
-        <div class="protein" id="viewport"></div>
-        <!-- Markdown description of the experiment -->
-        <div class="markdown" id="markdown" style="display: none">
-          <hr />
-          <details>
-            <summary>Click for Description</summary>
-            <div id="markdown-container"></div>
-          </details>
+      <div class="app-main" id="app-main">
+        <div class="container">
+          <div id="alertBanner" class="alert hidden">
+            <span id="alertMessage">Default message</span>
+            <span id="alertClose" class="alert-close"
+              ><i class="bx bx-x"></i
+            ></span>
+          </div>
+          <div id="loadingScreen">
+            <div class="spinner"></div>
+          </div>
+          <!-- Chart contains the main D3 chart -->
+          <div class="chart" id="chart"></div>
+          <!-- Protein contains the protein(s) -->
+          <div class="protein" id="viewport"></div>
+          <!-- Markdown description of the experiment -->
+          <div class="markdown" id="markdown" style="display: none">
+            <hr />
+            <details>
+              <summary>Click for Description</summary>
+              <div id="markdown-container"></div>
+            </details>
+          </div>
         </div>
       </div>
     </div>
+    <!-- Attach the code for `dms-viz` -->
     <script type="module" src="./js/main.js"></script>
     <script type="module">
       document.addEventListener("DOMContentLoaded", () => {

@@ -3,45 +3,70 @@ import "tippy.js/dist/tippy.css";
 
 export class UI {
   constructor() {
-    // UI Elements
-    this.infoButton = document.getElementById("dataset-info-button");
-    this.sidebar = document.getElementById("sidebar");
+    /* Main UI elements */
+    this.sidebar = document.getElementById("app-sidebar");
+    this.navbar = document.getElementById("app-navbar");
+    this.main = document.getElementById("app-main");
+
+    /* Elements responsible for toggling the sidebar */
     this.toggle = document.getElementById("sidebar-toggle");
-    this.headerpd = document.getElementById("header");
-    this.mainpd = document.getElementById("main");
+
+    /* Elements responsible for toggling the download buttons */
     this.localFile = document.getElementById("local-file");
     this.remoteFile = document.getElementById("remote-file");
-    this.accordionParent = document.getElementById("sidebar");
+
+    /* Button to show dataset information */
+    this.infoButton = document.getElementById("dataset-info-button");
+
+    /* Register event listeners */
     this.registerEventListeners();
     this.registerTooltips();
   }
 
-  // UI functions to attach to event listeners
+  /* Method to toggle sidebar classes */
   toggleSidebar() {
-    return new Promise((resolve) => {
-      this.sidebar.classList.toggle("sidebar--collapsed");
-      this.toggle.classList.toggle("bx-x");
-      this.headerpd.classList.toggle("body-pad");
-      this.mainpd.classList.toggle("body-pad");
-
-      this.sidebar.addEventListener("transitionend", resolve, { once: true });
-    });
-  }
-
-  toggleAccordion(btn) {
-    if (this.sidebar.classList.contains("sidebar--collapsed")) {
-      this.toggleSidebar().then(() => {
-        this.expandAccordionContent(btn);
+    let ui = this;
+    // Add the collapsed class to each of the main elements
+    ui.sidebar.classList.toggle("sidebar-collapsed");
+    ui.navbar.classList.toggle("sidebar-collapsed");
+    ui.main.classList.toggle("sidebar-collapsed");
+    // Select all of the accordion buttons
+    const accordions = document.querySelectorAll(".accordion");
+    // Check if the sidebar is collapsed
+    if (ui.sidebar.classList.contains("sidebar-collapsed")) {
+      // Close all of the sub menus
+      accordions.forEach((accordion) => {
+        accordion.classList.remove("is-open");
+        let content = accordion.nextElementSibling;
+        content.style.maxHeight = null;
       });
+      // Change the icon and text of the toggle button
+      document.querySelector("#sidebar-toggle i").className =
+        "bx bx-horizontal-right";
+      document.querySelector("#sidebar-toggle span").textContent =
+        "Expand Sidebar";
     } else {
-      this.expandAccordionContent(btn);
+      // Change the icon and text of the toggle button
+      document.querySelector("#sidebar-toggle i").className =
+        "bx bx-horizontal-left";
+      document.querySelector("#sidebar-toggle span").textContent =
+        "Collapse Sidebar";
     }
+    // Finally, dispatch a resize event to trigger plot resizing
+    window.dispatchEvent(new Event("resize"));
   }
 
-  expandAccordionContent(btn) {
+  /* Method to open/close the sidebar accordion menus */
+  toggleAccordion(btn) {
+    let ui = this;
+    // Toggle the class of the accordion button
     btn.classList.toggle("is-open");
+    // Open the side if it is closed
+    if (ui.sidebar.classList.contains("sidebar-collapsed")) {
+      ui.toggleSidebar();
+    }
+    // Open the accordion content if it is closed
     let content = btn.nextElementSibling;
-
     if (content.style.maxHeight) {
       content.style.maxHeight = null;
     } else {
@@ -49,54 +74,7 @@ export class UI {
     }
   }
 
-  registerEventListeners() {
-    this.infoButton.addEventListener("click", () =>
-      this.showDatasetDescription()
-    );
-    this.toggle.addEventListener("click", () => this.handleSidebarToggle());
-    this.localFile.addEventListener("click", (event) =>
-      this.toggleDownload(event)
-    );
-    this.remoteFile.addEventListener("click", (event) =>
-      this.toggleDownload(event)
-    );
-    this.accordionParent.addEventListener("click", (event) => {
-      const accordion = event.target.closest(".accordion");
-      if (accordion) {
-        this.toggleAccordion(accordion);
-      }
-    });
-
-    // Shrink the sidebar on load if the screen is less than 1000px
-    window.addEventListener("load", () => {
-      const mediaQuery = window.matchMedia("(max-width: 1000px)");
-      if (mediaQuery.matches) {
-        this.handleSidebarToggle();
-      } else {
-        window.dispatchEvent(new Event("resize"));
-        // Expand the chart accordion on load by default if the screen is big enough
-        const chartBtn = document.getElementById("chart-btn");
-        this.expandAccordionContent(chartBtn);
-      }
-    });
-  }
-
-  registerTooltips() {
-    tippy(".bx-info-circle", {
-      content: "Click here for more information about the dataset",
-      placement: "right",
-      theme: "select-info",
-      animation: "scale",
-    });
-  }
-
-  showDatasetDescription() {
-    const ui = this;
-    // Show the alert banner with a dataset description
-    const alert = new Alerts();
-    alert.showAlert(ui.datasetDescription, "info");
-  }
-
+  /* Method to toggle download buttons between local and remote */
   toggleDownload({ target: element }) {
     const accordianButton =
       element.parentNode.parentNode.parentNode.previousElementSibling;
@@ -126,22 +104,62 @@ export class UI {
     }
   }
 
-  handleSidebarToggle() {
-    this.toggleSidebar()
-      .then(() => {
-        const accordions = document.querySelectorAll(".accordion");
-        accordions.forEach((accordion) => {
-          accordion.classList.remove("is-open");
-          let content = accordion.nextElementSibling;
-          content.style.maxHeight = null;
-        });
-      })
-      .then(() => {
+  /* Method show the dataset description alert */
+  showDatasetDescription() {
+    const ui = this;
+    // Show the alert banner with a dataset description
+    const alert = new Alerts();
+    alert.showAlert(ui.datasetDescription, "info");
+  }
+
+  /* Register the event listeners */
+  registerEventListeners() {
+    // Toggle the sidebar when the toggle button is clicked
+    this.toggle.addEventListener("click", () => this.toggleSidebar());
+    // Toggle the accordion menus when clicked
+    this.sidebar.addEventListener("click", (event) => {
+      const accordion = event.target.closest(".accordion");
+      if (accordion) {
+        this.toggleAccordion(accordion);
+      }
+    });
+    // Toggle the download buttons when clicked
+    this.localFile.addEventListener("click", (event) =>
+      this.toggleDownload(event)
+    );
+    this.remoteFile.addEventListener("click", (event) =>
+      this.toggleDownload(event)
+    );
+    // Show the dataset description alert when clicked
+    this.infoButton.addEventListener("click", () =>
+      this.showDatasetDescription()
+    );
+    // Toggle the sidebar if the window is too small
+    window.addEventListener("load", () => {
+      const mediaQuery = window.matchMedia("(max-width: 1200px)");
+      if (mediaQuery.matches) {
+        this.toggleSidebar();
+      } else {
         window.dispatchEvent(new Event("resize"));
-      });
+        const chartBtn = document.getElementById("chart-btn");
+        this.toggleAccordion(chartBtn);
+      }
+    });
+  }
+
+  /* Register the information tooltips from tippy */
+  registerTooltips() {
+    // Dataset description tooltip
+    tippy(".bx-info-circle", {
+      content: "Click here for more information about the dataset",
+      placement: "right",
+      theme: "select-info",
+      animation: "scale",
+    });
   }
 }
 
+// Class for to handle alert messages
 export class Alerts {
   constructor() {
     this.alertBanner = document.getElementById("alertBanner");

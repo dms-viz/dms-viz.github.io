@@ -1,0 +1,200 @@
+/* CSS for the side bar component on the left side of the application */
+
+.app-sidebar .main-content {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 3px);
+  overflow: auto;
+}
+
+.app-sidebar .menu-title {
+  margin-bottom: 2.5rem;
+  height: var(--nav-height);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.app-sidebar .menu-title .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Press Start 2P", monospace;
+  font-size: 1em;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+  white-space: nowrap;
+  width: 100%;
+  gap: 10px;
+}
+
+.logo-img {
+  width: var(--sidebar-icon-width);
+  height: auto;
+}
+
+.app-sidebar .accordion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: none;
+  outline: none;
+  background: none;
+  color: rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.app-sidebar .accordion:hover {
+  background-color: #dddddd;
+}
+
+.app-sidebar .accordion-content {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  gap: 0.5em;
+}
+
+.app-sidebar .accordion-content label {
+  font-size: 0.8rem;
+}
+
+.app-sidebar .accordion-content select {
+  width: 100%;
+  height: 2em;
+}
+.app-sidebar .accordion-content input[type="range"] {
+  width: 100%;
+}
+
+.app-sidebar .color {
+  display: flex;
+  justify-content: space-between;
+}
+.app-sidebar .accordion-option {
+  padding-bottom: 10px;
+}
+
+.app-sidebar .accordion-option .output {
+  float: right;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: #963c10;
+}
+
+.app-sidebar .icon {
+  width: var(--sidebar-icon-width);
+  height: var(--sidebar-icon-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.75rem;
+}
+.legend {
+  padding-top: 0.2em;
+}
+
+#url-json-file {
+  width: 100%;
+  height: 2em;
+}
+
+#url-markdown-file {
+  width: 100%;
+  height: 2em;
+}
+
+.body-pad {
+  padding: 0 2.5em 0 calc(var(--sidebar-icon-width) + 2.5em) !important;
+}
+
+.download-toggle {
+  width: 100%;
+  height: 1.5em;
+  position: relative;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.75);
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.download-toggle button {
+  text-align: center;
+  line-height: 50px;
+  color: black;
+  flex: 1;
+  margin: 0;
+  border: none;
+  background: white;
+  border-radius: 25px 0 0 25px;
+}
+
+.download-toggle .upload-method {
+  color: white;
+  background: #007bff;
+}
+
+.download-toggle button:last-child {
+  border-radius: 0 25px 25px 0;
+}
+
+.github-link {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px;
+  box-sizing: border-box;
+  background-color: var(--sidebar-bg-color);
+}
+
+.github-link .icon {
+  width: 30px;
+  height: 30px;
+}
+
+.github-link a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.software-version {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px;
+  box-sizing: border-box;
+  background-color: var(--sidebar-bg-color);
+}
+
+.software-version span {
+  display: flex;
+  color: rgba(44, 44, 44, 0.75);
+  font-size: small;
+}
+
+/* Collapse the Sidebar */
+
+.app-sidebar.sidebar-collapsed {
+  width: var(--sidebar-icon-width);
+  overflow-x: hidden;
+}
+
+.app-sidebar.sidebar-collapsed .menu-title .logo {
+  justify-content: flex-start;
+}
