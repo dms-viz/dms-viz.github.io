@@ -442,3 +442,21 @@
 ### Removed
 
 - N/A
+
+## [0.6.2] - 2024-04-11
+
+### Added
+
+- N/A
+
+### Changed
+
+- Harmonize the padding, margins, and min/max widths of the sidebar and main content.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

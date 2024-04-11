@@ -25,27 +25,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
-  padding-left: calc(var(--sidebar-width) + 32px);
+  margin: 10px auto 0 auto;
+  max-width: calc(var(--layout-max-width) + var(--sidebar-width));
+  min-width: calc(var(--layout-min-width) + var(--sidebar-width));
   padding-right: 32px;
   min-height: 100vh;
 }
 
 .app-main.sidebar-collapsed {
-  padding-left: calc(var(--sidebar-icon-width) + 32px);
+  max-width: calc(var(--layout-max-width) + var(--sidebar-icon-width));
+  min-width: calc(var(--layout-min-width) + var(--sidebar-icon-width));
 }
 
 .app-main .container {
-  max-width: calc(var(--layout-max-width) - var(--sidebar-width));
-  min-width: var(--layout-min-width);
   width: 100%;
+  padding-left: calc(var(--sidebar-width) + 32px);
   box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
 }
 
 .app-main.sidebar-collapsed .container {
-  max-width: calc(var(--layout-max-width) - var(--sidebar-icon-width));
+  padding-left: calc(var(--sidebar-icon-width) + 32px);
 }
 
 .protein {
