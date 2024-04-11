@@ -6,7 +6,9 @@ Welcome to the `dms-viz` project! [dms-viz](https://dms-viz.github.io/) is an in
    to
 2. An interactive web-based visualization tool written with Javascript.
 
-This repository contains the code for the interactive visualization component of dms-viz. We are always looking for ways to improve and are happy to welcome contributions from the community.
+This repository contains the code for the interactive visualization component of `dms-viz`. We are always looking for ways to improve and are happy to welcome contributions from the community.
+
+Detailed instructions for contributing to the `dms-viz` project are available in the documentation [here](https://dms-viz.github.io/dms-viz-docs/).
 
 ## Getting Started
 
@@ -20,13 +22,13 @@ To begin contributing, follow these steps:
 
 2. Install the necessary dependencies specified in the package.json file by running the command:
 
-```
+```bash
 npm install
 ```
 
 To start development, you'll need to run the local server using Vite. This can be done with the command:
 
-```
+```bash
 npm run dev
 ```
 
@@ -47,4 +49,4 @@ Remember to fetch the latest changes from the main repository before you start w
 
 ## Code Guidelines
 
-We aim for clean and consistent code across the entire project. To this end, we use `ESLint` for linting and `Prettier` for code formatting. Make sure to install these extensions to your code editor. Before making a Pull Request, ensure your code adheres to these formatting guidelines.
+We aim for clean and consistent code across the entire project. To this end, we use `ESLint` for linting and `Prettier` for code formatting. Make sure to install these extensions in your code editor. Before making a Pull Request, ensure your code adheres to these formatting guidelines.
