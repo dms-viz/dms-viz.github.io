@@ -70,6 +70,11 @@ Promise.all([
     .then(() => {
       // Trigger a resize event after everything is done
       window.dispatchEvent(new Event("resize"));
+      // Make sure the chart submenu is open if the sidebar is open
+      if (!sessionUI.sidebar.classList.contains("sidebar-collapsed")) {
+        const chartBtn = document.getElementById("chart-btn");
+        sessionUI.toggleAccordion(chartBtn);
+      }
     }),
   delay(3000),
 ])
@@ -226,6 +231,23 @@ function setUpFileUploadListeners() {
           hideMarkdown();
         }
 
+        // Make sure any open accordions are resized
+        var submenus = document.querySelectorAll(".submenu");
+        submenus.forEach(function (submenu) {
+          // Find the accordion button within the submenu
+          var accordionButton = submenu.querySelector(".accordion");
+          // Find the accordion content within the submenu
+          var accordionContent = submenu.querySelector(".accordion-content");
+          if (accordionButton && accordionContent) {
+            // Check if the accordion is open
+            if (accordionButton.classList.contains("is-open")) {
+              // Set the max-height to the scrollHeight of the content
+              accordionContent.style.maxHeight =
+                accordionContent.scrollHeight + "px";
+            }
+          }
+        });
+
         // Trigger a resize event
         window.dispatchEvent(new Event("resize"));
       } catch (error) {
@@ -280,6 +302,23 @@ function setUpFileUploadListeners() {
     } else {
       hideMarkdown();
     }
+
+    // Make sure any open accordions are resized
+    var submenus = document.querySelectorAll(".submenu");
+    submenus.forEach(function (submenu) {
+      // Find the accordion button within the submenu
+      var accordionButton = submenu.querySelector(".accordion");
+      // Find the accordion content within the submenu
+      var accordionContent = submenu.querySelector(".accordion-content");
+      if (accordionButton && accordionContent) {
+        // Check if the accordion is open
+        if (accordionButton.classList.contains("is-open")) {
+          // Set the max-height to the scrollHeight of the content
+          accordionContent.style.maxHeight =
+            accordionContent.scrollHeight + "px";
+        }
+      }
+    });
 
     // Trigger a resize event
     window.dispatchEvent(new Event("resize"));

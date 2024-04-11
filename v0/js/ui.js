@@ -141,8 +141,6 @@ export class UI {
         this.toggleSidebar();
       } else {
         window.dispatchEvent(new Event("resize"));
-        const chartBtn = document.getElementById("chart-btn");
-        this.toggleAccordion(chartBtn);
       }
     });
   }

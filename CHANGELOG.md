@@ -460,3 +460,21 @@
 ### Removed
 
 - N/A
+
+## [0.6.3] - 2024-04-11
+
+### Added
+
+- N/A
+
+### Changed
+
+- Make sure that submenus are correctly resized when the data changes.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
