@@ -431,6 +431,7 @@ export class Protein extends EventTarget {
     let selectedSitesStrings = [];
 
     sites.forEach((d) => {
+      console.log(d);
       const site = protein.#formatSiteCode(d.site_protein);
       const chains = d.site_chain.split(" ");
       const siteStrings = chains
