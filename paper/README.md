@@ -23,4 +23,4 @@ pandoc -s paper.md --citeproc \
 -o paper.pdf
 ```
 
-The format is dictated by the `template.tex` file, which is a spliced together combo of the default Pandoc template with some additions to deal with authors and affiliations in the metadata format JOSS requires.
+The format is dictated by the `template.tex` file, which is a spliced-together combo of the default Pandoc template with some additions to deal with authors and affiliations in the metadata format JOSS requires.
