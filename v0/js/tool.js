@@ -221,8 +221,6 @@ export class Tool {
         summary: tool.summary,
         floor: tool.floor,
         mutations: tool.mutations,
-        metric: tool.data[tool.dataset].metric_col,
-        tooltips: tool.data[tool.dataset].tooltip_cols,
         filters: tool.filters,
         mutationCoverage: tool.mutationCoverage,
       },

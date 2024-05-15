@@ -478,3 +478,21 @@
 ### Removed
 
 - N/A
+
+## [0.6.4] - 2024-05-15
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fixes a bug where the axis titles and tooltips weren't changing between datasets by removing dataset-defined values from the Chart constructor.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

@@ -14,12 +14,10 @@ export class Chart {
     this.config = {
       dataset: _config.dataset,
       chartConditions: _config.chartConditions,
+      filters: _config.filters,
       summary: _config.summary,
       floor: _config.floor,
       mutations: _config.mutations,
-      metric: _config.metric,
-      tooltips: _config.tooltips,
-      filters: _config.filters,
       mutationCoverage: _config.mutationCoverage,
       parentElement: _config.parentElement,
       excludedAminoAcids: _config.excludedAminoAcids,
@@ -315,12 +313,6 @@ export class Chart {
     vis.yAxisFocusG
       .append("text")
       .attr("class", "axis-label")
-      .text(
-        `${
-          vis.config.summary.charAt(0).toUpperCase() +
-          vis.config.summary.slice(1)
-        } of ${vis.config.metric}`
-      )
       .attr("transform", "rotate(-90)")
       .attr("x", -(vis.bounds.focus.height / 2))
       .attr("y", -60)
@@ -609,12 +601,14 @@ export class Chart {
     // define a function to make the tooltip html
     vis.tooltipContent = (d) => {
       // default tooltip html
-      const defaultTooltip = `<strong>${vis.config.metric}:</strong> ${
-        d.metric !== null ? d.metric.toFixed(2) : "Filtered"
-      }</br>`;
+      const defaultTooltip = `<strong>${
+        vis.data[vis.config.dataset].metric_col
+      }:</strong> ${d.metric !== null ? d.metric.toFixed(2) : "Filtered"}</br>`;
       // if the tooltips exist, add them to the html
-      if (vis.config.tooltips) {
-        const lines = Object.entries(vis.config.tooltips).map(
+      if (vis.data[vis.config.dataset].tooltip_cols) {
+        const lines = Object.entries(
+          vis.data[vis.config.dataset].tooltip_cols
+        ).map(
           ([column, name]) =>
             `<strong>${name}:</strong> ${
               typeof d[column] === "number" ? d[column].toFixed(2) : d[column]
@@ -710,7 +704,7 @@ export class Chart {
           .style("opacity", 1)
           .html(
             `<strong>Site:</strong> ${d.site_reference}<br><strong>${
-              vis.config.metric
+              vis.data[vis.config.dataset].metric_col
             } ${vis.config.summary}:</strong> ${d[vis.config.summary].toFixed(
               2
             )}<br><strong>Wildtype:</strong> ${
@@ -849,7 +843,7 @@ export class Chart {
         `${
           vis.config.summary.charAt(0).toUpperCase() +
           vis.config.summary.slice(1)
-        } of ${vis.config.metric}`
+        } of ${vis.data[vis.config.dataset].metric_col}`
       );
 
     // Peripherals for the HEATMAP plot
@@ -1275,7 +1269,9 @@ export class Chart {
     // Create a link to download the image
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${vis.config.dataset}_${vis.config.metric}_${vis.config.summary}.png`;
+    link.download = `${vis.config.dataset}_${
+      vis.data[vis.config.dataset].metric_col
+    }_${vis.config.summary}.png`;
     link.click();
 
     // Remove the link
