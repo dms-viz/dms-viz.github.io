@@ -290,7 +290,7 @@ export class Chart {
     vis.yAxisFocus = d3
       .axisLeft(vis.yScaleFocus)
       .tickSizeOuter(0)
-      .ticks(6)
+      .ticks(3)
       .tickFormat((n) => {
         // Get the absolute value of the number
         var absValue = Math.abs(n);
@@ -330,7 +330,7 @@ export class Chart {
       .attr("class", "axis y-axis");
     vis.yAxisHeatmapLegend = d3
       .axisRight(vis.legendScaleHeatmap)
-      .ticks(6)
+      .ticks(3)
       .tickSize(0);
     vis.yAxisHeatmapLegendG = vis.heatmapLegend
       .append("g")
@@ -567,36 +567,77 @@ export class Chart {
       d3.max(vis.mutMetricHeatmap, vis.xAccessorHeatmap),
     ]);
     vis.yScaleHeatmap.domain(vis.alphabet);
+
+    // Allow user to set the color scale domain
+    if (vis.data[vis.config.dataset].heatmap_limits) {
+      // Cast each value in the array to a number
+      vis.data[vis.config.dataset].heatmap_limits = vis.data[
+        vis.config.dataset
+      ].heatmap_limits.map((d) => +d);
+      // Check what aspect of the scale is being set by the length of the array
+      if (vis.data[vis.config.dataset].heatmap_limits.length === 1) {
+        // If only the center is set, the color scale is symmetric
+        vis.heatmapCenter = vis.data[vis.config.dataset].heatmap_limits[0];
+        vis.heatmapMin = -d3.max(
+          d3
+            .extent(vis.originalMutMetric, vis.colorAccessorHeatmap)
+            .map(Math.abs)
+        );
+        vis.heatmapMax = d3.max(
+          d3
+            .extent(vis.originalMutMetric, vis.colorAccessorHeatmap)
+            .map(Math.abs)
+        );
+        // Make sure the center is within the min and max
+        if (
+          vis.heatmapCenter < vis.heatmapMin ||
+          vis.heatmapCenter > vis.heatmapMax
+        ) {
+          vis.heatmapCenter = 0;
+        }
+      } else if (vis.data[vis.config.dataset].heatmap_limits.length === 2) {
+        // Only the min and max are set
+        vis.heatmapMin = vis.data[vis.config.dataset].heatmap_limits[0];
+        vis.heatmapMax = vis.data[vis.config.dataset].heatmap_limits[1];
+        if (vis.heatmapMin > 0) {
+          vis.heatmapCenter = (vis.heatmapMax + vis.heatmapMin) / 2;
+        } else {
+          vis.heatmapCenter = 0;
+        }
+      } else if (vis.data[vis.config.dataset].heatmap_limits.length === 3) {
+        // All three are set
+        vis.heatmapMin = vis.data[vis.config.dataset].heatmap_limits[0];
+        vis.heatmapCenter = vis.data[vis.config.dataset].heatmap_limits[1];
+        vis.heatmapMax = vis.data[vis.config.dataset].heatmap_limits[2];
+      }
+    } else {
+      vis.heatmapCenter = 0;
+      vis.heatmapMin = -d3.max(
+        d3.extent(vis.originalMutMetric, vis.colorAccessorHeatmap).map(Math.abs)
+      );
+      vis.heatmapMax = d3.max(
+        d3.extent(vis.originalMutMetric, vis.colorAccessorHeatmap).map(Math.abs)
+      );
+    }
+
     // Color is dynamic depending on whether the data is floored
     if (!vis.config.floor) {
       vis.colorScaleHeatmap
-        .domain([
-          -d3.max(
-            d3
-              .extent(vis.originalMutMetric, vis.colorAccessorHeatmap)
-              .map(Math.abs)
-          ),
-          0,
-          d3.max(
-            d3
-              .extent(vis.originalMutMetric, vis.colorAccessorHeatmap)
-              .map(Math.abs)
-          ),
-        ])
+        .domain([vis.heatmapMin, vis.heatmapCenter, vis.heatmapMax])
         .range([vis.negativeColor, "white", vis.positiveColor]);
     } else {
       vis.colorScaleHeatmap
-        .domain([0, d3.max(vis.originalMutMetric, vis.colorAccessorHeatmap)])
+        .domain([vis.heatmapCenter, vis.heatmapMax])
         .range(["white", vis.positiveColor]);
     }
-    vis.legendScaleHeatmap
-      .domain(vis.colorScaleHeatmap.domain())
-      .rangeRound(
-        d3.quantize(
-          d3.interpolate(vis.bounds.heatmap.height / 2, 0),
-          vis.colorScaleHeatmap.range().length
-        )
-      );
+    // vis.legendScaleHeatmap
+    //   .domain(vis.colorScaleHeatmap.domain())
+    //   .rangeRound(
+    //     d3.quantize(
+    //       d3.interpolate(vis.bounds.heatmap.height / 2, 0),
+    //       vis.colorScaleHeatmap.range().length
+    //     )
+    //   );
 
     // define a function to make the tooltip html
     vis.tooltipContent = (d) => {
@@ -855,12 +896,35 @@ export class Chart {
     vis.yAxisHeatmapG.call(vis.yAxisHeatmap);
 
     // Peripherals for the HEATMAP legend
+    // Define the color stops based on the calculated offsets
     vis.legendLinearGradient
       .selectAll("stop")
-      .data(vis.colorScaleHeatmap.range())
+      .data(vis.colorScaleHeatmap.domain())
       .join("stop")
-      .attr("offset", (d, i) => i / (vis.colorScaleHeatmap.range().length - 1))
-      .attr("stop-color", (d) => d);
+      .attr("offset", (d, i) => {
+        if (vis.config.floor) {
+          return i / (vis.colorScaleHeatmap.range().length - 1);
+        } else {
+          if (i === 0) {
+            return "0%";
+          } else if (i === 1) {
+            let offset;
+            if (vis.config.floor) {
+              offset = 50;
+            } else {
+              offset =
+                ((vis.heatmapCenter - vis.heatmapMin) /
+                  (vis.heatmapMax - vis.heatmapMin)) *
+                100;
+            }
+            return `${offset}%`;
+          } else {
+            return "100%";
+          }
+        }
+      })
+      .attr("stop-color", (d) => vis.colorScaleHeatmap(d));
+
     vis.yAxisHeatmapLegendG
       .call(vis.yAxisHeatmapLegend)
       .call((g) => g.select(".domain").remove());
@@ -1118,23 +1182,59 @@ export class Chart {
     // Update the legend color
     vis.legendLinearGradient
       .selectAll("stop")
-      .data(vis.colorScaleHeatmap.range())
+      .data(vis.colorScaleHeatmap.domain())
       .join(
         (enter) =>
           enter
             .append("stop")
-            .attr(
-              "offset",
-              (d, i) => i / (vis.colorScaleHeatmap.range().length - 1)
-            )
-            .attr("stop-color", (d) => d),
+            .attr("offset", (d, i) => {
+              if (vis.config.floor) {
+                return i / (vis.colorScaleHeatmap.range().length - 1);
+              } else {
+                if (i === 0) {
+                  return "0%";
+                } else if (i === 1) {
+                  let offset;
+                  if (vis.config.floor) {
+                    offset = 50;
+                  } else {
+                    offset =
+                      ((vis.heatmapCenter - vis.heatmapMin) /
+                        (vis.heatmapMax - vis.heatmapMin)) *
+                      100;
+                  }
+                  return `${offset}%`;
+                } else {
+                  return "100%";
+                }
+              }
+            })
+            .attr("stop-color", (d) => vis.colorScaleHeatmap(d)),
         (update) =>
           update
-            .attr(
-              "offset",
-              (d, i) => i / (vis.colorScaleHeatmap.range().length - 1)
-            )
-            .attr("stop-color", (d) => d),
+            .attr("offset", (d, i) => {
+              if (vis.config.floor) {
+                return i / (vis.colorScaleHeatmap.range().length - 1);
+              } else {
+                if (i === 0) {
+                  return "0%";
+                } else if (i === 1) {
+                  let offset;
+                  if (vis.config.floor) {
+                    offset = 50;
+                  } else {
+                    offset =
+                      ((vis.heatmapCenter - vis.heatmapMin) /
+                        (vis.heatmapMax - vis.heatmapMin)) *
+                      100;
+                  }
+                  return `${offset}%`;
+                } else {
+                  return "100%";
+                }
+              }
+            })
+            .attr("stop-color", (d) => vis.colorScaleHeatmap(d)),
         (exit) => exit.remove()
       );
 

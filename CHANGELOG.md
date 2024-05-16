@@ -496,3 +496,21 @@
 ### Removed
 
 - N/A
+
+## [0.7.0] - 2024-05-15
+
+### Added
+
+- Allow users to set the min, max, and center of the color scales.
+
+### Changed
+
+- N/A
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
