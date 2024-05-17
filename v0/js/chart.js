@@ -630,14 +630,14 @@ export class Chart {
         .domain([vis.heatmapCenter, vis.heatmapMax])
         .range(["white", vis.positiveColor]);
     }
-    // vis.legendScaleHeatmap
-    //   .domain(vis.colorScaleHeatmap.domain())
-    //   .rangeRound(
-    //     d3.quantize(
-    //       d3.interpolate(vis.bounds.heatmap.height / 2, 0),
-    //       vis.colorScaleHeatmap.range().length
-    //     )
-    //   );
+    vis.legendScaleHeatmap
+      .domain(vis.colorScaleHeatmap.domain())
+      .rangeRound(
+        d3.quantize(
+          d3.interpolate(vis.bounds.heatmap.height / 2, 0),
+          vis.colorScaleHeatmap.range().length
+        )
+      );
 
     // define a function to make the tooltip html
     vis.tooltipContent = (d) => {
@@ -926,7 +926,12 @@ export class Chart {
       .attr("stop-color", (d) => vis.colorScaleHeatmap(d));
 
     vis.yAxisHeatmapLegendG
-      .call(vis.yAxisHeatmapLegend)
+      .call(
+        vis.yAxisHeatmapLegend.tickValues([
+          vis.colorScaleHeatmap.domain()[0],
+          vis.colorScaleHeatmap.domain()[2],
+        ])
+      )
       .call((g) => g.select(".domain").remove());
 
     vis.brushSelection = vis.brushSelection || null;
