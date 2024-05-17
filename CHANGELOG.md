@@ -496,3 +496,22 @@
 ### Removed
 
 - N/A
+
+## [0.7.0] - 2024-05-15
+
+### Added
+
+- Allow users to set the min, max, and center of the color scales.
+- Allow for color scales that aren't symmetric around 0.
+
+### Changed
+
+- Clear the URI parameters when data is loaded from a local file.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

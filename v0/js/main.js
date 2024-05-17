@@ -216,13 +216,15 @@ function setUpFileUploadListeners() {
 
         // Update the tool's state
         State.data = removeMarkdown(data);
-        State.initTool();
 
         // Clear the URL parameters and remote UI input elements
         window.history.replaceState({}, "", `${location.pathname}`);
         document.getElementById("url-json-file").value = "";
         document.getElementById("url-markdown-file").value = "";
         document.getElementById("url-markdown-file").disabled = true;
+
+        // Update the tool state
+        State.initTool();
 
         // Check if there is a markdown description in the data
         if (data.markdown_description) {
