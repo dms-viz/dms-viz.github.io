@@ -328,10 +328,7 @@ export class Chart {
     vis.yAxisHeatmapG = vis.heatmapPlot
       .append("g")
       .attr("class", "axis y-axis");
-    vis.yAxisHeatmapLegend = d3
-      .axisRight(vis.legendScaleHeatmap)
-      .ticks(3)
-      .tickSize(0);
+    vis.yAxisHeatmapLegend = d3.axisRight(vis.legendScaleHeatmap).tickSize(0);
     vis.yAxisHeatmapLegendG = vis.heatmapLegend
       .append("g")
       .attr("transform", `translate(${vis.bounds.heatmap.width / 2})`)
@@ -630,14 +627,19 @@ export class Chart {
         .domain([vis.heatmapCenter, vis.heatmapMax])
         .range(["white", vis.positiveColor]);
     }
+
+    // Calculate the legend positions
+    const legendPositions = vis.colorScaleHeatmap.domain().map((value) => {
+      const domain = vis.colorScaleHeatmap.domain();
+      const ratio =
+        (value - domain[0]) / (domain[domain.length - 1] - domain[0]);
+      return (vis.bounds.heatmap.height / 2) * (1 - ratio);
+    });
+
+    // Create the legend scale
     vis.legendScaleHeatmap
       .domain(vis.colorScaleHeatmap.domain())
-      .rangeRound(
-        d3.quantize(
-          d3.interpolate(vis.bounds.heatmap.height / 2, 0),
-          vis.colorScaleHeatmap.range().length
-        )
-      );
+      .range(legendPositions);
 
     // define a function to make the tooltip html
     vis.tooltipContent = (d) => {
@@ -929,7 +931,10 @@ export class Chart {
       .call(
         vis.yAxisHeatmapLegend.tickValues([
           vis.colorScaleHeatmap.domain()[0],
-          vis.colorScaleHeatmap.domain()[2],
+          vis.colorScaleHeatmap.domain()[1],
+          vis.colorScaleHeatmap.domain()[
+            vis.colorScaleHeatmap.domain().length - 1
+          ],
         ])
       )
       .call((g) => g.select(".domain").remove());
