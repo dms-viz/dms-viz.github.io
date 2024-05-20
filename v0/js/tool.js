@@ -633,8 +633,16 @@ export class Tool {
         default: tool.data[tool.dataset].conditions,
         json: true,
       },
-      summary: { abbrev: "s", default: "mean", json: false },
-      floor: { abbrev: "f", default: false, json: false },
+      summary: {
+        abbrev: "s",
+        default: tool.data[tool.dataset].summary_stat || "mean",
+        json: false,
+      },
+      floor: {
+        abbrev: "f",
+        default: tool.data[tool.dataset].floor || false,
+        json: false,
+      },
       mutations: { abbrev: "m", default: false, json: false },
       selectAll: { abbrev: "sa", default: false, json: false },
       proteinRepresentation: { abbrev: "pr", default: "cartoon", json: false },

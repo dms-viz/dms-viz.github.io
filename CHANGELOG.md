@@ -515,3 +515,20 @@
 ### Removed
 
 - N/A
+
+## [0.8.0] - 2024-05-15
+
+### Added
+
+- Allow users to set the default summary metric and default value for floor
+
+### Changed
+
+- N/A
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
