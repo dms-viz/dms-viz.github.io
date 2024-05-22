@@ -532,3 +532,21 @@
 ### Removed
 
 - N/A
+
+## [0.8.1] - 2024-05-22
+
+### Added
+
+- N/A
+
+### Changed
+
+- Menu options 'summary' and 'floor' set in the config file populate the menu when the dataset changes.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

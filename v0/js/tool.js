@@ -393,6 +393,19 @@ export class Tool {
       d3.select("#alertMessage").text(tool.datasetDescription);
     }
 
+    // Update the visualization with the default menu options for the new dataset
+    tool.initSelect(
+      d3.select("#summary"),
+      ["sum", "mean", "max", "min", "median"],
+      tool.data[tool.dataset].summary_stat || "mean"
+    );
+    tool.initCheckbox(
+      d3.select("#floor"),
+      tool.data[tool.dataset].floor || false
+    );
+    tool.chart.config.summary = tool.data[tool.dataset].summary_stat || "mean";
+    tool.chart.config.floor = tool.data[tool.dataset].floor || false;
+
     // Populate Filter Sites
     tool.filters = {};
     d3.select("#filters").html("");
