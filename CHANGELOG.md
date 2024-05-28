@@ -550,3 +550,21 @@
 ### Removed
 
 - N/A
+
+## [0.8.2] - 2024-05-28
+
+### Added
+
+- N/A
+
+### Changed
+
+- Add style to color hyperlinks in markdown.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A

@@ -99,3 +99,9 @@
     transform: rotate(360deg);
   }
 }
+
+/* Markdown container styles */
+#markdown-container a {
+  color: #0000ff;
+  cursor: pointer;
+}
