@@ -55,7 +55,7 @@ Our group previously created a tool called `dms-view` [@hiltonDmsviewInteractive
 
 # Design and Usage
 
-Using `dms-viz` involves three components. First, using the command line tool `configure-dms-viz`, available as a Python package on PyPI (<https://pypi.org/project/configure-dms-viz/>), the user formats their data into a `JSON` specification file. Then, the user uploads this specification file to `dms-viz.github.io`, a web-based interface written in Javascript, `D3.js`, and `NGL.js` [@roseNGLViewerWebbased2018]. Finally, the specification file can either be shared directly or hosted remotely to generate a shareable URL link (\autoref{fig:figure2}).
+Using `dms-viz` involves three components. First, using the command line tool `configure-dms-viz`, available as a Python package on PyPI (<https://pypi.org/project/configure-dms-viz/>), the user formats their data into a `JSON` specification file (see the [documentation]() for details on the `JSON` schema). Then, the user uploads this specification file to `dms-viz.github.io`, a web-based interface written in Javascript, `D3.js`, and `NGL.js` [@roseNGLViewerWebbased2018]. Finally, the specification file can either be shared directly or hosted remotely to generate a shareable URL link (\autoref{fig:figure2}).
 
 Upon uploading the specification file to `dms-viz`, users will see a visualization composed of four components, as illustrated in \autoref{fig:figure3}.
 
