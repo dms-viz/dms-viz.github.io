@@ -49,7 +49,7 @@ We wanted `dms-viz` to provide the following functionalities:
 
 6. **Share findings with ease**: Users of `dms-viz` can generate shareable URL links for a customized visualization view. They can also save and share the `JSON` specification files created by the command line interface, ensuring that data can be accessed easily.
 
-7. **Preserve data privacy**: `dms-viz` allows users to analyze proprietary and sensitive data by supporting local upload. This means researchers can view and analyze their confidential structures and datasets without the requirement to store them in a public repository.
+7. **Preserve data privacy**: `dms-viz` allows users to visualize proprietary structures and analyze sensitive data in their browser without uploading their datasets to a remote server or storing them in a public repository.
 
 Our group previously created a tool called `dms-view` [@hiltonDmsviewInteractiveVisualization2020] that has some of the functionalities listed above. However, we designed `dms-viz` to be more customizable and comprehensive to handle a wider diversity of experimental designs and questions.
 
