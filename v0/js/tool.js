@@ -405,6 +405,7 @@ export class Tool {
     );
     tool.chart.config.summary = tool.data[tool.dataset].summary_stat || "mean";
     tool.chart.config.floor = tool.data[tool.dataset].floor || false;
+    tool.protein.config.floor = tool.data[tool.dataset].floor || false;
 
     // Populate Filter Sites
     tool.filters = {};
