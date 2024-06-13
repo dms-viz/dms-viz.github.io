@@ -568,3 +568,21 @@
 ### Removed
 
 - N/A
+
+## [0.8.3] - 2024-06-13
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fix a bug where floor was determined by the config in the chart but not for the protein.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
