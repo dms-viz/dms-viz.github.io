@@ -97,7 +97,7 @@ See how `dms-viz` can provide this dataset as an interactive resource [here](htt
 
 PTEN is a tumor suppressor that is inactivated in many cancers. Matreyek and Starita used variant abundance by massively parallel sequencing (VAMP-seq) to characterize the effect of thousands of mutations on the intracellular abundance of PTEN [@matreyekMultiplexAssessmentProtein2018].
 
-See how `dms-viz` can be used to identify clinically relevant mutations in human proteins [here]().
+See how `dms-viz` can be used to identify clinically relevant mutations in human proteins [here](https://dms-viz.github.io/v0/?data=https%3A%2F%2Fgist.githubusercontent.com%2FWillHannon-MCB%2F102f0e3dff8f67452ffe3f9f290c41cf%2Fraw%2F7df95064f74c0f9681cd5fec883306aa5a021232%2Fpten_example.json).
 
 # Conclusion
 
