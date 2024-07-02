@@ -87,11 +87,7 @@ For additional scientific background and a walkthrough of the code that generate
 
 Bloom and Neher estimated the fitness effects of mutations to all SARS-CoV-2 proteins by analyzing millions of human SARS-CoV-2 sequences  [@bloomFitnessEffectsMutations2023]. See how `dms-viz` can be used to enhance structure-guided drug design by merging this data with structural views of a viral target like the SARS-CoV-2 main protease (Mpro) in complex with a bound ligand such as MAT-POS-e194df51-1 from the COVID Moonshot project [@bobyOpenScienceDiscovery2023] [here](https://dms-viz.github.io/v0/?data=https%3A%2F%2Fgist.githubusercontent.com%2FWillHannon-MCB%2Faa8599278999c841550c54f12b9964ee%2Fraw%2Fea7540c9b8ce0795dbbc9bf60cae85ba37cc7635%2Fmpro_with_inhibitor.json&markdown=https%3A%2F%2Fgist.githubusercontent.com%2FWillHannon-MCB%2Faa8599278999c841550c54f12b9964ee%2Fraw%2F2984be0aa286cf6a3447f65230b2ae9b7d128671%2FREADME.md&g=true&le=true&fi=%257B%2522expected_count%2522%253A10.15084%257D&sa=true&so=0.58&lr=ball%2Bstick&pr=ball%2Bstick&sr=surface).
 
-## 3. Exploring the evolutionary potential of the influenza A polymerase PB1 subunit
-
-@liDeepMutationalScanning2023 measured the effects of thousands of mutations to the PB1 subunit of the influenza RNA-dependent RNA polymerase on the replicative fitness of the lab-adapted influenza strain A/WSN/1933(H1N1) [@liDeepMutationalScanning2023]. See how `dms-viz` can provide this dataset as an interactive resource [here](https://dms-viz.github.io/v0/?data=https%3A%2F%2Fraw.githubusercontent.com%2Fdms-viz%2Fconfigure_dms_viz%2Fmain%2Ftests%2FIAV-PB1-DMS%2Foutput%2FIAV-PB1-DMS.json&n=true&s=mean).
-
-## 4. Visualizing the pathogenicity of genetic variants of an important tumor suppressor
+## 3. Visualizing the pathogenicity of genetic variants of an important tumor suppressor
 
 @matreyekMultiplexAssessmentProtein2018 used variant abundance by massively parallel sequencing (VAMP-seq) to characterize the effect of thousands of mutations on the intracellular abundance of PTEN, a tumor suppressor that is inactivated in many cancers [@matreyekMultiplexAssessmentProtein2018]. See how `dms-viz` can be used to identify clinically relevant mutations in human proteins [here](https://dms-viz.github.io/v0/?data=https%3A%2F%2Fgist.githubusercontent.com%2FWillHannon-MCB%2F102f0e3dff8f67452ffe3f9f290c41cf%2Fraw%2F7df95064f74c0f9681cd5fec883306aa5a021232%2Fpten_example.json).
 
