@@ -1,7 +1,7 @@
 {
   "name": "dms-viz.github.io",
   "private": true,
-  "version": "v0.8.3",
+  "version": "v0.8.4",
   "type": "module",
   "scripts": {
     "dev": "vite",

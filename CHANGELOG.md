@@ -586,3 +586,21 @@
 ### Removed
 
 - N/A
+
+## [0.8.4] - 2024-07-08
+
+### Added
+
+- N/A
+
+### Changed
+
+- Fix a bug in NGL by bumping it to the most recent version.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
