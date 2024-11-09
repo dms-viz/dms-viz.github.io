@@ -111,15 +111,20 @@ export class Legend {
             .style("fill", (d) => vis.conditionColors[d])
             .on("click", (event, datum) => {
               if (event.altKey && vis.config.chartConditions.includes(datum)) {
-                vis.deselectChartConditions(datum);
+                requestAnimationFrame(() => vis.deselectChartConditions(datum));
               } else if (
                 event.altKey &&
                 !vis.config.chartConditions.includes(datum)
               ) {
-                vis.selectChartConditions(datum);
+                requestAnimationFrame(() => vis.selectChartConditions(datum));
               } else {
-                vis.selectProteinCondition(datum);
+                requestAnimationFrame(() => vis.selectProteinCondition(datum));
               }
+            })
+            .on("dblclick", (event, datum) => {
+              requestAnimationFrame(() =>
+                vis.clearAndSelectSingleCondition(datum)
+              );
             }),
         (update) =>
           update
@@ -150,15 +155,20 @@ export class Legend {
             )
             .on("click", (event, datum) => {
               if (event.altKey && vis.config.chartConditions.includes(datum)) {
-                vis.deselectChartConditions(datum);
+                requestAnimationFrame(() => vis.deselectChartConditions(datum));
               } else if (
                 event.altKey &&
                 !vis.config.chartConditions.includes(datum)
               ) {
-                vis.selectChartConditions(datum);
+                requestAnimationFrame(() => vis.selectChartConditions(datum));
               } else {
-                vis.selectProteinCondition(datum);
+                requestAnimationFrame(() => vis.selectProteinCondition(datum));
               }
+            })
+            .on("dblclick", (event, datum) => {
+              requestAnimationFrame(() =>
+                vis.clearAndSelectSingleCondition(datum)
+              );
             }),
         (update) =>
           update
@@ -192,15 +202,20 @@ export class Legend {
             .style("user-select", "none")
             .on("click", (event, datum) => {
               if (event.altKey && vis.config.chartConditions.includes(datum)) {
-                vis.deselectChartConditions(datum);
+                requestAnimationFrame(() => vis.deselectChartConditions(datum));
               } else if (
                 event.altKey &&
                 !vis.config.chartConditions.includes(datum)
               ) {
-                vis.selectChartConditions(datum);
+                requestAnimationFrame(() => vis.selectChartConditions(datum));
               } else {
-                vis.selectProteinCondition(datum);
+                requestAnimationFrame(() => vis.selectProteinCondition(datum));
               }
+            })
+            .on("dblclick", (event, datum) => {
+              requestAnimationFrame(() =>
+                vis.clearAndSelectSingleCondition(datum)
+              );
             }),
         (update) =>
           update
@@ -235,10 +250,15 @@ export class Legend {
     vis.config.proteinCondition = datum;
 
     // Dispatch an event to notify about the selected condition
-    const proteinConditionEvent = new CustomEvent("proteinConditionSelected", {
-      detail: vis.config.proteinCondition,
+    requestAnimationFrame(() => {
+      const proteinConditionEvent = new CustomEvent(
+        "proteinConditionSelected",
+        {
+          detail: vis.config.proteinCondition,
+        }
+      );
+      window.dispatchEvent(proteinConditionEvent);
     });
-    window.dispatchEvent(proteinConditionEvent);
   }
   selectChartConditions(datum) {
     let vis = this;
@@ -263,10 +283,12 @@ export class Legend {
     vis.config.chartConditions.push(datum);
 
     // Dispatch an event to notify about the plot conditions
-    const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
-      detail: vis.config.chartConditions,
+    requestAnimationFrame(() => {
+      const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
+        detail: vis.config.chartConditions,
+      });
+      window.dispatchEvent(chartConditionEvent);
     });
-    window.dispatchEvent(chartConditionEvent);
   }
   deselectChartConditions(datum) {
     let vis = this;
@@ -304,9 +326,51 @@ export class Legend {
       .style("opacity", ".25");
 
     // Dispatch an event to notify about the plot conditions
-    const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
-      detail: vis.config.chartConditions,
+    requestAnimationFrame(() => {
+      const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
+        detail: vis.config.chartConditions,
+      });
+      window.dispatchEvent(chartConditionEvent);
     });
-    window.dispatchEvent(chartConditionEvent);
+  }
+  clearAndSelectSingleCondition(datum) {
+    let vis = this;
+
+    // Clear all chartConditions and only keep the clicked datum
+    vis.config.chartConditions = [datum];
+
+    // Update protein condition to the selected datum
+    vis.config.proteinCondition = datum;
+
+    // Reset styles to reflect only the selected condition
+    vis.legend
+      .selectAll(".condition-box")
+      .style("opacity", (d) => (d === datum ? ".25" : "0"));
+
+    vis.legend
+      .selectAll(".condition-circle")
+      .style("opacity", (d) => (d === datum ? "1" : "0.2"));
+
+    vis.legend
+      .selectAll(".condition-label")
+      .style("opacity", (d) => (d === datum ? "1" : "0.2"));
+
+    // Dispatch events to notify about the selected condition
+    requestAnimationFrame(() => {
+      const chartConditionEvent = new CustomEvent("chartConditionsSelected", {
+        detail: vis.config.chartConditions,
+      });
+      window.dispatchEvent(chartConditionEvent);
+    });
+
+    requestAnimationFrame(() => {
+      const proteinConditionEvent = new CustomEvent(
+        "proteinConditionSelected",
+        {
+          detail: vis.config.proteinCondition,
+        }
+      );
+      window.dispatchEvent(proteinConditionEvent);
+    });
   }
 }

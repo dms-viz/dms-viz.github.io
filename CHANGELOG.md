@@ -604,3 +604,21 @@
 ### Removed
 
 - N/A
+
+## [0.8.5] - 2024-07-08
+
+### Added
+
+- N/A
+
+### Changed
+
+- Make it easier to select and de-select options with double-clicking.
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
