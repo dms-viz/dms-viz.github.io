@@ -613,6 +613,24 @@
 
 ### Changed
 
+- Make a release for JOSS
+
+### Deprecated
+
+- N/A
+
+### Removed
+
+- N/A
+
+## [0.8.6] - 2024-11-09
+
+### Added
+
+- N/A
+
+### Changed
+
 - Make it easier to select and de-select options with double-clicking.
 
 ### Deprecated
